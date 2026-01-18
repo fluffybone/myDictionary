@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  backend:
+    container_name: dictionary_backend
+    build: ./backend
+    restart: always
+    ports:
+      - "8000:8000"
+    # Тут можно добавить переменные окружения для прода
+    # environment:
+    #   - DATABASE_URL=postgresql://...
+
+  frontend:
+    container_name: dictionary_front
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
