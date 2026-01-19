@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  backend:
+    container_name: dictionary_backend_prod
+    build:
+      context: ./backend
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql://dictionary:${POSTGRES_PASSWORD}@postgres:5432/dictionary
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - prod-network
+    ports:
+      - "8000:8000"
+
+  frontend:
+    container_name: dictionary_frontend_prod
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - prod-network
+
+  postgres:
+    image: postgres:17.2-alpine
+    container_name: dictionary_postgres_prod
+    restart: always
+    environment:
+      POSTGRES_USER: dictionary
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: dictionary
+    volumes:
+      - prod-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dictionary"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - prod-network
+
+networks:
+  prod-network:
+    driver: bridge
+
+volumes:
+  prod-postgres-data:

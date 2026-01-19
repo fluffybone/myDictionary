@@ -1,0 +1,58 @@
+services:
+  backend:
+    container_name: dictionary_backend
+    build:
+      context: ./backend
+    environment:
+      - DATABASE_URL=postgresql://dictionary:${POSTGRES_PASSWORD}@postgres:5432/dictionary
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - dictionary-network
+
+  frontend:
+    container_name: dictionary_frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - dictionary-network
+
+  postgres:
+    image: postgres:17.2-alpine
+    container_name: dictionary-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: dictionary
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: dictionary
+    volumes:
+      - postgres-dictionary-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dictionary"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 3s
+    networks:
+      - dictionary-network
+
+networks:
+  dictionary-network:
+    driver: bridge
+
+volumes:
+  postgres-dictionary-data:
