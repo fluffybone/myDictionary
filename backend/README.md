@@ -6,9 +6,9 @@
 
 `source venv/bin/activate`
 
-### Установить FastApi
+### Установить зависимости
 
-`pip install "fastapi[standard]"`
+`pip install -r requirements.txt`
 
 ## Создать main.py
 
@@ -20,7 +20,8 @@
 
 `python main.py`
 
-> запуск на **http://localhost:8000/hello**
+> запуск на **http://localhost:8000/**
+> docs **http://localhost:8000/docs**
 
 ### Запуск docker
 
@@ -36,3 +37,5 @@
 запустить - `docker start dictionary-backend-container`
 
 удалить контейнер - `docker rm -f dictionary-backend-container`
+
+Флаг -v удаляет тома (volumes) - `docker compose down -v`
