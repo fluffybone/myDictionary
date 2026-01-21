@@ -39,3 +39,12 @@
 удалить контейнер - `docker rm -f dictionary-backend-container`
 
 Флаг -v удаляет тома (volumes) - `docker compose down -v`
+
+посмотреть бд
+
+> docker exec -it dictionary-postgres psql -U dictionary -d dictionary
+
+ввести - `\dt`
+`SELECT * FROM words;`
+
+выйти `\q`

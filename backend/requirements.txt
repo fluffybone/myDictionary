@@ -2,3 +2,6 @@ fastapi[standard]
 uvicorn
 sqlalchemy       
 psycopg2-binary  
+pwdlib[argon2] 
+pyjwt          
+python-multipart
