@@ -39,3 +39,13 @@
 удалить контейнер - `docker rm -f dictionary-backend-container`
 
 Флаг -v удаляет тома (volumes) - `docker compose down -v`
+
+посмотреть бд
+"Подключиться к контейнеру с именем dictionary-postgres и запустить интерактивную сессию psql для пользователя dictionary в базе данных dictionary"
+
+> docker exec -it dictionary-postgres psql -U dictionary -d dictionary
+
+ввести - `\dt`
+`SELECT * FROM words;`
+
+выйти `\q`

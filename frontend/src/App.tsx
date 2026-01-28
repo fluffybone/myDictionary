@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import { Authorization } from "./Authorization";
+import { ACCESS_TOKEN_LOCALSTORAGE_KEY, API_URL } from "./shared";
+const token = localStorage.getItem(ACCESS_TOKEN_LOCALSTORAGE_KEY);
 
 export const App = () => {
   const [enWord, setEnWord] = useState("");
@@ -8,7 +11,7 @@ export const App = () => {
   >([]);
 
   const writeWord = async () => {
-    const response = await fetch("http://127.0.0.1:8000/words", {
+    const response = await fetch(`${API_URL}/words`, {
       body: JSON.stringify({
         english_word: enWord,
         russian_word: ruWord,
@@ -21,9 +24,10 @@ export const App = () => {
     console.log("response", response);
     setWords([...words, response]);
   };
-
   const getWord = async () => {
-    await fetch("http://127.0.0.1:8000/words")
+    await fetch(`${API_URL}/words/`, {
+      headers: { Authorization: token ?? "" },
+    })
       .then((response) => response.json())
       .then((res) => setWords(res));
   };
@@ -35,36 +39,40 @@ export const App = () => {
   console.log("enWord", enWord);
   return (
     <>
-      <input
-        placeholder="слово на английском"
-        value={enWord}
-        onChange={(e) => setEnWord(e.target.value)}
-      />
-      <input
-        placeholder="слово на русском"
-        value={ruWord}
-        onChange={(e) => setRuWord(e.target.value)}
-      />
-      <button onClick={() => writeWord()}>Записать слово</button>
-      <h2>Все слова</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Слово на английском</th>
-            <th>Перевод</th>
-          </tr>
-        </thead>
-        <tbody>
-          {words.map((word) => {
-            return (
-              <tr key={word.english_word}>
-                <td>{word.english_word}</td>
-                <td>{word.russian_word}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <Authorization />
+      <div>
+        <input
+          placeholder="слово на английском"
+          value={enWord}
+          onChange={(e) => setEnWord(e.target.value)}
+        />
+        <input
+          placeholder="слово на русском"
+          value={ruWord}
+          onChange={(e) => setRuWord(e.target.value)}
+        />
+        <button onClick={() => writeWord()}>Записать слово</button>
+        <h2>Все слова</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Слово на английском</th>
+              <th>Перевод</th>
+            </tr>
+          </thead>
+          <tbody>
+            {words.length > 0 &&
+              words.map((word) => {
+                return (
+                  <tr key={word.english_word}>
+                    <td>{word.english_word}</td>
+                    <td>{word.russian_word}</td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 };

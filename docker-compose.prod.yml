@@ -8,6 +8,7 @@ services:
     restart: always
     environment:
       - DATABASE_URL=postgresql://dictionary:${POSTGRES_PASSWORD}@postgres:5432/dictionary
+      - SECRET_KEY=${SECRET_KEY}
     depends_on:
       postgres:
         condition: service_healthy
