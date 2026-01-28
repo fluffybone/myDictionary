@@ -14,8 +14,6 @@ services:
         condition: service_healthy
     networks:
       - prod-network
-    ports:
-      - "8000:8000"
 
   frontend:
     container_name: dictionary_frontend_prod
