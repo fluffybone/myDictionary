@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Authorization } from "./Authorization";
-import { ACCESS_TOKEN_LOCALSTORAGE_KEY, API_URL } from "./shared";
+import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "./shared";
 const token = localStorage.getItem(ACCESS_TOKEN_LOCALSTORAGE_KEY);
 
 export const App = () => {
@@ -11,7 +11,7 @@ export const App = () => {
   >([]);
 
   const writeWord = async () => {
-    const response = await fetch(`${API_URL}/words`, {
+    const response = await fetch(`/api/words`, {
       body: JSON.stringify({
         english_word: enWord,
         russian_word: ruWord,
@@ -25,7 +25,7 @@ export const App = () => {
     setWords([...words, response]);
   };
   const getWord = async () => {
-    await fetch(`${API_URL}/words/`, {
+    await fetch(`/api/words/`, {
       headers: { Authorization: token ?? "" },
     })
       .then((response) => response.json())

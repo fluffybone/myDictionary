@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { ACCESS_TOKEN_LOCALSTORAGE_KEY, API_URL } from "../shared";
+import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "../shared";
 
 export const Authorization = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const registerUser = async () => {
-    const response = await fetch(`${API_URL}/register`, {
+    const response = await fetch(`/api/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,7 +29,7 @@ export const Authorization = () => {
       formData.append("username", email);
       formData.append("password", password);
 
-      const response = await fetch(`${API_URL}/login`, {
+      const response = await fetch(`/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
