@@ -9,6 +9,7 @@ export const App = () => {
   const [words, setWords] = useState<
     { english_word: string; russian_word: string }[]
   >([]);
+  const [isVisibleAuth, setIsVisibleAuth] = useState(false);
 
   const writeWord = async () => {
     const response = await fetch(`/api/words`, {
@@ -23,12 +24,21 @@ export const App = () => {
       },
     }).then((response) => response.json());
     setWords([...words, response]);
+    setRuWord("");
+    setEnWord("");
   };
+
   const getWord = async () => {
     await fetch(`/api/words`, {
       headers: { Authorization: token ?? "" },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        console.log("response", response);
+        if (response.status === 401) {
+          setIsVisibleAuth(true);
+        }
+        return response.json();
+      })
       .then((res) => setWords(res));
   };
 
@@ -38,7 +48,7 @@ export const App = () => {
 
   return (
     <>
-      <Authorization />
+      {isVisibleAuth && <Authorization />}
       <div>
         <input
           placeholder="слово на английском"
