@@ -73,7 +73,7 @@ export const Authorization = () => {
         />
         <button onClick={() => loginUser()}>Войти</button>
       </div>
-      <div>
+      <div style={{ backgroundColor: "#ecfce6" }}>
         <h2>Зарегистрироваться</h2>
         <input
           placeholder="логин"
