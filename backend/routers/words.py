@@ -5,13 +5,9 @@ from sqlalchemy.orm import Session
 
 import models, schemas, auth, database 
 
-router = APIRouter(
-    prefix="/words",  # Все ручки будут начинаться с /words
-    tags=["Dictionary"]
-)
-
+router = APIRouter(prefix="/api/words", tags=["words"])
 # POST /words
-@router.post("/", response_model=schemas.Word)
+@router.post("", response_model=schemas.Word)
 def create_word(
     word: schemas.WordCreate, 
     db: Session = Depends(database.get_db),
@@ -25,7 +21,7 @@ def create_word(
     return db_word
 
 # GET /words
-@router.get("/", response_model=List[schemas.Word])
+@router.get("", response_model=List[schemas.Word])
 def read_my_words(
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(auth.get_current_user)

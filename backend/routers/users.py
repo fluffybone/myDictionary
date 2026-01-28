@@ -6,7 +6,7 @@ from datetime import timedelta
 
 import models, schemas, auth, database 
 
-router = APIRouter(tags=["Users"]) # tags нужны для группировки в Swagger
+router = APIRouter(prefix="/api",tags=["Users"]) # tags нужны для группировки в Swagger
 
 @router.post("/register", response_model=schemas.User)
 def register(user: schemas.UserCreate, db: Session = Depends(database.get_db)):

@@ -14,7 +14,6 @@ export const Authorization = () => {
 
       body: JSON.stringify({ password, email }),
     });
-    console.log("response", response);
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.detail || "Ошибка регистрации");
