@@ -12,6 +12,12 @@ export const App = () => {
   const [isVisibleAuth, setIsVisibleAuth] = useState(false);
 
   const writeWord = async () => {
+    if (enWord.trim().length === 0 || ruWord.trim().length === 0) {
+      return;
+    }
+    if (words.find((word) => word.english_word === enWord)) {
+      return;
+    }
     const response = await fetch(`/api/words`, {
       body: JSON.stringify({
         english_word: enWord,
@@ -33,7 +39,6 @@ export const App = () => {
       headers: { Authorization: token ?? "" },
     })
       .then((response) => {
-        console.log("response", response);
         if (response.status === 401) {
           setIsVisibleAuth(true);
         }
