@@ -19,13 +19,13 @@ export const App = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: token ?? "",
       },
     }).then((response) => response.json());
-    console.log("response", response);
     setWords([...words, response]);
   };
   const getWord = async () => {
-    await fetch(`/api/words/`, {
+    await fetch(`/api/words`, {
       headers: { Authorization: token ?? "" },
     })
       .then((response) => response.json())
@@ -36,7 +36,6 @@ export const App = () => {
     getWord();
   }, []);
 
-  console.log("enWord", enWord);
   return (
     <>
       <Authorization />
