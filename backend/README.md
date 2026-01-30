@@ -23,6 +23,8 @@
 > запуск на **http://localhost:8000/**
 > docs **http://localhost:8000/docs**
 
+>посмотреть логи контейнера docker logs -f dictionary_backend
+
 ### Запуск docker
 
 создаем образ - `docker build -t dictionary-backend-image .`

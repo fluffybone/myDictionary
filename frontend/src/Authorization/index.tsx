@@ -42,7 +42,7 @@ export const Authorization = () => {
       }
 
       const data = await response.json();
-
+      console.log("data", data);
       if (data.access_token) {
         localStorage.setItem(
           ACCESS_TOKEN_LOCALSTORAGE_KEY,
