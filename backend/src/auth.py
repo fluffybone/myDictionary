@@ -1,15 +1,15 @@
 import os
 from datetime import datetime, timedelta, timezone
-from typing import Annotated, Optional
+from typing import Annotated
 import jwt
+import src.crud.users as crud_users
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash
 from sqlalchemy.orm import Session
-from database import get_db
-import models 
-
+from src.database import get_db
+from src.models.users import User
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
@@ -17,17 +17,20 @@ if not SECRET_KEY:
     raise ValueError("No SECRET_KEY")
 
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 30  # 30 дней
 
 password_hash = PasswordHash.recommended()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+
 def verify_password(plain_password, hashed_password):
     return password_hash.verify(plain_password, hashed_password)
 
+
 def get_password_hash(password):
     return password_hash.hash(password)
+
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
@@ -40,24 +43,36 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-async def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)], 
-    db: Session = Depends(get_db)
-):
+def get_current_user(
+    token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)
+) -> User:
+
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
+
+        # 1. Достаем ID из поля "sub"
+        user_id_str: str = payload.get("sub")
+
+        if user_id_str is None:
             raise credentials_exception
-    except InvalidTokenError:
+
+        # Конвертируем строку обратно в int
+        user_id = int(user_id_str)
+
+    except (InvalidTokenError, ValueError):
+        # ValueError ловит случаи, если в sub попало не число
         raise credentials_exception
-    
-    user = db.query(models.User).filter(models.User.email == username).first()
+
+    # 2. Ищем пользователя через CRUD по ID
+    user = crud_users.get_user(db, user_id=user_id)
+
     if user is None:
         raise credentials_exception
+
     return user

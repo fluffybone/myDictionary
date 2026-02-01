@@ -5,6 +5,7 @@ services:
     container_name: dictionary_backend_prod
     build:
       context: ./backend
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000
     restart: always
     environment:
       - DATABASE_URL=postgresql://dictionary:${POSTGRES_PASSWORD}@postgres:5432/dictionary

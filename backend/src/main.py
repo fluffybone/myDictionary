@@ -1,18 +1,19 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import models
-from database import engine
-from routers import users, words 
+import src.models
+from src.database import engine, Base
+from src.routers import main_router
 
-models.Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+app.include_router(main_router)
 
 origins = [
     "http://localhost",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "http://147.45.103.144"
+    "http://147.45.103.144",
 ]
 
 app.add_middleware(
@@ -22,10 +23,3 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-app.include_router(users.router)
-app.include_router(words.router)
-
-@app.get("/")
-def root():
-    return {"message": "Welcome to Dictionary API"}
