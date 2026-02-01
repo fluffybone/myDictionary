@@ -7,19 +7,20 @@ from src import models
 from src.crud import users as crud_users
 from src.schemas.users import UserCreate, User
 from src.schemas.token import Token
-from src.routers.dependencies import SessionDep
+from src.database import get_db
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/api", tags=["Users"])
 
 
 @router.post("/register", response_model=User)
-async def register(user: UserCreate, session: SessionDep):
-    db_user = crud_users.get_user_by_email(session, email=user.email)
+async def register(user: UserCreate, session: Annotated[AsyncSession, Depends(get_db)]):
+    db_user = await crud_users.get_user_by_email(session, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
 
     hashed_password = auth.get_password_hash(user.password)
-    return crud_users.create_user(
+    return await crud_users.create_user(
         db=session, user=user, hashed_password=hashed_password
     )
 
@@ -27,9 +28,9 @@ async def register(user: UserCreate, session: SessionDep):
 @router.post("/login", response_model=Token)
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    session: SessionDep,
+    session: Annotated[AsyncSession, Depends(get_db)],
 ):
-    user = crud_users.get_user_by_email(session, email=form_data.username)
+    user = await crud_users.get_user_by_email(session, email=form_data.username)
 
     if not user or not auth.verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
