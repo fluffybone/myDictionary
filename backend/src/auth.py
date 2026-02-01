@@ -7,9 +7,10 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash
-from sqlalchemy.orm import Session
 from src.database import get_db
 from src.models.users import User
+from sqlalchemy.ext.asyncio import AsyncSession
+from src.database import get_db
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
@@ -43,8 +44,8 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)
+async def get_current_user(
+    token: Annotated[str, Depends(oauth2_scheme)], db: AsyncSession = Depends(get_db)
 ) -> User:
 
     credentials_exception = HTTPException(
@@ -55,22 +56,16 @@ def get_current_user(
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-
-        # 1. Достаем ID из поля "sub"
         user_id_str: str = payload.get("sub")
-
         if user_id_str is None:
             raise credentials_exception
-
-        # Конвертируем строку обратно в int
         user_id = int(user_id_str)
-
     except (InvalidTokenError, ValueError):
-        # ValueError ловит случаи, если в sub попало не число
         raise credentials_exception
 
-    # 2. Ищем пользователя через CRUD по ID
-    user = crud_users.get_user(db, user_id=user_id)
+    # ДОБАВЛЯЕМ AWAIT
+    # Так как crud_users.get_user теперь async def
+    user = await crud_users.get_user(db, user_id=user_id)
 
     if user is None:
         raise credentials_exception

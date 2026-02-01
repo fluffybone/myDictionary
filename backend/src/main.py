@@ -1,12 +1,23 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import src.models
 from src.database import engine, Base
 from src.routers import main_router
 
-Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+# Определяем lifespan для создания таблиц при старте
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # run_sync позволяет выполнять синхронные методы (как create_all) в асинхронном движке
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+
+
+# Подключаем lifespan
+app = FastAPI(lifespan=lifespan)
+
 app.include_router(main_router)
 
 origins = [

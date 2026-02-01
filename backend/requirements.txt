@@ -6,3 +6,5 @@ pwdlib[argon2]
 pyjwt          
 python-multipart
 black==26.1.0
+asyncpg
+greenlet

@@ -1,22 +1,20 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
 import os
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy.orm import declarative_base
 
-# Получаем URL из переменных окружения (которые мы задали в docker-compose)
-SQLALCHEMY_DATABASE_URL = os.getenv(
-    "DATABASE_URL", 
-    "postgresql://dictionary:pass@localhost:5432/dictionary" # Значение по умолчанию для локального запуска без докера
+DATABASE_URL = os.getenv(
+    "DATABASE_URL", "postgresql+asyncpg://dictionary:pass@localhost:5432/dictionary"
 )
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_async_engine(DATABASE_URL, echo=True)
+
+AsyncSessionLocal = async_sessionmaker(
+    bind=engine, class_=AsyncSession, expire_on_commit=False
+)
 
 Base = declarative_base()
 
-# Функция для получения сессии БД (dependency)
-def get_db():
-    db = SessionLocal()
-    try:
+
+async def get_db():
+    async with AsyncSessionLocal() as db:
         yield db
-    finally:
-        db.close()
