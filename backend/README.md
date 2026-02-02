@@ -75,3 +75,30 @@ def upgrade() -> None:
     
     # 3. (Опционально) Теперь можно сделать колонку NOT NULL, если нужно
     op.alter_column('words', 'learned', nullable=False)
+
+
+>Для prod alembic
+
+1. **Как работать с миграциями (Workflow)**
+Золотое правило: Миграции создаются (revision) ТОЛЬКО локально на компьютере разработчика. На прод они попадают через Git.
+
+Локально (Dev):
+
+Поменяли модель в коде.
+
+docker compose exec backend alembic revision --autogenerate -m "..."
+
+Проверили файл миграции (если надо, дописали туда op.execute("UPDATE...")).
+
+git add . -> git commit -> git push.
+
+На сервере (Prod):
+
+git pull (скачали код с новой папкой versions).
+
+docker compose -f docker-compose.prod.yml up -d --build (пересобрали контейнеры).
+
+Миграции должны примениться сами при старте контейнера (об этом ниже).
+
+2. **Автоматический запуск миграций на Проде**
+Чтобы не заходить каждый раз руками на сервер и не писать alembic upgrade head, добавьте эту команду в скрипт запуска контейнера.
