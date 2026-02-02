@@ -5,22 +5,22 @@ export const Authorization = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // const registerUser = async () => {
-  //   const response = await fetch(`/api/register`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
+  const registerUser = async () => {
+    const response = await fetch(`/api/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-  //     body: JSON.stringify({ password, email }),
-  //   });
-  //   if (!response.ok) {
-  //     const errorData = await response.json();
-  //     throw new Error(errorData.detail || "Ошибка регистрации");
-  //   }
+      body: JSON.stringify({ password, email }),
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Ошибка регистрации");
+    }
 
-  //   return response.json();
-  // };
+    return response.json();
+  };
 
   const loginUser = async () => {
     try {
@@ -73,7 +73,7 @@ export const Authorization = () => {
         />
         <button onClick={() => loginUser()}>Войти</button>
       </div>
-      {/* <div style={{ backgroundColor: "#ecfce6" }}>
+      <div style={{ backgroundColor: "#ecfce6" }}>
         <h2>Зарегистрироваться</h2>
         <input
           placeholder="логин"
@@ -87,7 +87,7 @@ export const Authorization = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
         <button onClick={() => registerUser()}>Зарегистрироваться</button>
-      </div> */}
+      </div>
     </>
   );
 };

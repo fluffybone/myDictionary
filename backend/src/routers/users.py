@@ -5,7 +5,7 @@ from datetime import timedelta
 from src import auth
 from src import models
 from src.crud import users as crud_users
-from src.schemas.users import UserCreate, User
+from src.schemas.users import UserCreate, UserBase, User
 from src.schemas.token import Token
 from src.database import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,7 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 router = APIRouter(prefix="/api", tags=["Users"])
 
 
-@router.post("/register", response_model=User)
+@router.post("/register", response_model=UserBase)
 async def register(user: UserCreate, session: Annotated[AsyncSession, Depends(get_db)]):
     db_user = await crud_users.get_user_by_email(session, email=user.email)
     if db_user:
