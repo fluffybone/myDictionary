@@ -5,7 +5,7 @@ from src.schemas.words import Word
 
 
 class UserBase(BaseModel):
-    email: EmailStr
+    email: str
 
 
 class UserCreate(UserBase):

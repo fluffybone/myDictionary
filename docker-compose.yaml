@@ -35,7 +35,7 @@ services:
     container_name: dictionary-postgres
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "5435:5432"
     environment:
       POSTGRES_USER: dictionary
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}

@@ -51,3 +51,27 @@
 `SELECT * FROM words;`
 
 выйти `\q`
+
+
+> ALEMBIC
+
+**создание миграции**
+`docker compose exec backend alembic revision --autogenerate -m "Add created_at to words"`
+
+**Применение миграции**
+`docker compose exec backend alembic upgrade head`
+
+```docker compose exec postgres psql -U dictionary -d dictionary -c "UPDATE words SET learned = false WHERE learned IS NULL;"
+```
+
+> Для деплоя прода пример алембика (руками подправлять версию в алембике)
+
+def upgrade() -> None:
+    # 1. Сначала добавляем колонку как nullable (чтобы не упало сразу)
+    op.add_column('words', sa.Column('learned', sa.Boolean(), nullable=True))
+    
+    # 2. ЗАПОЛНЯЕМ данные для старых строк (Вот этого шага не хватило!)
+    op.execute("UPDATE words SET learned = false WHERE learned IS NULL")
+    
+    # 3. (Опционально) Теперь можно сделать колонку NOT NULL, если нужно
+    op.alter_column('words', 'learned', nullable=False)

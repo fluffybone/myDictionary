@@ -20,8 +20,9 @@ async def create_word(
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: UserDb = Depends(auth.get_current_user),
 ):
-    # Используем current_user.id чтобы привязать слово
-    db_word = WordDb(**word.model_dump(), owner_id=current_user.id)
+
+    word_data = word.model_dump()
+    db_word = WordDb(**word_data, owner_id=current_user.id)
     db.add(db_word)
     await db.commit()
     await db.refresh(db_word)
