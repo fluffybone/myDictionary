@@ -4,7 +4,7 @@ import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "../shared";
 export const Authorization = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [code, setCode] = useState("");
   const registerUser = async () => {
     const response = await fetch(`/api/register`, {
       method: "POST",
@@ -56,6 +56,23 @@ export const Authorization = () => {
     }
   };
 
+  const verificationCode = async () => {
+    const response = await fetch(`/api/verify-email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, code }),
+    });
+    console.log("response", response);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Ошибка");
+    }
+
+    return response.json();
+  };
+
   return (
     <>
       <div>
@@ -87,6 +104,18 @@ export const Authorization = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
         <button onClick={() => registerUser()}>Зарегистрироваться</button>
+
+        <input
+          placeholder="Код подтверждения"
+          onChange={(e) => {
+            if (e.target.value.trim().length > 0) {
+              setCode(e.target.value);
+            }
+          }}
+          value={code}
+        />
+
+        <button onClick={() => verificationCode()}>Подтвердить</button>
       </div>
     </>
   );
