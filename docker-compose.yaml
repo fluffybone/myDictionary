@@ -6,6 +6,9 @@ services:
     environment:
       - DATABASE_URL=postgresql+asyncpg://dictionary:${POSTGRES_PASSWORD}@postgres:5432/dictionary
       - SECRET_KEY=${SECRET_KEY}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_FROM=${MAIL_FROM}
     ports:
       - "8000:8000"
     volumes:

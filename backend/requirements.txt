@@ -9,3 +9,4 @@ black==26.1.0
 asyncpg
 greenlet
 alembic==1.18.3
+fastapi-mail

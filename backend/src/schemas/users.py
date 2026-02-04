@@ -5,7 +5,7 @@ from src.schemas.words import Word
 
 
 class UserBase(BaseModel):
-    email: str
+    email: EmailStr
 
 
 class UserCreate(UserBase):
@@ -15,7 +15,26 @@ class UserCreate(UserBase):
 class User(UserBase):
     id: int
     is_active: bool
-    words: List[Word] = []
+    is_verified: bool = False
 
     class Config:
         from_attributes = True
+
+
+class ResendCodeRequest(BaseModel):
+    email: EmailStr
+
+
+class VerifyRequest(BaseModel):
+    email: str
+    code: str
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    email: EmailStr
+    code: str
+    new_password: str
