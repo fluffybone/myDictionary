@@ -1,0 +1,13 @@
+.container {
+  margin: 0 auto;
+  height: calc(100vh - 4vw);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.text {
+  font-family: "SnItalicMedium";
+  text-align: center;
+  color: var(--secondary);
+}

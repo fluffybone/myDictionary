@@ -1,0 +1,29 @@
+.text {
+  text-align: center;
+  font-family: var(--font-bold);
+  margin: 8px;
+}
+
+.authCard {
+  align-self: center;
+  margin: 24px auto;
+  @media (max-width: 640px) {
+    margin-top: 12px auto;
+  }
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+}
+
+.button {
+  margin-top: 16px;
+}
+
+.password {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

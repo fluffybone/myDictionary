@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Authorization } from "./Authorization";
+import { Authorization } from "./Authorization/old-index";
 import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "./shared";
 const token = localStorage.getItem(ACCESS_TOKEN_LOCALSTORAGE_KEY);
 
-export const App = () => {
+export const AppOld = () => {
   const [enWord, setEnWord] = useState("");
   const [ruWord, setRuWord] = useState("");
   const [words, setWords] = useState<
