@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import classes from "./index.module.css";
+import classes from "../index.module.css";
 import { clsx } from "clsx";
 
 export const Registration = () => {
@@ -19,7 +19,7 @@ export const Registration = () => {
           <button className={clsx(classes.button, "btn btn-secondary")}>
             Зарегистрироваться
           </button>
-          <p className={classes.text}>
+          <p className={classes.authText}>
             Есть аккаунт? <Link to="/auth/login">Войти</Link>
           </p>
         </div>

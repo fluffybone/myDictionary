@@ -97,7 +97,6 @@ a:active {
 a:hover {
   color: var(--primary-hover);
 }
-
 a:active {
   color: var(--primary-focus);
   opacity: 0.8;

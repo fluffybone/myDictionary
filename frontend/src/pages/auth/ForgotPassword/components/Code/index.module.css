@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+  align-self: center;
+  column-gap: 8px;
+  padding: 0 24px;
+  justify-content: center;
+}
+
+.container input {
+  padding: 2px 8px;
+  height: 48px;
+  font-size: var(--text-lg);
+  text-align: center;
+}
