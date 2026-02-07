@@ -3,6 +3,7 @@ import { clsx } from "clsx";
 import classes from "../index.module.css";
 import { useState } from "react";
 import { Code } from "./components/Code";
+import { PasswordInput } from "../components/PasswordInput";
 
 const BUTTON_TEXT_BY_STEP: Record<number, string> = {
   1: "Продолжить",
@@ -12,7 +13,7 @@ const BUTTON_TEXT_BY_STEP: Record<number, string> = {
 
 export const ForgotPassword = () => {
   const [step, setStep] = useState(1);
-
+  const [value, setValue] = useState("");
   return (
     <>
       <h1>
@@ -48,7 +49,7 @@ export const ForgotPassword = () => {
           {step == 3 && (
             <>
               <p className={classes.forgotText}>Введите новый пароль</p>
-              <input type="password" />
+              <PasswordInput value={value} onChangeValue={setValue} />
             </>
           )}
           <button
