@@ -22,6 +22,9 @@ export const AppRoutes = () => {
       <Route element={<Layout />}>
         <Route element={<AuthPage />} path="/auth/:type?" />
       </Route>
+      <Route element={<Layout />}>
+        <Route element={<div>Ура!!</div>} path="/" />
+      </Route>
     </Routes>
   );
 };

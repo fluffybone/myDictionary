@@ -1,25 +1,37 @@
-import { useState, type FC } from "react";
+import { useState, type ChangeEvent, type FC } from "react";
 import classes from "./index.module.css";
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
+import { clsx } from "clsx";
 
 type TProps = {
   value: string;
-  onChangeValue: (value: string) => void;
+  onChangeValue: (value: ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
+  className?: string;
+  id: string;
+  name: string;
+  isRequired?: boolean;
 };
 
 export const PasswordInput: FC<TProps> = ({
   value,
   onChangeValue,
   placeholder,
+  className,
+  isRequired,
+  id,
+  name,
 }) => {
   const [isPasswordType, setIsPasswordType] = useState(true);
 
   return (
-    <div className={classes.passwordInput}>
+    <div className={clsx(classes.passwordInput, className)}>
       <input
+        id={id}
+        name={name}
+        required={isRequired}
         type={isPasswordType ? "password" : "text"}
-        onChange={(event) => onChangeValue(event.target.value)}
+        onChange={onChangeValue}
         value={value}
         placeholder={placeholder}
       />

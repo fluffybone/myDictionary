@@ -42,11 +42,23 @@
   justify-content: space-between;
 }
 
-.forgotText {
+.infoText {
   font-size: var(--text-lg);
   margin: 8px 0;
 }
 
 .back {
   text-align: left;
+}
+
+.errorText {
+  margin: 0 auto;
+  color: var(--error);
+  font-size: var(--text-lg);
+  font-family: var(--font-bold);
+}
+
+.success {
+  font-family: var(--font-bold);
+  text-align: center;
 }

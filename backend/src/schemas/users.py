@@ -1,11 +1,23 @@
-from pydantic import BaseModel, EmailStr
-from typing import List
+from pydantic import BaseModel, EmailStr, field_validator, ValidationError
+from typing import List, Annotated
+from pydantic_core import PydanticCustomError
 
-from src.schemas.words import Word
+
+from pydantic import BaseModel, ValidationError, WrapValidator
+
+
+def validate_email(v, handler):
+    try:
+        return handler(v)
+    except ValueError:
+        raise PydanticCustomError("value_error", "Неккоректный email")
+
+
+MyEmailStr = Annotated[EmailStr, WrapValidator(validate_email)]
 
 
 class UserBase(BaseModel):
-    email: EmailStr
+    email: MyEmailStr
 
 
 class UserCreate(UserBase):
@@ -22,19 +34,19 @@ class User(UserBase):
 
 
 class ResendCodeRequest(BaseModel):
-    email: EmailStr
+    email: MyEmailStr
 
 
 class VerifyRequest(BaseModel):
-    email: str
+    email: MyEmailStr
     code: str
 
 
 class ForgotPasswordRequest(BaseModel):
-    email: EmailStr
+    email: MyEmailStr
 
 
 class ResetPasswordRequest(BaseModel):
-    email: EmailStr
+    email: MyEmailStr
     code: str
     new_password: str

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Authorization } from "./Authorization/old-index";
+
 import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "./shared";
 const token = localStorage.getItem(ACCESS_TOKEN_LOCALSTORAGE_KEY);
 
@@ -9,7 +9,6 @@ export const AppOld = () => {
   const [words, setWords] = useState<
     { english_word: string; russian_word: string }[]
   >([]);
-  const [isVisibleAuth, setIsVisibleAuth] = useState(false);
 
   const writeWord = async () => {
     if (enWord.trim().length === 0 || ruWord.trim().length === 0) {
@@ -40,7 +39,7 @@ export const AppOld = () => {
     })
       .then((response) => {
         if (response.status === 401) {
-          setIsVisibleAuth(true);
+          // setIsVisibleAuth(true);
         }
         return response.json();
       })
@@ -53,7 +52,6 @@ export const AppOld = () => {
 
   return (
     <>
-      {isVisibleAuth && <Authorization />}
       <div>
         <input
           placeholder="слово на английском"

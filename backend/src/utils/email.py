@@ -18,7 +18,7 @@ conf = ConnectionConfig(
 )
 
 
-async def send_verification_code(email: EmailStr, code: str):
+async def send_verification_code(email: EmailStr, code: str, email_title: str):
     html = f"""
     <!DOCTYPE html>
     <html>
@@ -60,7 +60,7 @@ async def send_verification_code(email: EmailStr, code: str):
     </head>
     <body>
         <div class="email-container">
-            <h2>Добро пожаловать в WordEater!</h2>
+            <h2>{email_title}</h2>
             <p class="text">Ваш код подтверждения:</p>
             <div class="code">{code}</div>
             <p class="text">Код действителен в течение <strong>10 минут</strong>.</p>
@@ -74,7 +74,7 @@ async def send_verification_code(email: EmailStr, code: str):
     """
 
     message = MessageSchema(
-        subject="Подтверждение регистрации WordEater",
+        subject="WordEater 🍥",
         recipients=[email],
         body=html,
         subtype=MessageType.html,

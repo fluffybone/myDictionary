@@ -10,7 +10,6 @@ export const AuthPage = () => {
   const params = useParams<{
     type?: "login" | "registration" | "forgot-password";
   }>();
-  console.log("params", params);
 
   useEffect(() => {
     if (!params.type) {
