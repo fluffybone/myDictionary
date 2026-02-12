@@ -1,4 +1,4 @@
-import { useEffect, useRef, type FC } from "react";
+import { useEffect, useRef, type FC, type KeyboardEvent } from "react";
 import classes from "./index.module.css";
 const NUMBER_COUNT_CODE = 6;
 
@@ -32,11 +32,10 @@ export const Code: FC<TProps> = ({ code, setCode }) => {
     }
   };
 
-  const handleKeyDown = (
-    index: number,
-    e: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (e.key === "Backspace" && !code[index] && index > 0) {
+  const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace") {
+      e.preventDefault();
+      handleChange(index, "");
       if (inputRefs.current[index - 1]) {
         inputRefs.current[index - 1]!.focus();
       }

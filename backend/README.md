@@ -64,6 +64,14 @@
 ```docker compose exec postgres psql -U dictionary -d dictionary -c "UPDATE words SET learned = false WHERE learned IS NULL;"
 ```
 
+**Обновить базу до актуального состояния**
+
+`docker compose exec backend alembic upgrade head`
+
+**Сказать alembic что миграция уже применена **
+
+`docker compose exec backend alembic stamp 8b18c9f67c3d`
+
 > Для деплоя прода пример алембика (руками подправлять версию в алембике)
 
 def upgrade() -> None:

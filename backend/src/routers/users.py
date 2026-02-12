@@ -114,7 +114,7 @@ async def verify_email(data: VerifyRequest, db: AsyncSession = Depends(get_db)):
     user = result.scalar_one_or_none()
 
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Неверные данные")
 
     if user.verification_code != data.code:
         raise HTTPException(status_code=400, detail="Неправильный код")
@@ -209,7 +209,7 @@ async def reset_password(
     user = await crud_users.get_user_by_email(session, email=request.email)
 
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Неверные данные")
 
     # Проверка кода
     if user.verification_code != request.code:
