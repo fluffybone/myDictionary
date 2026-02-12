@@ -37,23 +37,39 @@ async def register(
     background_tasks: BackgroundTasks,
 ):
     db_user = await crud_users.get_user_by_email(session, email=user.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Такой пользователь уже существует")
+    if db_user and db_user.is_verified:
+        raise HTTPException(status_code=400, detail="Ошибка при регистрации!")
 
     code = generate_verification_code()
     expiries_at = datetime.now(timezone.utc) + timedelta(minutes=15)
-
     hashed_password = auth.get_password_hash(user.password)
-    new_user = await crud_users.create_user(
-        db=session,
-        user=user,
-        hashed_password=hashed_password,
-        verification_code=code,
-        verification_code_expires_at=expiries_at,
-    )
 
-    background_tasks.add_task(send_verification_code, user.email, code)
-    return new_user
+    if not db_user:
+        new_user = await crud_users.create_user(
+            db=session,
+            user=user,
+            hashed_password=hashed_password,
+            verification_code=code,
+            verification_code_expires_at=expiries_at,
+        )
+
+        background_tasks.add_task(
+            send_verification_code, user.email, code, "Добро пожаловать в WordEater!"
+        )
+        return new_user
+
+    if db_user.verification_code_expires_at < datetime.now(timezone.utc):
+        db_user.verification_code = code
+        db_user.verification_code_expires_at = expiries_at
+        db_user.hashed_password = hashed_password
+        await session.commit()
+        await session.refresh(db_user)
+        background_tasks.add_task(
+            send_verification_code, user.email, code, "Добро пожаловать в WordEater!"
+        )
+        return db_user
+    else:
+        return db_user
 
 
 @router.post("/login", response_model=Token)
@@ -66,12 +82,15 @@ async def login_for_access_token(
     if not user or not auth.verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Неправильный пароль или почта",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
     if not user.is_verified:
-        raise HTTPException(status_code=400, detail="Почта не подтверждена!")
+        raise HTTPException(
+            status_code=400,
+            detail="Пользователь не был зарегистрирован, пройдите регистрацию заново, подтвердите почту",
+        )
 
     access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
 
@@ -95,14 +114,14 @@ async def verify_email(data: VerifyRequest, db: AsyncSession = Depends(get_db)):
     user = result.scalar_one_or_none()
 
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Неверные данные")
 
     if user.verification_code != data.code:
-        raise HTTPException(status_code=400, detail="Invalid code")
+        raise HTTPException(status_code=400, detail="Неправильный код")
 
     # Проверка времени (учитываем timezone)
     if user.verification_code_expires_at < datetime.now(timezone.utc):
-        raise HTTPException(status_code=400, detail="Code expired")
+        raise HTTPException(status_code=400, detail="Время кода истекло")
 
     user.is_verified = True
     user.verification_code = None
@@ -118,14 +137,13 @@ async def resend_verification_code(
     session: Annotated[AsyncSession, Depends(get_db)],
     background_tasks: BackgroundTasks,
 ):
-    # 1. Ищем пользователя
     db_user = await crud_users.get_user_by_email(session, email=request.email)
 
     # 2. Если юзера нет или он уже подтвержден —
     # ради безопасности можно вернуть "ОК", чтобы не выдавать наличие email в базе.
     # Но для учебного проекта можно сказать прямо:
     if not db_user:
-        raise HTTPException(status_code=404, detail="Пользователь не найден")
+        raise HTTPException(status_code=404, detail="Ошибка сервера!")
 
     if db_user.is_verified:
         raise HTTPException(status_code=400, detail="Почта подтверждена!")
@@ -173,19 +191,17 @@ async def forgot_password(
     code = generate_verification_code()
     expires_at = datetime.now(timezone.utc) + timedelta(minutes=15)
 
-    # Сохраняем код в то же поле verification_code (или создать отдельное reset_code)
-    # Обычно используют то же поле, так как нельзя одновременно регистрироваться и восстанавливать пароль.
     user.verification_code = code
     user.verification_code_expires_at = expires_at
     await session.commit()
 
-    # Отправляем письмо (нужно будет немного доработать функцию отправки или сделать новую)
-    background_tasks.add_task(send_verification_code, user.email, code)
+    background_tasks.add_task(
+        send_verification_code, user.email, code, "Восcтановление доступа WordEater!"
+    )
 
     return {"message": "Verification code sent"}
 
 
-# 2. Установка нового пароля
 @router.post("/reset-password")
 async def reset_password(
     request: ResetPasswordRequest, session: Annotated[AsyncSession, Depends(get_db)]
@@ -193,14 +209,14 @@ async def reset_password(
     user = await crud_users.get_user_by_email(session, email=request.email)
 
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Неверные данные")
 
     # Проверка кода
     if user.verification_code != request.code:
-        raise HTTPException(status_code=400, detail="Invalid code")
+        raise HTTPException(status_code=400, detail="Неверный код!")
 
     if user.verification_code_expires_at < datetime.now(timezone.utc):
-        raise HTTPException(status_code=400, detail="Code expired")
+        raise HTTPException(status_code=400, detail="Время действия кода истекло")
 
     # Хешируем новый пароль
     new_hashed_password = auth.get_password_hash(request.new_password)

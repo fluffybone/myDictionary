@@ -1,0 +1,20 @@
+.card {
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-top: 1px solid rgba(255, 255, 255, 0.8);
+  border-left: 1px solid rgba(255, 255, 255, 0.8);
+  border-right: 1px solid rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--card-radius);
+  padding: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  font-size: var(--text-base);
+  width: 440px;
+
+  @media (max-width: 640px) {
+    padding: 16px;
+    width: 100%;
+  }
+}

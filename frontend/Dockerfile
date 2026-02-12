@@ -9,7 +9,6 @@ COPY . .
 
 RUN yarn build
 
-
 FROM nginx:alpine
 
 RUN rm -rf /usr/share/nginx/html/*

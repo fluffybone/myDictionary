@@ -2,6 +2,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import src.models
+from fastapi.exceptions import HTTPException
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from src.database import engine, Base
 from src.routers import main_router
 
@@ -15,7 +18,6 @@ async def lifespan(app: FastAPI):
     yield
 
 
-# Подключаем lifespan
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(main_router)

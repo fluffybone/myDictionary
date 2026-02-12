@@ -1,0 +1,13 @@
+.passwordInput {
+  position: relative;
+}
+.passwordInput input {
+  padding-right: 32px;
+}
+
+.passwordIcon {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  cursor: pointer;
+}

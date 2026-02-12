@@ -1,0 +1,125 @@
+@font-face {
+  font-family: "SnBold";
+  src: url("./fonts/SNPro-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SnRegular";
+  src: url("./fonts/SNPro-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "SnMedium";
+  font-weight: bold;
+  font-style: italic;
+  src: url("./fonts/SNPro-Medium.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "SnItalicMedium";
+  font-weight: bold;
+  font-style: italic;
+  src: url("./fonts/SNPro-ExtraBoldItalic.ttf") format("truetype");
+}
+
+:root {
+  --animation-duration: 0.2s;
+
+  --primary: #e59500;
+  --background: #f2edeb;
+  --background-secondary: #ffffff;
+  --error: #ce6a85;
+  --main: #2b2d42;
+  --secondary: #676f54;
+
+  --card-radius: 30px;
+  --element-radius: 12px;
+
+  --disabled: #a0a0a0;
+  --bacground-disabled: #e0e0e0;
+
+  --primary-hover: #d68a00;
+  --primary-focus: #d67d00;
+
+  /* Размеры шрифта */
+  --text-xs: 0.75rem; /* 12px */
+  --text-sm: 0.875rem; /* 14px */
+  --text-base: 1rem; /* 16px - Основной */
+  --text-lg: 1.125rem; /* 18px */
+  --text-xl: 1.25rem; /* 20px */
+  --text-2xl: 1.5rem; /* 24px */
+  --text-3xl: 2rem; /* 32px */
+  --text-word: 3rem; /* 48px - Для главного слова */
+
+  --font-regular: "SnRegular";
+  --font-medium: "SnMedium";
+  --font-bold: "SnBold";
+
+  --breakpoint-xs: 640px;
+  --breakpoint-m: 768px;
+  --breakpoint-l: 1024px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  color: var(--main);
+  margin: 0;
+  font-family:
+    "SnRegular",
+    -apple-system,
+    sans-serif;
+  font-size: var(--text-base);
+  line-height: 1.5;
+  color: var(--main);
+}
+
+p {
+  font-size: 14px;
+}
+
+a {
+  text-decoration: none;
+  background-color: transparent;
+  font-size: var(--text-base);
+  color: var(--primary);
+}
+a:hover,
+a:active {
+  outline-color: transparent;
+}
+
+a:hover {
+  color: var(--primary-hover);
+}
+a:active {
+  color: var(--primary-focus);
+  opacity: 0.8;
+  transform: translateY(1px);
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+td,
+th {
+  padding: 0;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --text-3xl: 1.75rem;
+    --text-word: 2.25rem;
+  }
+}
+
+svg {
+  fill: var(--secondary);
+}

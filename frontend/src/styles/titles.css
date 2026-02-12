@@ -1,0 +1,7 @@
+h1 {
+  font-size: var(--text-3xl);
+  font-family: var(--font-bold);
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  text-align: center;
+}

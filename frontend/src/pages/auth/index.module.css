@@ -1,0 +1,64 @@
+.container {
+  margin: 0 auto;
+  height: calc(100vh - 4vw);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.text {
+  font-family: "SnItalicMedium";
+  text-align: center;
+  color: var(--secondary);
+}
+
+.authText {
+  text-align: center;
+  font-family: var(--font-bold);
+  margin: 8px;
+}
+
+.authCard {
+  align-self: center;
+  margin: 24px auto;
+  @media (max-width: 640px) {
+    margin-top: 12px auto;
+  }
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+}
+
+.button {
+  margin-top: 16px;
+}
+
+.password {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.infoText {
+  font-size: var(--text-lg);
+  margin: 8px 0;
+}
+
+.back {
+  text-align: left;
+}
+
+.errorText {
+  margin: 0 auto;
+  color: var(--error);
+  font-size: var(--text-lg);
+  font-family: var(--font-bold);
+}
+
+.success {
+  font-family: var(--font-bold);
+  text-align: center;
+}
