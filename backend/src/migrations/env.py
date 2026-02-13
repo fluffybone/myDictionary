@@ -3,7 +3,7 @@ import os
 
 # Добавляем корневую папку проекта (/app) в sys.path
 # Это позволяет видеть пакет 'src'
-sys.path.append(os.getcwd())  # Если запускаем из корня
+sys.path.insert(0, os.getcwd())  # Если запускаем из корня
 sys.path.append("/app")  # Жесткая привязка к Docker-пути
 
 import asyncio
@@ -17,7 +17,10 @@ from alembic import context
 
 # 1. Импортируем модели и настройки
 from src.database import Base, DATABASE_URL
-from src.models import User, Word  # Импорт нужен, чтобы Base узнал о моделях
+import src.models
+
+print("DEBUG: Tables found in metadata:", Base.metadata.tables.keys())
+
 
 config = context.config
 
