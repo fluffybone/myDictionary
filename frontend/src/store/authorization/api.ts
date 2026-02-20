@@ -4,7 +4,7 @@ import { customBaseQuery } from "../utils/customBaseQuery";
 export const authorizationApi = createApi({
   baseQuery: customBaseQuery,
   endpoints: (builder) => ({
-    login: builder.mutation<void, FormData>({
+    login: builder.mutation<{ access_token: string }, FormData>({
       query: (body) => ({
         url: "/api/login",
         method: "POST",
@@ -14,14 +14,20 @@ export const authorizationApi = createApi({
         body,
       }),
     }),
-    registration: builder.mutation<void, { email: string; password: string }>({
+    registration: builder.mutation<
+      { access_token: string },
+      { email: string; password: string }
+    >({
       query: (body) => ({
         url: "/api/register",
         method: "POST",
         body,
       }),
     }),
-    verifyEmail: builder.mutation<void, { code: string; email: string }>({
+    verifyEmail: builder.mutation<
+      { access_token: string },
+      { code: string; email: string }
+    >({
       query: (body) => ({
         url: "/api/verify-email",
         method: "POST",

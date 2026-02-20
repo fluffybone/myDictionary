@@ -17,13 +17,6 @@
   src: url("./fonts/SNPro-Medium.ttf") format("truetype");
 }
 
-@font-face {
-  font-family: "SnItalicMedium";
-  font-weight: bold;
-  font-style: italic;
-  src: url("./fonts/SNPro-ExtraBoldItalic.ttf") format("truetype");
-}
-
 :root {
   --animation-duration: 0.2s;
 

@@ -2,17 +2,19 @@ import { Link, useNavigate } from "react-router-dom";
 import classes from "../index.module.css";
 import { clsx } from "clsx";
 import { useState, type ChangeEvent, type FormEvent } from "react";
-import { Code, CODE_INPUTS } from "../components/Code";
+
 import {
   useRegistrationMutation,
   useVerifyEmailMutation,
 } from "../../../store/authorization/api";
 import { PasswordInput } from "../components/PasswordInput";
 import { getErrorText } from "../../../store/utils/getErrorText";
+import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "../../../shared";
+import { AuthenticationCodeInput } from "../components/AuthenticationCodeInput";
 
 export const Registration = () => {
   const [step, setStep] = useState(1);
-  const [code, setCode] = useState(CODE_INPUTS);
+  const [code, setCode] = useState(new Array(6).fill(""));
   const navigate = useNavigate();
   const [registration, { isLoading: isRegistrationLoading, error }] =
     useRegistrationMutation();
@@ -39,7 +41,6 @@ export const Registration = () => {
     e.preventDefault();
     if (step == 1) {
       if (!formValues.email || !formValues.password) return;
-      console.log("value", e);
       const response = await registration(formValues);
       if ("data" in response) {
         setStep(2);
@@ -50,10 +51,13 @@ export const Registration = () => {
         code: code.join(""),
         email: formValues.email,
       });
-      if ("data" in response) {
+      if ("data" in response && response.data) {
         navigate("/");
+        localStorage.setItem(
+          ACCESS_TOKEN_LOCALSTORAGE_KEY,
+          response.data.access_token,
+        );
       }
-      console.log("response", response);
     }
   };
 
@@ -125,7 +129,7 @@ export const Registration = () => {
                 <p className={classes.infoText}>
                   На Вашу почту отправлен код, для подтверждения регистрации
                 </p>
-                <Code setCode={setCode} code={code} />
+                <AuthenticationCodeInput value={code} onChange={setCode} />
               </>
             )}
             <button

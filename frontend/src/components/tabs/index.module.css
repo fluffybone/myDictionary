@@ -1,0 +1,77 @@
+.tabs {
+  display: flex;
+  align-items: start;
+  justify-content: center;
+
+  @media (max-width: 640px) {
+    display: block;
+    position: relative;
+    margin-top: 52px;
+  }
+}
+
+.tabsNav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+
+  @media (max-width: 640px) {
+    position: absolute;
+    top: -66px;
+    left: 22px;
+    flex-direction: row;
+  }
+}
+
+.tabsNav button {
+  color: var(--main);
+  background-color: inherit;
+  border-color: inherit;
+  border: none !important;
+}
+
+.tabsNav button:hover {
+  color: var(--primary);
+  transition: color 0.2s;
+}
+
+.content {
+  padding: 24px;
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-top: 1px solid rgba(255, 255, 255, 0.8);
+  border-right: 1px solid rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--card-radius);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  font-size: var(--text-base);
+
+  @media (max-width: 640px) {
+    padding: 12px;
+  }
+}
+
+.activeTab.activeTab {
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-top: 1px solid rgba(255, 255, 255, 0.8) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.8) !important;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  font-size: var(--text-base);
+  color: var(--primary);
+
+  @media (max-width: 640px) {
+    border-bottom: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.4) !important;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: var(--element-radius);
+  }
+}
