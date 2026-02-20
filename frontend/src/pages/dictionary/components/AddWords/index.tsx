@@ -14,7 +14,7 @@ export const AddWords = () => {
   });
 
   return (
-    <div className={classes.wordsContainer}>
+    <div>
       <form>
         <div className={classes.inputContainer}>
           <input

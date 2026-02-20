@@ -1,11 +1,3 @@
-.allWords {
-  height: 80vh;
-  background-color: var(--background-secondary);
-  border-radius: var(--element-radius);
-  border: 2px solid var(--primary);
-  padding: 1vw 2vw;
-}
-
 .containerTabs.containerTabs {
   display: grid;
   grid-template-columns: 140px minmax(200px, calc(1000px - 140px));
