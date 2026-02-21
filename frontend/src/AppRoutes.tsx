@@ -29,7 +29,7 @@ export const AppRoutes = () => {
 
       {(words || token) && (
         <Route element={<Layout />}>
-          <Route element={<Dictionary words={words} />} path="/" />
+          <Route element={<Dictionary />} path="/" />
         </Route>
       )}
     </Routes>
