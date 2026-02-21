@@ -8,11 +8,10 @@ class Word(Base):
     __tablename__ = "words"  # Имя таблицы в БД
 
     id = Column(Integer, primary_key=True, index=True)
-    english_word = Column(String, index=True)
-    russian_word = Column(String)
-    learned = Column(Boolean, default=False)
+    orig_word = Column(String, index=True)
+    translate_word = Column(String)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-
+    description = Column(String)
     # Добавляем внешний ключ на таблицу пользователей
     owner_id = Column(Integer, ForeignKey("users.id"))
 

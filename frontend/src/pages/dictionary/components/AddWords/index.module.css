@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   gap: 24px;
-  margin-bottom: 24px;
+  margin-bottom: 4px;
 }
 
 .button.button {
@@ -15,5 +15,40 @@
   border-radius: var(--element-radius);
   border: 2px solid var(--primary);
   padding: 1vw 2vw;
-  margin-top: 32px;
+  min-height: 24vh;
+  max-width: 99vw;
+  margin: 0px auto;
+  overflow: auto;
+  height: 58dvh;
+  -webkit-overflow-scrolling: touch;
+
+  @media (max-width: 640px) {
+    height: 55dvh;
+  }
+}
+
+.learningWordsContainer {
+  margin-top: 24px;
+
+  @media (max-width: 640px) {
+    margin-top: 12px;
+  }
+}
+
+.count {
+  text-align: right;
+  padding-right: 8px;
+  margin: 4px 0;
+}
+
+.errorText {
+  margin: 0 auto;
+  text-align: center;
+  color: var(--error);
+  font-size: var(--text-lg);
+  font-family: var(--font-bold);
+}
+
+.textarea {
+  margin-top: 20px;
 }

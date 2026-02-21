@@ -11,6 +11,6 @@
   padding: 2vw 8vw;
 
   @media (max-width: 640px) {
-    padding: 24px 12px;
+    padding: 16px 12px;
   }
 }

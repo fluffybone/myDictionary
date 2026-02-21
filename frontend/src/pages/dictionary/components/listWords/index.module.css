@@ -1,0 +1,19 @@
+.tableTr {
+  border-top: 1px solid white;
+}
+
+.tableTr td {
+  padding: 4px;
+}
+
+table tr:first-child {
+  border: none;
+}
+
+.wordTd {
+  min-width: 140px;
+}
+
+.descriptionTd {
+  min-width: 240px;
+}

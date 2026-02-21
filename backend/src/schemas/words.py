@@ -1,13 +1,26 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
+from .validators import validate_not_empty
 
 
 # --- Схемы для слов ---
 # Базовая схема (общие поля)
 class WordBase(BaseModel):
-    english_word: str
-    russian_word: str
-    learned: bool = False
+    orig_word: str = Field(..., min_length=1, description="Поле не может быть пустым")
+    translate_word: str = Field(
+        ..., min_length=1, description="Поле не может быть пустым"
+    )
+    description: str
+
+    @field_validator("orig_word")
+    @classmethod
+    def validate_orig_word(cls, v: str) -> str:
+        return validate_not_empty(v, "Слово", min_length=2)
+
+    @field_validator("translate_word")
+    @classmethod
+    def validate_translate_word(cls, v: str) -> str:
+        return validate_not_empty(v, "Перевод слова", min_length=2)
 
 
 # Схема для создания (то, что шлет фронтенд)
@@ -18,7 +31,6 @@ class WordCreate(WordBase):
 # Схема для чтения (то, что возвращает бэкенд, включая ID)
 class Word(WordBase):
     id: int
-    owner_id: int
     created_at: datetime
 
     class Config:

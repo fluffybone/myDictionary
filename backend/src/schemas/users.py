@@ -1,9 +1,9 @@
-from pydantic import BaseModel, EmailStr, field_validator, ValidationError
+from pydantic import BaseModel, EmailStr
 from typing import List, Annotated
 from pydantic_core import PydanticCustomError
 
 
-from pydantic import BaseModel, ValidationError, WrapValidator
+from pydantic import BaseModel, WrapValidator
 
 
 def validate_email(v, handler):

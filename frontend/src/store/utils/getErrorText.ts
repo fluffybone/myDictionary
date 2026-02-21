@@ -5,7 +5,7 @@ export const getErrorText = ({
   error,
 }: {
   error: FetchBaseQueryError | SerializedError | undefined;
-}) => {
+}): string => {
   if (error && "data" in error) {
     if (
       typeof error.data === "object" &&
@@ -21,4 +21,5 @@ export const getErrorText = ({
       }
     }
   }
+  return "";
 };

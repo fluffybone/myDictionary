@@ -16,6 +16,7 @@ export const Tabs: FC<TProps> = ({ tabs, className }) => {
         {tabs.map((tab, index) => {
           return (
             <button
+              key={index}
               type="button"
               className={clsx("btn", {
                 [classes.activeTab]: activeIndexTab === index,

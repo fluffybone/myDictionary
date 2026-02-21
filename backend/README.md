@@ -64,6 +64,10 @@
 ```docker compose exec postgres psql -U dictionary -d dictionary -c "UPDATE words SET learned = false WHERE learned IS NULL;"
 ```
 
+**Понижение на одну миграцию**
+
+``docker compose exec backend alembic downgrade -1``
+
 **Обновить базу до актуального состояния**
 
 `docker compose exec backend alembic upgrade head`
