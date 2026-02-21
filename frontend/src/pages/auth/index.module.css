@@ -7,7 +7,7 @@
 }
 
 .text {
-  font-family: "SnItalicMedium";
+  font-family: "SnRegular";
   text-align: center;
   color: var(--secondary);
 }

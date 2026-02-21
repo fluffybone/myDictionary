@@ -1,0 +1,9 @@
+.containerTabs.containerTabs {
+  display: grid;
+  grid-template-columns: 140px minmax(200px, calc(1000px - 140px));
+  align-items: normal;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}

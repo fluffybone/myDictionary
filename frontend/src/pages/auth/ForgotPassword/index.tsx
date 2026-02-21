@@ -2,13 +2,13 @@ import { Link } from "react-router-dom";
 import { clsx } from "clsx";
 import classes from "../index.module.css";
 import { useState, type FormEvent } from "react";
-import { Code, CODE_INPUTS } from "../components/Code";
 import { PasswordInput } from "../components/PasswordInput";
 import {
   useForgotPasswordMutation,
   useResetPasswordMutation,
 } from "../../../store/authorization/api";
 import { getErrorText } from "../../../store/utils/getErrorText";
+import { AuthenticationCodeInput } from "../components/AuthenticationCodeInput";
 
 const BUTTON_TEXT_BY_STEP: Record<number, string> = {
   1: "Продолжить",
@@ -20,7 +20,7 @@ export const ForgotPassword = () => {
   const [step, setStep] = useState<number>(1);
   const [passwordValue, setPasswordValue] = useState("");
   const [emailValue, setEmailValue] = useState("");
-  const [code, setCode] = useState(CODE_INPUTS);
+  const [code, setCode] = useState(new Array(6).fill(""));
 
   const [
     forgotPassword,
@@ -35,7 +35,6 @@ export const ForgotPassword = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (step === 1 && emailValue.length > 0) {
-      console.log("e", e);
       const response = await forgotPassword({ email: emailValue });
       if ("data" in response) {
         setStep(2);
@@ -115,7 +114,7 @@ export const ForgotPassword = () => {
                 <p className={classes.infoText}>
                   На Вашу почту отправлен код, введите его чтобы поменять пароль
                 </p>
-                <Code code={code} setCode={setCode} />
+                <AuthenticationCodeInput value={code} onChange={setCode} />
               </>
             )}
             {step < 4 && (
@@ -131,6 +130,7 @@ export const ForgotPassword = () => {
               <Link to="/auth/login">Войти</Link>
               {step !== 4 && (
                 <>
+                  {" "}
                   или <Link to="/auth/registration">Зарегистрироваться</Link>
                 </>
               )}

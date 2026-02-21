@@ -5,6 +5,7 @@ import { useLoginMutation } from "../../../store/authorization/api";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { PasswordInput } from "../components/PasswordInput";
 import { getErrorText } from "../../../store/utils/getErrorText";
+import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "../../../shared";
 
 export const Login = () => {
   const [login, { isLoading, error }] = useLoginMutation();
@@ -33,11 +34,13 @@ export const Login = () => {
     formData.append("username", formValues.email);
     formData.append("password", formValues.password);
 
-    try {
-      await login(formData);
+    const response = await login(formData);
+    if ("data" in response && response.data) {
       navigate("/");
-    } catch (err) {
-      console.error("Ошибка входа:", err);
+      localStorage.setItem(
+        ACCESS_TOKEN_LOCALSTORAGE_KEY,
+        response.data.access_token,
+      );
     }
   };
 

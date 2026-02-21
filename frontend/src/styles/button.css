@@ -1,6 +1,6 @@
 :root {
   --btn-text: #ffffff;
-  --btn-primary-shadow: rgba(229, 149, 0, 0.4); /* Цветная тень */
+  --btn-primary-shadow: rgba(229, 149, 0, 0.4);
 
   --btn-secondary-hover: #3a3c55;
   --btn-text: #ffffff;
@@ -28,6 +28,10 @@
   text-decoration: none;
   position: relative;
   overflow: hidden;
+
+  @media (max-width: 640px) {
+    padding: 0 12px;
+  }
 }
 
 .btn:active {
