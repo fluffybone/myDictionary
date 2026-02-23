@@ -1,6 +1,6 @@
 .container {
   margin: 0 auto;
-  height: calc(100vh - 4vw);
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;

@@ -50,7 +50,7 @@
   font-size: var(--text-base);
 
   @media (max-width: 640px) {
-    padding: 12px;
+    padding: 16px;
     width: 94%;
     margin: auto;
   }
