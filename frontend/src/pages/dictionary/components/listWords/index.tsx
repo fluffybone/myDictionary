@@ -152,7 +152,7 @@ export const ListWords: FC<TProps> = ({
                       onClick={() =>
                         setWordForm({
                           origWord: word.orig_word,
-                          translateWord: word.orig_word,
+                          translateWord: word.translate_word,
                           description: word.description,
                           wordId: word.id,
                         })
