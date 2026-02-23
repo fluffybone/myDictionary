@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
 from .validators import validate_not_empty
+from typing import List, Optional
 
 
 # --- Схемы для слов ---
@@ -35,3 +36,13 @@ class Word(WordBase):
 
     class Config:
         from_attributes = True  # Важно для работы с ORM
+
+
+class DeleteWordsRequest(BaseModel):
+    word_ids: List[int]
+
+
+class WordUpdate(BaseModel):
+    orig_word: Optional[str] = None
+    translate_word: Optional[str] = None
+    description: Optional[str] = None

@@ -1,5 +1,6 @@
 .tableTr {
   border-top: 1px solid white;
+  position: relative;
 }
 
 .tableTr td {
@@ -16,4 +17,63 @@ table tr:first-child {
 
 .descriptionTd {
   min-width: 240px;
+}
+
+.checkbox {
+  width: 24px;
+}
+
+.learnWords {
+  border-radius: var(--element-radius);
+  border: 2px solid var(--primary);
+  padding: 1vw 24px;
+  min-height: 24vh;
+  max-width: 99vw;
+  margin: 0px auto;
+  overflow: auto;
+  height: 58dvh;
+  -webkit-overflow-scrolling: touch;
+
+  @media (max-width: 640px) {
+    height: 42dvh;
+    padding: 1vw 16px;
+  }
+}
+
+.controlInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  margin: 4px 0;
+}
+
+.controlInfo p {
+  margin: 0;
+}
+
+.control {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.control button span svg {
+  width: 18px;
+  height: 18px;
+}
+
+.showFull {
+  height: 84dvh;
+
+  @media (max-width: 640px) {
+    height: 80dvh;
+  }
+}
+
+.icon {
+  width: 40px;
+  height: 20px;
+  text-align: center;
+  display: block;
 }

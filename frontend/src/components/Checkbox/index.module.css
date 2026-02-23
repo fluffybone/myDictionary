@@ -1,0 +1,104 @@
+.checkboxContainer {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkboxContainer input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  pointer-events: none;
+}
+
+.checkboxCustom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border: 2px solid var(--primary);
+  border-radius: 4px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.checkboxContainer:hover .checkboxCustom {
+  background-color: rgba(229, 149, 0, 0.1); /* primary с прозрачностью */
+}
+
+.checkboxContainer input[type="checkbox"]:focus + .checkboxCustom {
+  box-shadow: 0 0 0 3px rgba(229, 149, 0, 0.3);
+}
+
+.checkboxContainer input[type="checkbox"]:checked + .checkboxCustom {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* Галочка */
+.checkboxCustom svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: white;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.checkboxContainer input[type="checkbox"]:checked + .checkboxCustom svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.checkboxLabel {
+  color: var(--text);
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+.checkboxContainer input[type="checkbox"]:disabled + .checkboxCustom {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: var(--secondary);
+}
+
+.checkboxContainer input[type="checkbox"]:disabled ~ .checkboxLabel {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.checkboxContainer.error .checkboxCustom {
+  border-color: var(--error);
+}
+
+.checkboxContainer.error input[type="checkbox"]:checked + .checkboxCustom {
+  background-color: var(--error);
+  border-color: var(--error);
+}
+
+@media (max-width: 640px) {
+  .checkboxCustom {
+    width: 24px;
+    height: 24px;
+  }
+
+  .checkboxCustom svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .checkboxLabel {
+    font-size: 16px;
+  }
+}

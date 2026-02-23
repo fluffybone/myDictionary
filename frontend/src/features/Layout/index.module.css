@@ -1,5 +1,5 @@
 .layout {
-  min-height: 100vh;
+  min-height: 100dvh;
   background-color: #f4f4f2;
   background-image:
     radial-gradient(at 80% 0%, rgba(229, 149, 0, 0.4) 0px, transparent 50%),
@@ -11,6 +11,6 @@
   padding: 2vw 8vw;
 
   @media (max-width: 640px) {
-    padding: 16px 12px;
+    padding: 12px;
   }
 }

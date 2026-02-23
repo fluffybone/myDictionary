@@ -4,38 +4,67 @@ import { clsx } from "clsx";
 import {
   useAddWordMutation,
   useLazyGetWordsQuery,
+  useUpdateWordMutation,
   type TWordResponse,
 } from "../../../../store/words/api";
 import { getErrorText } from "../../../../store/utils/getErrorText";
 import { ListWords } from "../listWords";
 
 export const AddWords = () => {
-  const [values, setValues] = useState<{
+  const [showSection, setShowSection] = useState<"all" | "words">("all");
+  const [mode, setMode] = useState<"show" | "delete" | "edit">("show");
+  const [wordForm, setWordForm] = useState<{
     origWord: string;
     translateWord: string;
     description: string;
+    wordId?: number;
   }>({
     description: "",
     origWord: "",
     translateWord: "",
   });
-  const [addWord, { isLoading }] = useAddWordMutation();
-  const [error, setError] = useState<null | string>(null);
   const [getWords, { data: words }] = useLazyGetWordsQuery();
+  const [addWord, { isLoading: isAddWordLoading }] = useAddWordMutation();
+  const [updateWord, { isLoading: isUpdateWordLoading }] =
+    useUpdateWordMutation();
+
+  const [error, setError] = useState<null | string>(null);
   const [learningWords, setLearningWords] = useState<TWordResponse[]>([]);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleCreateWord = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const response = await addWord({
-      orig_word: values.origWord,
-      translate_word: values.translateWord,
-      description: values.description,
+      orig_word: wordForm.origWord,
+      translate_word: wordForm.translateWord,
+      description: wordForm.description,
     });
 
     if ("data" in response && response.data) {
       setLearningWords([...learningWords, response.data]);
-      setValues({ origWord: "", translateWord: "", description: "" });
+      setWordForm({ origWord: "", translateWord: "", description: "" });
+    }
+    if ("error" in response) {
+      const responseError = getErrorText({
+        error: response.error,
+      });
+      setError(responseError);
+    }
+  };
+
+  const handleUpdateWord = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!wordForm.wordId) return;
+
+    const response = await updateWord({
+      orig_word: wordForm.origWord,
+      translate_word: wordForm.translateWord,
+      description: wordForm.description,
+      id: wordForm.wordId,
+    });
+
+    if ("data" in response && response.data) {
+      setWordForm({ origWord: "", translateWord: "", description: "" });
     }
     if ("error" in response) {
       const responseError = getErrorText({
@@ -58,70 +87,82 @@ export const AddWords = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <div className={classes.inputContainer}>
-          <input
-            className={error && error.includes("Слово") ? "error" : undefined}
-            placeholder="Новое слово"
-            id="origWord"
-            name="origWord"
-            type="text"
-            autoFocus
-            required
-            value={values.origWord}
-            onChange={(e) => {
-              setError(null);
-              setValues((prev) => ({
-                ...prev,
-                origWord: e.target.value,
-              }));
-            }}
-          />
-          <input
-            className={error && error.includes("Перевод") ? "error" : undefined}
-            placeholder="Перевод"
-            id="translateWord"
-            name="translateWord"
-            type="text"
-            required
-            value={values.translateWord}
-            onChange={(e) => {
-              setError(null);
-              setValues((prev) => ({
-                ...prev,
-                translateWord: e.target.value,
-              }));
-            }}
-          />
-        </div>
-        {error && <div className={classes.errorText}>{error}</div>}
-        <textarea
-          id="description"
-          name="description"
-          placeholder="Заметки к слову"
-          value={values.description}
-          onChange={(e) =>
-            setValues((prev) => ({
-              ...prev,
-              description: e.target.value,
-            }))
-          }
-          className={classes.textarea}
-        />
-        <button
-          className={clsx("btn btn-secondary", classes.button)}
-          type="submit"
-          disabled={isLoading}
+      {showSection == "all" && (
+        <form
+          onSubmit={mode === "show" ? handleCreateWord : handleUpdateWord}
+          className={classes.form}
         >
-          Записать
-        </button>
-      </form>
-      <div className={classes.learningWordsContainer}>
-        <p className={classes.count}>{learningWords.length} / 20</p>
-        <div className={classes.learnWords}>
-          <ListWords words={learningWords} />
-        </div>
-      </div>
+          <div className={classes.inputContainer}>
+            <input
+              className={error && error.includes("Слово") ? "error" : undefined}
+              placeholder="Новое слово"
+              id="origWord"
+              name="origWord"
+              autoFocus={!!wordForm?.wordId}
+              type="text"
+              required
+              onFocus={(event) => !!wordForm?.wordId && event.target.focus()}
+              value={wordForm.origWord}
+              onChange={(e) => {
+                setError(null);
+                setWordForm((prev) => ({
+                  ...prev,
+                  origWord: e.target.value,
+                }));
+              }}
+            />
+            <input
+              className={
+                error && error.includes("Перевод") ? "error" : undefined
+              }
+              placeholder="Перевод"
+              id="translateWord"
+              name="translateWord"
+              type="text"
+              required
+              value={wordForm.translateWord}
+              onChange={(e) => {
+                setError(null);
+                setWordForm((prev) => ({
+                  ...prev,
+                  translateWord: e.target.value,
+                }));
+              }}
+            />
+          </div>
+          {error && <div className={classes.errorText}>{error}</div>}
+          <textarea
+            id="description"
+            name="description"
+            placeholder="Заметки к слову"
+            value={wordForm.description}
+            onChange={(e) =>
+              setWordForm((prev) => ({
+                ...prev,
+                description: e.target.value,
+              }))
+            }
+            className={classes.textarea}
+          />
+          <button
+            className={clsx("btn btn-secondary", classes.button)}
+            type="submit"
+            disabled={isAddWordLoading || isUpdateWordLoading}
+          >
+            {mode === "edit" && wordForm.wordId
+              ? "Сохранить изменения"
+              : "Записать"}
+          </button>
+        </form>
+      )}
+      <ListWords
+        words={learningWords}
+        setShowSection={setShowSection}
+        showSection={showSection}
+        setMode={setMode}
+        mode={mode}
+        setWordForm={setWordForm}
+      />
     </div>
   );
 };

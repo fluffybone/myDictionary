@@ -17,9 +17,11 @@ export type TWordResponse = {
 
 export const wordsApi = createApi({
   baseQuery: customBaseQuery,
+  tagTypes: ["LEARNING_WORDS"],
   endpoints: (builder) => ({
     getWords: builder.query<void, void>({
       query: () => ({ url: "/api/words/learning" }),
+      providesTags: ["LEARNING_WORDS"],
     }),
     addWord: builder.mutation<TWordResponse, TWord>({
       query: (body) => ({
@@ -28,9 +30,33 @@ export const wordsApi = createApi({
         body,
       }),
     }),
+    deleteWords: builder.mutation<void, { ids: TWordResponse["id"][] }>({
+      query: ({ ids }) => ({
+        url: "/api/words/delete",
+        method: "DELETE",
+        body: { word_ids: ids },
+      }),
+      invalidatesTags: ["LEARNING_WORDS"],
+    }),
+    updateWord: builder.mutation<
+      TWordResponse,
+      Omit<TWordResponse, "created_at">
+    >({
+      query: (body) => ({
+        url: `/api/words/${body.id}`,
+        method: "PUT",
+        body: body,
+      }),
+      invalidatesTags: ["LEARNING_WORDS"],
+    }),
   }),
   reducerPath: "wordsApi",
 });
 
-export const { useGetWordsQuery, useLazyGetWordsQuery, useAddWordMutation } =
-  wordsApi;
+export const {
+  useGetWordsQuery,
+  useDeleteWordsMutation,
+  useLazyGetWordsQuery,
+  useAddWordMutation,
+  useUpdateWordMutation,
+} = wordsApi;

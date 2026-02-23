@@ -3,6 +3,10 @@
   align-items: center;
   gap: 24px;
   margin-bottom: 4px;
+
+  @media (max-width: 640px) {
+    gap: 8px;
+  }
 }
 
 .button.button {
@@ -11,34 +15,12 @@
   margin-left: auto;
 }
 
-.learnWords {
-  border-radius: var(--element-radius);
-  border: 2px solid var(--primary);
-  padding: 1vw 2vw;
-  min-height: 24vh;
-  max-width: 99vw;
-  margin: 0px auto;
-  overflow: auto;
-  height: 58dvh;
-  -webkit-overflow-scrolling: touch;
+.form {
+  margin-bottom: 24px;
 
   @media (max-width: 640px) {
-    height: 55dvh;
+    margin-bottom: 12px;
   }
-}
-
-.learningWordsContainer {
-  margin-top: 24px;
-
-  @media (max-width: 640px) {
-    margin-top: 12px;
-  }
-}
-
-.count {
-  text-align: right;
-  padding-right: 8px;
-  margin: 4px 0;
 }
 
 .errorText {
