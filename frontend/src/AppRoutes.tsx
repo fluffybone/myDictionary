@@ -4,7 +4,7 @@ import { AuthPage } from "./pages/auth";
 import { useGetWordsQuery } from "./store/words/api";
 import { useEffect } from "react";
 import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "./shared";
-import { Dictionary } from "./pages/dictionary";
+import { Dictionary } from "./pages/learning";
 
 export const AppRoutes = () => {
   const { data: words, error } = useGetWordsQuery();

@@ -12,7 +12,7 @@ table tr:first-child {
 }
 
 .wordTd {
-  min-width: 140px;
+  min-width: 100px;
 }
 
 .descriptionTd {

@@ -42,10 +42,8 @@ export const ListWords: FC<TProps> = ({
   setWordForm,
 }) => {
   const [selectedIds, setSelectedIds] = useState<TWordResponse["id"][]>([]);
-  const [deleteWords, { data, isLoading: isDeleteLoading }] =
+  const [deleteWords, { isLoading: isDeleteLoading }] =
     useDeleteWordsMutation();
-
-  console.log("data", data);
 
   return (
     <div className={classes.learningWordsContainer}>
@@ -129,7 +127,19 @@ export const ListWords: FC<TProps> = ({
         <table>
           <tbody>
             {words.map((word) => (
-              <tr key={word.id} className={classes.tableTr}>
+              <tr
+                key={word.id}
+                className={classes.tableTr}
+                onClick={() =>
+                  mode === "edit" &&
+                  setWordForm({
+                    origWord: word.orig_word,
+                    translateWord: word.translate_word,
+                    description: word.description,
+                    wordId: word.id,
+                  })
+                }
+              >
                 <td>
                   {mode === "delete" && (
                     <Checkbox
