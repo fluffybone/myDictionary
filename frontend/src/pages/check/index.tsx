@@ -49,7 +49,6 @@ export const Check = () => {
     }
   };
 
-  console.log("wordResult", wordResult);
   return (
     <div>
       <h3>
