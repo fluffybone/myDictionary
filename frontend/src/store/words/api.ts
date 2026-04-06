@@ -19,7 +19,7 @@ export const wordsApi = createApi({
   baseQuery: customBaseQuery,
   tagTypes: ["LEARNING_WORDS"],
   endpoints: (builder) => ({
-    getWords: builder.query<void, void>({
+    getWords: builder.query<TWordResponse[], void>({
       query: () => ({ url: "/api/words/learning" }),
       providesTags: ["LEARNING_WORDS"],
     }),

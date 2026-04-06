@@ -1,0 +1,110 @@
+.list {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.block {
+  display: flex;
+  align-items: anchor-center;
+  gap: 16px;
+}
+
+.text {
+  font-size: var(--text-base);
+  margin: 4px;
+}
+
+.tableContainer {
+  margin-top: 20px;
+  width: 100%;
+  padding: 1vw 24px;
+  border-radius: var(--element-radius);
+  border: 2px solid var(--primary);
+  max-height: 70dvh;
+  overflow: auto;
+
+  @media (max-width: 640px) {
+    max-height: 46dvh;
+  }
+}
+
+.tableContainer.isWin {
+  filter: blur(4px);
+}
+
+.form {
+  margin: 0px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+
+.table {
+  width: 100%;
+}
+
+.button {
+  margin-left: auto;
+}
+
+.wordRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tableTr {
+  border-top: 1px solid white;
+  position: relative;
+}
+
+.tableTr td {
+  padding: 4px;
+}
+
+table tr:first-child {
+  border: none;
+}
+
+.wordTd {
+  min-width: 160px;
+
+  @media (max-width: 640px) {
+    min-width: 100px;
+  }
+}
+
+.descriptionTd {
+  min-width: 240px;
+}
+
+.blockWin {
+  padding: 8px 16px;
+  background-color: white;
+  border-radius: 12px;
+  position: relative;
+  width: 350px;
+  position: absolute;
+  z-index: 10000;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.close {
+  position: absolute !important;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+}
+
+.blockWin h3 {
+  margin: 20px 0;
+  color: green;
+}
+
+.buttonWrite {
+  display: block !important;
+  margin: 24px auto 24px auto;
+}

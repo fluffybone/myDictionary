@@ -12,7 +12,7 @@ table tr:first-child {
 }
 
 .wordTd {
-  min-width: 140px;
+  min-width: 100px;
 }
 
 .descriptionTd {
@@ -31,7 +31,7 @@ table tr:first-child {
   max-width: 99vw;
   margin: 0px auto;
   overflow: auto;
-  height: 58dvh;
+  height: 54dvh;
   -webkit-overflow-scrolling: touch;
 
   @media (max-width: 640px) {

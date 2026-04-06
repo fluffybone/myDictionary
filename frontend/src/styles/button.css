@@ -20,6 +20,8 @@
   font-size: var(--text-base);
   letter-spacing: 0.01em;
 
+  background-color: inherit;
+
   border: none;
   border-radius: var(--element-radius);
   cursor: pointer;
@@ -36,9 +38,13 @@
 }
 
 .btn-small {
-  padding: 0 12px;
+  padding: 16px 12px;
   height: var(--btn-small-height);
   font-size: 14px;
+
+  svg {
+    fill: white;
+  }
 }
 
 .btn:active {

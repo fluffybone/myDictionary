@@ -27,7 +27,7 @@
   margin: 0 auto;
   text-align: center;
   color: var(--error);
-  font-size: var(--text-lg);
+  font-size: var(--text-sm);
   font-family: var(--font-bold);
 }
 

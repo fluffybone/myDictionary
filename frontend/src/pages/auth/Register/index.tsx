@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import classes from "../index.module.css";
 import { clsx } from "clsx";
 import { useState, type ChangeEvent, type FormEvent } from "react";
@@ -15,7 +15,6 @@ import { AuthenticationCodeInput } from "../components/AuthenticationCodeInput";
 export const Registration = () => {
   const [step, setStep] = useState(1);
   const [code, setCode] = useState(new Array(6).fill(""));
-  const navigate = useNavigate();
   const [registration, { isLoading: isRegistrationLoading, error }] =
     useRegistrationMutation();
   const [verifyEmail, { isLoading: isVerifyEmailLoading, error: codeError }] =
@@ -52,7 +51,7 @@ export const Registration = () => {
         email: formValues.email,
       });
       if ("data" in response && response.data) {
-        navigate("/");
+        window.location.href = "/";
         localStorage.setItem(
           ACCESS_TOKEN_LOCALSTORAGE_KEY,
           response.data.access_token,

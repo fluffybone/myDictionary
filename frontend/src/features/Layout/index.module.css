@@ -8,7 +8,7 @@
     linear-gradient(180deg, #f4f4f2 0%, #eaeaea 100%);
   background-attachment: fixed;
   background-size: cover;
-  padding: 2vw 8vw;
+  padding: 1vw 8vw;
 
   @media (max-width: 640px) {
     padding: 12px;
