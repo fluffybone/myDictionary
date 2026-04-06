@@ -36,7 +36,10 @@ export const Check = () => {
     if (!wordResult) return;
     let hasErrorInSubmit = false;
     for (const [, value] of Object.entries(wordResult)) {
-      if (value.answer !== value.correctAnswer) {
+      if (
+        value.answer.toLocaleLowerCase() !==
+        value.correctAnswer.toLocaleLowerCase()
+      ) {
         hasErrorInSubmit = true;
         setHasError(true);
       }
