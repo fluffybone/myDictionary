@@ -1,29 +1,56 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { RadioGroup } from "../../components/RadioComponents/RadioGroup";
 import classes from "./index.module.css";
-import { useGetWordsQuery } from "../../store/words/api";
+import { useGetWordsQuery, type TWordResponse } from "../../store/words/api";
 import clsx from "clsx";
+import { CloseOutlined } from "@ant-design/icons";
 
 export const Check = () => {
   const [selectedOption, setSelectedOption] = useState("origWord");
   const { data: words } = useGetWordsQuery();
+  const [isViewResult, setIsViewResult] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [isWin, setIsWin] = useState(false);
+  const [shuffledWords, setShuffledWords] = useState<TWordResponse[]>();
 
-  const [wordResult, setWordResult] =
-    useState<Record<string, { answer: string; correctAnswer: string }>>();
+  const [wordResult, setWordResult] = useState<Record<
+    string,
+    { answer: string; correctAnswer: string }
+  > | null>(null);
 
-  if (!words) {
+  useEffect(() => {
+    if (words) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setShuffledWords([...words].sort(() => Math.random() - 0.5));
+    }
+  }, [words]);
+
+  if (!shuffledWords) {
     return;
   }
 
-  const hadleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const hadleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("gggg", wordResult);
+    setIsWin(false);
+    setIsViewResult(true);
+    if (!wordResult) return;
+    let hasErrorInSubmit = false;
+    for (const [, value] of Object.entries(wordResult)) {
+      if (value.answer !== value.correctAnswer) {
+        hasErrorInSubmit = true;
+        setHasError(true);
+      }
+    }
+    if (!hasErrorInSubmit) {
+      setIsWin(true);
+    }
   };
 
+  console.log("wordResult", wordResult);
   return (
     <div>
       <h3>
-        Проверить себя по списку:{" "}
+        Проверить себя по списку:
         <span className={classes.list}>Сейчас учу</span>
       </h3>
       <div className={classes.container}>
@@ -35,12 +62,8 @@ export const Check = () => {
             value={selectedOption}
             onChange={(value) => {
               setSelectedOption(value);
-              // if (value === "origWord") {
-              //   setShowWords(words.map((word) => word.translate_word));
-              // }
-              // if (value === "translateWord") {
-              //   setShowWords(words.map((word) => word.orig_word));
-              // }
+              setWordResult(null);
+              setIsViewResult(false);
             }}
             options={[
               { value: "origWord", label: "Слово" },
@@ -50,11 +73,34 @@ export const Check = () => {
           />
         </div>
       </div>
-      <form onSubmit={hadleSubmit}>
-        <div className={classes.tableContainer}>
+      <form
+        onSubmit={hadleSubmit}
+        className={classes.form}
+        key={selectedOption}
+      >
+        {isWin && (
+          <div className={classes.blockWin}>
+            <h3>Правильно! 🎉🎉🎉 </h3>
+            <button
+              className={clsx("btn btn-primary btn-small", classes.close)}
+              onClick={() => {
+                setIsWin(false);
+                setWordResult(null);
+              }}
+            >
+              <CloseOutlined size={24} />
+            </button>
+            {/* <button className={clsx("btn btn-secondary", classes.buttonWrite)}>
+              Записать в словарь
+            </button> */}
+          </div>
+        )}
+        <div
+          className={clsx(classes.tableContainer, { [classes.isWin]: isWin })}
+        >
           <table className={classes.table}>
             <tbody>
-              {words.map((word) => {
+              {shuffledWords.map((word) => {
                 const key =
                   selectedOption === "origWord"
                     ? "orig_word"
@@ -70,17 +116,27 @@ export const Check = () => {
                     <td className={classes.wordTd}>{word[key]}</td>
                     <td className={classes.wordTd}>
                       <input
+                        className={
+                          isViewResult &&
+                          wordResult &&
+                          hasError &&
+                          wordResult[word[key]].answer !==
+                            wordResult[word[key]].correctAnswer
+                            ? "error"
+                            : undefined
+                        }
                         required
                         name={word[key]}
-                        onChange={(value) =>
+                        onChange={(value) => {
+                          setHasError(false);
                           setWordResult({
                             ...wordResult,
                             [word[key]]: {
                               answer: value.target.value,
                               correctAnswer: word[keyRightWord],
                             },
-                          })
-                        }
+                          });
+                        }}
                       />
                     </td>
                   </tr>
@@ -88,13 +144,15 @@ export const Check = () => {
               })}
             </tbody>
           </table>
+        </div>
+        {!isWin && (
           <button
             className={clsx(classes.button, "btn btn-secondary")}
             type="submit"
           >
             Отправить
           </button>
-        </div>
+        )}
       </form>
     </div>
   );

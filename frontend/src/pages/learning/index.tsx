@@ -8,7 +8,6 @@ export const Dictionary = () => {
     <Tabs
       tabs={[
         { name: "Сейчас учу", children: <AddWords /> },
-        // { name: "Все слова", children: <div>Все слова</div> },
         { name: "Проверить себя", children: <Check /> },
       ]}
       className={classes.containerTabs}

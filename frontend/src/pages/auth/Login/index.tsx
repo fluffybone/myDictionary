@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import classes from "../index.module.css";
 import { clsx } from "clsx";
 import { useLoginMutation } from "../../../store/authorization/api";
@@ -9,7 +9,6 @@ import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "../../../shared";
 
 export const Login = () => {
   const [login, { isLoading, error }] = useLoginMutation();
-  const navigate = useNavigate();
   const [formValues, setFormValues] = useState<{
     email: string;
     password: string;
@@ -36,7 +35,7 @@ export const Login = () => {
 
     const response = await login(formData);
     if ("data" in response && response.data) {
-      navigate("/");
+      window.location.href = "/";
       localStorage.setItem(
         ACCESS_TOKEN_LOCALSTORAGE_KEY,
         response.data.access_token,

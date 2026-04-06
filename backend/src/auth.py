@@ -63,8 +63,6 @@ async def get_current_user(
     except (InvalidTokenError, ValueError):
         raise credentials_exception
 
-    # ДОБАВЛЯЕМ AWAIT
-    # Так как crud_users.get_user теперь async def
     user = await crud_users.get_user(db, user_id=user_id)
 
     if user is None:

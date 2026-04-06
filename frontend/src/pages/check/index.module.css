@@ -20,12 +20,32 @@
   padding: 1vw 24px;
   border-radius: var(--element-radius);
   border: 2px solid var(--primary);
-  max-height: 84vh;
+  max-height: 70dvh;
   overflow: auto;
+
+  @media (max-width: 640px) {
+    max-height: 46dvh;
+  }
+}
+
+.tableContainer.isWin {
+  filter: blur(4px);
+}
+
+.form {
+  margin: 0px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
 }
 
 .table {
-  margin: 0px auto;
+  width: 100%;
+}
+
+.button {
+  margin-left: auto;
 }
 
 .wordRow {
@@ -57,4 +77,34 @@ table tr:first-child {
 
 .descriptionTd {
   min-width: 240px;
+}
+
+.blockWin {
+  padding: 8px 16px;
+  background-color: white;
+  border-radius: 12px;
+  position: relative;
+  width: 350px;
+  position: absolute;
+  z-index: 10000;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.close {
+  position: absolute !important;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+}
+
+.blockWin h3 {
+  margin: 20px 0;
+  color: green;
+}
+
+.buttonWrite {
+  display: block !important;
+  margin: 24px auto 24px auto;
 }
