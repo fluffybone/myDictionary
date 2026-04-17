@@ -12,6 +12,7 @@ class WordBase(BaseModel):
         ..., min_length=1, description="Поле не может быть пустым"
     )
     description: str
+    is_learning: bool = Field(default=True, description="Слово в процессе изучения")
 
     @field_validator("orig_word")
     @classmethod
@@ -46,3 +47,9 @@ class WordUpdate(BaseModel):
     orig_word: Optional[str] = None
     translate_word: Optional[str] = None
     description: Optional[str] = None
+    is_learning: Optional[bool] = None
+
+
+class BulkUpdateLearningStatusRequest(BaseModel):
+    word_ids: List[int]
+    is_learning: bool

@@ -17,6 +17,7 @@ table tr:first-child {
 
 .descriptionTd {
   min-width: 240px;
+  width: 100%;
 }
 
 .checkbox {

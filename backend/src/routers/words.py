@@ -1,5 +1,5 @@
-from typing import List
-from fastapi import APIRouter, Depends
+from typing import List, Optional
+from fastapi import APIRouter, Depends, Query
 from fastapi import HTTPException, status
 from typing import Annotated
 from src import auth
@@ -8,7 +8,13 @@ from src.database import get_db
 
 from src.models.users import User as UserDb
 from src.models.words import Word as WordDb
-from src.schemas.words import Word, WordCreate, DeleteWordsRequest, WordUpdate
+from src.schemas.words import (
+    Word,
+    WordCreate,
+    DeleteWordsRequest,
+    WordUpdate,
+    BulkUpdateLearningStatusRequest,
+)
 from sqlalchemy import select, func, delete
 
 router = APIRouter(prefix="/api/words", tags=["words"])
@@ -17,8 +23,6 @@ MAX_WORDS_PER_USER = 10
 
 
 # Для слов Изучаю сейчас
-
-
 @router.post("", response_model=Word)
 async def create_word(
     word: WordCreate,
@@ -39,11 +43,14 @@ async def create_word(
             detail=f"Слово '{word.orig_word}' уже существует в вашем словаре",
         )
 
-    words_count_query = select(func.count()).where(WordDb.owner_id == current_user.id)
-    words_count_result = await db.execute(words_count_query)
-    words_count = words_count_result.scalar()
+    learning_words_count_query = select(func.count()).where(
+        WordDb.owner_id == current_user.id,
+        WordDb.is_learning == True,
+    )
+    learning_words_count_result = await db.execute(learning_words_count_query)
+    learning_words_count = learning_words_count_result.scalar()
 
-    if words_count >= MAX_WORDS_PER_USER:
+    if learning_words_count >= MAX_WORDS_PER_USER:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Достигнут предел на запись слов для текущего изучения (максимум {MAX_WORDS_PER_USER} слов)",
@@ -61,12 +68,27 @@ async def create_word(
 async def read_my_words(
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[UserDb, Depends(auth.get_current_user)],
+    is_learning: Optional[bool] = Query(
+        None,
+        description="Фильтр по статусу изучения (true - изучаемые, false - изученные, null - все слова)",
+    ),
+    skip: int = Query(0, ge=0, description="Количество пропускаемых записей"),
+    limit: int = Query(
+        100, ge=1, le=1000, description="Максимальное количество записей"
+    ),
 ):
     query = select(WordDb).where(WordDb.owner_id == current_user.id)
 
-    result = await db.execute(query)
+    if is_learning is not None:
+        query = query.where(WordDb.is_learning == is_learning)
 
-    return result.scalars().all()
+    query = query.offset(skip).limit(limit)
+    query = query.order_by(WordDb.created_at.desc())
+
+    result = await db.execute(query)
+    words = result.scalars().all()
+
+    return words
 
 
 @router.delete("/delete", status_code=status.HTTP_204_NO_CONTENT)
@@ -139,3 +161,39 @@ async def update_word(
     await db.refresh(db_word)
 
     return db_word
+
+
+# Эндпоинт для массового обновления статуса изучения
+@router.patch("/learning-status", response_model=dict)
+async def bulk_update_learning_status(
+    request: BulkUpdateLearningStatusRequest,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: UserDb = Depends(auth.get_current_user),
+):
+    """Массовое обновление статуса изучения для нескольких слов"""
+
+    if not request.word_ids:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Список ID слов не может быть пустым",
+        )
+
+    # Выполняем массовое обновление
+    query = select(WordDb).where(
+        WordDb.owner_id == current_user.id, WordDb.id.in_(request.word_ids)
+    )
+    result = await db.execute(query)
+    words = result.scalars().all()
+
+    if not words:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Слова не найдены",
+        )
+
+    for word in words:
+        word.is_learning = request.is_learning
+
+    await db.commit()
+
+    return {"message": f"Обновлено {len(words)} слов"}

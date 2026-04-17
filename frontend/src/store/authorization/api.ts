@@ -1,6 +1,12 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { customBaseQuery } from "../utils/customBaseQuery";
 
+type TUser = {
+  id: number;
+  is_active: boolean;
+  is_verified: boolean;
+};
+
 export const authorizationApi = createApi({
   baseQuery: customBaseQuery,
   endpoints: (builder) => ({
@@ -51,6 +57,11 @@ export const authorizationApi = createApi({
         body,
       }),
     }),
+    getMe: builder.query<TUser, void>({
+      query: () => ({
+        url: "api/users/me",
+      }),
+    }),
   }),
   reducerPath: "authorizationApi",
 });
@@ -61,4 +72,5 @@ export const {
   useVerifyEmailMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
+  useGetMeQuery,
 } = authorizationApi;
