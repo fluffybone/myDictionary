@@ -29,11 +29,20 @@
   background-color: inherit;
   border-color: inherit;
   border: none !important;
+  transition: all 0.3s;
+  svg {
+    transition: all 0.3s;
+    fill: var(--main);
+  }
 }
 
 .tabsNav button:hover {
   color: var(--primary);
   transition: color 0.2s;
+
+  svg {
+    fill: var(--primary);
+  }
 }
 
 .content {
@@ -75,5 +84,9 @@
     border-right: 1px solid rgba(255, 255, 255, 0.4) !important;
     border-bottom-left-radius: 0;
     border-top-right-radius: var(--element-radius);
+  }
+
+  svg {
+    fill: var(--primary);
   }
 }

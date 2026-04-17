@@ -1,17 +1,23 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FC, type FormEvent } from "react";
 import classes from "./index.module.css";
 import { clsx } from "clsx";
 import {
   useAddWordMutation,
-  useLazyGetWordsQuery,
   useUpdateWordMutation,
   type TWordResponse,
-} from "../../../../store/words/api";
-import { getErrorText } from "../../../../store/utils/getErrorText";
-import { ListWords } from "../listWords";
+} from "../../store/words/api";
+import { getErrorText } from "../../store/utils/getErrorText";
+import { ListWords } from "./components/ListWords";
 
-export const AddWords = () => {
-  const [showSection, setShowSection] = useState<"all" | "words">("all");
+type TProps = {
+  words: TWordResponse[];
+  isOpenDefaultWordList?: boolean;
+};
+
+export const DisplayWords: FC<TProps> = ({ words, isOpenDefaultWordList }) => {
+  const [showSection, setShowSection] = useState<"all" | "words">(
+    isOpenDefaultWordList ? "words" : "all",
+  );
   const [mode, setMode] = useState<"show" | "delete" | "edit">("show");
   const [wordForm, setWordForm] = useState<{
     origWord: string;
@@ -23,7 +29,6 @@ export const AddWords = () => {
     origWord: "",
     translateWord: "",
   });
-  const [getWords, { data: words }] = useLazyGetWordsQuery();
   const [addWord, { isLoading: isAddWordLoading }] = useAddWordMutation();
   const [updateWord, { isLoading: isUpdateWordLoading }] =
     useUpdateWordMutation();
@@ -73,10 +78,6 @@ export const AddWords = () => {
       setError(responseError);
     }
   };
-
-  useEffect(() => {
-    getWords();
-  }, [getWords]);
 
   useEffect(() => {
     if (words) {

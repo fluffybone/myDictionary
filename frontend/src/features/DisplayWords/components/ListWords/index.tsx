@@ -1,10 +1,6 @@
 import { useState, type FC } from "react";
-import {
-  useDeleteWordsMutation,
-  type TWordResponse,
-} from "../../../../store/words/api";
+
 import classes from "./index.module.css";
-import { Checkbox } from "../../../../components/Checkbox";
 import { clsx } from "clsx";
 import {
   ArrowLeftOutlined,
@@ -14,6 +10,11 @@ import {
   EditOutlined,
   UpOutlined,
 } from "@ant-design/icons";
+import {
+  useDeleteWordsMutation,
+  type TWordResponse,
+} from "../../../../store/words/api";
+import { Checkbox } from "../../../../components/Checkbox";
 
 type TProps = {
   words: TWordResponse[];

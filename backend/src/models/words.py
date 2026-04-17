@@ -14,6 +14,7 @@ class Word(Base):
     description = Column(String)
     # Добавляем внешний ключ на таблицу пользователей
     owner_id = Column(Integer, ForeignKey("users.id"))
+    is_learning = Column(Boolean, default=True, nullable=False)
 
     # Связь с таблицей пользователей
     # back_populates создает виртуальное поле "words" в модели User

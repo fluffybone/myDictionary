@@ -19,8 +19,12 @@ export const wordsApi = createApi({
   baseQuery: customBaseQuery,
   tagTypes: ["LEARNING_WORDS"],
   endpoints: (builder) => ({
-    getWords: builder.query<TWordResponse[], void>({
-      query: () => ({ url: "/api/words/learning" }),
+    getWords: builder.query<TWordResponse[], { isLearning?: boolean }>({
+      query: ({ isLearning }) => ({
+        url: "/api/words/learning",
+        params:
+          isLearning == undefined ? undefined : { is_learning: isLearning },
+      }),
       providesTags: ["LEARNING_WORDS"],
     }),
     addWord: builder.mutation<TWordResponse, TWord>({
@@ -49,6 +53,17 @@ export const wordsApi = createApi({
       }),
       invalidatesTags: ["LEARNING_WORDS"],
     }),
+    updateLearningStatusWord: builder.mutation<
+      TWordResponse,
+      { wordsIds: TWordResponse["id"][] }
+    >({
+      query: ({ wordsIds }) => ({
+        url: `/api/words/learning-status`,
+        method: "PATCH",
+        body: { word_ids: wordsIds, is_learning: false },
+      }),
+      invalidatesTags: ["LEARNING_WORDS"],
+    }),
   }),
   reducerPath: "wordsApi",
 });
@@ -59,4 +74,5 @@ export const {
   useLazyGetWordsQuery,
   useAddWordMutation,
   useUpdateWordMutation,
+  useUpdateLearningStatusWordMutation,
 } = wordsApi;

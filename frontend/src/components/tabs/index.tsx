@@ -3,7 +3,7 @@ import classes from "./index.module.css";
 import clsx from "clsx";
 
 type TProps = {
-  tabs: { name: string; children: ReactNode }[];
+  tabs: { name: ReactNode; children: ReactNode }[];
   className?: string;
 };
 
