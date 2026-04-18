@@ -11,18 +11,6 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 }
 
-const isMobileDevice = () => {
-  const navigatorWithUserAgentData = window.navigator as Navigator & {
-    userAgentData?: { mobile?: boolean };
-  };
-
-  if (typeof navigatorWithUserAgentData.userAgentData?.mobile === "boolean") {
-    return navigatorWithUserAgentData.userAgentData.mobile;
-  }
-
-  return /android|iphone|ipad|ipod|mobile/i.test(window.navigator.userAgent);
-};
-
 export const Layout: FC = () => {
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
@@ -35,10 +23,6 @@ export const Layout: FC = () => {
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (event: Event) => {
-      if (!isMobileDevice()) {
-        return;
-      }
-
       const dismissed = localStorage.getItem(INSTALL_BANNER_DISMISSED_KEY) === "1";
       const displayModeStandalone = window.matchMedia(
         "(display-mode: standalone)",
@@ -82,7 +66,7 @@ export const Layout: FC = () => {
   }, []);
 
   const showInstallBanner = Boolean(
-    deferredPrompt && !isDismissed && !isStandalone && isMobileDevice(),
+    deferredPrompt && !isDismissed && !isStandalone,
   );
 
   const handleInstallClick = async () => {
@@ -109,7 +93,7 @@ export const Layout: FC = () => {
       {showInstallBanner && (
         <section className={classes.installBanner} aria-live="polite">
           <p className={classes.installText}>
-            Установите WordEater на телефон для быстрого доступа с домашнего экрана.
+            Установите WordEater на устройство для быстрого доступа с рабочего стола.
           </p>
           <div className={classes.installActions}>
             <button
