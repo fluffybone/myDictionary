@@ -11,6 +11,18 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 }
 
+const isMobileDevice = () => {
+  const navigatorWithUserAgentData = window.navigator as Navigator & {
+    userAgentData?: { mobile?: boolean };
+  };
+
+  if (typeof navigatorWithUserAgentData.userAgentData?.mobile === "boolean") {
+    return navigatorWithUserAgentData.userAgentData.mobile;
+  }
+
+  return /android|iphone|ipad|ipod|mobile/i.test(window.navigator.userAgent);
+};
+
 export const Layout: FC = () => {
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
@@ -23,6 +35,22 @@ export const Layout: FC = () => {
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (event: Event) => {
+      if (!isMobileDevice()) {
+        return;
+      }
+
+      const dismissed = localStorage.getItem(INSTALL_BANNER_DISMISSED_KEY) === "1";
+      const displayModeStandalone = window.matchMedia(
+        "(display-mode: standalone)",
+      ).matches;
+      const iosStandalone = (window.navigator as Navigator & { standalone?: boolean })
+        .standalone;
+      const isStandaloneNow = displayModeStandalone || Boolean(iosStandalone);
+
+      if (dismissed || isStandaloneNow) {
+        return;
+      }
+
       event.preventDefault();
       setDeferredPrompt(event as BeforeInstallPromptEvent);
     };
@@ -53,7 +81,9 @@ export const Layout: FC = () => {
     return displayModeStandalone || Boolean(iosStandalone);
   }, []);
 
-  const showInstallBanner = Boolean(deferredPrompt && !isDismissed && !isStandalone);
+  const showInstallBanner = Boolean(
+    deferredPrompt && !isDismissed && !isStandalone && isMobileDevice(),
+  );
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
