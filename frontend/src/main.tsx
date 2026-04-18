@@ -22,12 +22,3 @@ root.render(
     </ReduxProvider>
   </>,
 );
-
-if (import.meta.env.PROD && "serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    const swUrl = `/sw.js?v=${encodeURIComponent(__APP_VERSION__)}`;
-    navigator.serviceWorker.register(swUrl).catch((error: unknown) => {
-      console.error("Service worker registration failed", error);
-    });
-  });
-}
