@@ -7,4 +7,8 @@ echo "Applying database migrations..."
 python -m alembic upgrade head
 
 echo "Starting server..."
-exec uvicorn src.main:app --host 0.0.0.0 --port 8000
+if [ "$#" -eq 0 ]; then
+  exec uvicorn src.main:app --host 0.0.0.0 --port 8000
+fi
+
+exec "$@"
