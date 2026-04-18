@@ -3,11 +3,13 @@
   src: url("./fonts/SNPro-Bold.ttf") format("truetype");
   font-weight: bold;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
   font-family: "SnRegular";
   src: url("./fonts/SNPro-Regular.ttf") format("truetype");
+  font-display: swap;
 }
 
 @font-face {
@@ -15,6 +17,7 @@
   font-weight: bold;
   font-style: italic;
   src: url("./fonts/SNPro-Medium.ttf") format("truetype");
+  font-display: swap;
 }
 
 :root {
