@@ -1,12 +1,14 @@
 {
   "name": "Пожиратель слов",
-  "short_name": "ПС",
-  "description": "Личный словарь для изучения слов.",
+  "short_name": "WordEater",
+  "description": "Изучение иностранных слов",
+  "lang": "ru",
+  "id": "/",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "lang": "ru-RU",
-  "background_color": "#e59500",
+  "orientation": "portrait",
+  "background_color": "#f2edeb",
   "theme_color": "#e59500",
   "icons": [
     {
