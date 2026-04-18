@@ -32,6 +32,7 @@ type TProps = {
     description: string;
     wordId?: number;
   }) => void;
+  setIsInvalidateCacheWord:(isInvalidateCacheWord:boolean)=>void;
 };
 
 export const ListWords: FC<TProps> = ({
@@ -39,6 +40,7 @@ export const ListWords: FC<TProps> = ({
   setShowSection,
   showSection,
   setMode,
+  setIsInvalidateCacheWord,
   mode,
   setWordForm,
 }) => {
@@ -97,6 +99,7 @@ export const ListWords: FC<TProps> = ({
                 const response = await deleteWords({ ids: selectedIds });
                 if ("data" in response) {
                   setMode("show");
+                  setIsInvalidateCacheWord(true)
                 }
               }}
             >

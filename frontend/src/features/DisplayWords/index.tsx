@@ -4,10 +4,12 @@ import { clsx } from "clsx";
 import {
   useAddWordMutation,
   useUpdateWordMutation,
+  wordsApi,
   type TWordResponse,
 } from "../../store/words/api";
 import { getErrorText } from "../../store/utils/getErrorText";
 import { ListWords } from "./components/ListWords";
+import { useAppDispatch } from "../../store/utils/useAppDispatch";
 
 type TProps = {
   words: TWordResponse[];
@@ -35,6 +37,9 @@ export const DisplayWords: FC<TProps> = ({ words, isOpenDefaultWordList }) => {
 
   const [error, setError] = useState<null | string>(null);
   const [learningWords, setLearningWords] = useState<TWordResponse[]>([]);
+  const [isInvalidateCacheWord, setIsInvalidateCacheWord] = useState(false)
+
+  const dispatch = useAppDispatch()
 
   const handleCreateWord = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,6 +53,7 @@ export const DisplayWords: FC<TProps> = ({ words, isOpenDefaultWordList }) => {
     if ("data" in response && response.data) {
       setLearningWords([...learningWords, response.data]);
       setWordForm({ origWord: "", translateWord: "", description: "" });
+      setIsInvalidateCacheWord(true)
     }
     if ("error" in response) {
       const responseError = getErrorText({
@@ -70,6 +76,7 @@ export const DisplayWords: FC<TProps> = ({ words, isOpenDefaultWordList }) => {
 
     if ("data" in response && response.data) {
       setWordForm({ origWord: "", translateWord: "", description: "" });
+      setIsInvalidateCacheWord(true)
     }
     if ("error" in response) {
       const responseError = getErrorText({
@@ -78,6 +85,16 @@ export const DisplayWords: FC<TProps> = ({ words, isOpenDefaultWordList }) => {
       setError(responseError);
     }
   };
+
+useEffect(()=>{
+
+  return ()=>{
+    if(isInvalidateCacheWord){
+     dispatch(wordsApi.util.invalidateTags(['LEARNING_WORDS']));
+    }
+  }
+
+},[isInvalidateCacheWord])
 
   useEffect(() => {
     if (words) {
@@ -163,6 +180,7 @@ export const DisplayWords: FC<TProps> = ({ words, isOpenDefaultWordList }) => {
         setMode={setMode}
         mode={mode}
         setWordForm={setWordForm}
+        setIsInvalidateCacheWord={setIsInvalidateCacheWord}
       />
     </div>
   );
