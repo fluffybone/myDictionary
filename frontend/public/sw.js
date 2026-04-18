@@ -4,6 +4,9 @@ const APP_SHELL_URL = "/index.html";
 const PRECACHE_URLS = [
   "/",
   APP_SHELL_URL,
+  "/icon-192.png",
+  "/icon-512.png",
+  "/apple-touch-icon.png",
 ];
 
 self.addEventListener("install", (event) => {
@@ -39,10 +42,7 @@ self.addEventListener("fetch", (event) => {
     url.origin !== self.location.origin ||
     url.pathname.startsWith("/api/") ||
     url.pathname === "/sw.js" ||
-    url.pathname === "/manifest.webmanifest" ||
-    url.pathname === "/icon-192.png" ||
-    url.pathname === "/icon-512.png" ||
-    url.pathname === "/apple-touch-icon.png"
+    url.pathname === "/manifest.webmanifest"
   ) {
     return;
   }
