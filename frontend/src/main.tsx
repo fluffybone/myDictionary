@@ -13,6 +13,14 @@ if (rootNode === null) {
 const store = setupStore();
 const root = createRoot(rootNode);
 
+if ("serviceWorker" in navigator && import.meta.env.PROD) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch((error) => {
+      console.error("Service worker registration failed:", error);
+    });
+  });
+}
+
 root.render(
   <>
     <ReduxProvider store={store}>
