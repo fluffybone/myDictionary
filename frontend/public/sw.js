@@ -14,36 +14,30 @@ const PRECACHE_URLS = [
 ];
 
 self.addEventListener('install', (event) => {
-  console.log('[SW] Install');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('[SW] Pre-caching offline page');
         return cache.addAll(PRECACHE_URLS);
       })
       .then(() => {
-        console.log('[SW] Skip waiting');
         return self.skipWaiting();
       })
   );
 });
 
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activate');
   
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
-            console.log('[SW] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
     }).then(() => {
-      console.log('[SW] Claiming clients');
       return self.clients.claim();
     })
   );
@@ -65,11 +59,9 @@ self.addEventListener('fetch', (event) => {
     caches.match(request)
       .then((cachedResponse) => {
         if (cachedResponse) {
-          console.log('[SW] Serving from cache:', url.pathname);
           return cachedResponse;
         }
 
-        console.log('[SW] Fetching from network:', url.pathname);
         return fetch(request)
           .then((networkResponse) => {
             if (networkResponse && networkResponse.status === 200) {
@@ -82,7 +74,6 @@ self.addEventListener('fetch', (event) => {
             return networkResponse;
           })
           .catch((error) => {
-            console.log('[SW] Offline fallback:', url.pathname);
             if (request.mode === 'navigate') {
               return caches.match(OFFLINE_URL);
             }

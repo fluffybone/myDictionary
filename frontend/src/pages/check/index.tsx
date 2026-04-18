@@ -23,7 +23,7 @@ export const Check = () => {
     string,
     { answer: string; correctAnswer: string }
   > | null>(null);
-  console.log("wordResult", wordResult);
+
   useEffect(() => {
     if (words) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -128,7 +128,6 @@ export const Check = () => {
                   const response = await addedWordsInDictionary({
                     wordsIds: words.map((item) => item.id),
                   });
-                  console.log("response", response);
                   if (response) {
                     setIsWin(false);
                     setWordResult(null);
