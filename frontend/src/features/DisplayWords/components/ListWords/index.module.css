@@ -68,7 +68,7 @@ table tr:first-child {
   height: 84dvh;
 
   @media (max-width: 640px) {
-    height: 80dvh;
+    height: 76dvh;
   }
 }
 
