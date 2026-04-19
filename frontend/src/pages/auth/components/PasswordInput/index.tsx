@@ -1,7 +1,7 @@
 import { useState, type ChangeEvent, type FC } from "react";
 import classes from "./index.module.css";
 import { clsx } from "clsx";
-import { EyeIcon, EyeOffIcon } from "../../../../components/icons";
+import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 
 type TProps = {
   value: string;
@@ -42,7 +42,7 @@ export const PasswordInput: FC<TProps> = ({
         onClick={() => setIsPasswordType(!isPasswordType)}
         type="button"
       >
-        {isPasswordType ? <EyeOffIcon /> : <EyeIcon />}
+        {isPasswordType ? <EyeInvisibleOutlined /> : <EyeOutlined />}
       </button>
     </div>
   );
