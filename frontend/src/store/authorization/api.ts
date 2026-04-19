@@ -59,7 +59,7 @@ export const authorizationApi = createApi({
     }),
     getMe: builder.query<TUser, void>({
       query: () => ({
-        url: "api/users/me",
+        url: "/api/users/me",
       }),
     }),
   }),
