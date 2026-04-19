@@ -1,7 +1,7 @@
 import { useState, type ChangeEvent, type FC } from "react";
 import classes from "./index.module.css";
-import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 import { clsx } from "clsx";
+import { EyeIcon, EyeOffIcon } from "../../../../components/icons";
 
 type TProps = {
   value: string;
@@ -23,6 +23,7 @@ export const PasswordInput: FC<TProps> = ({
   name,
 }) => {
   const [isPasswordType, setIsPasswordType] = useState(true);
+  const label = isPasswordType ? "Показать пароль" : "Скрыть пароль";
 
   return (
     <div className={clsx(classes.passwordInput, className)}>
@@ -35,12 +36,14 @@ export const PasswordInput: FC<TProps> = ({
         value={value}
         placeholder={placeholder}
       />
-      <div
+      <button
+        aria-label={label}
         className={classes.passwordIcon}
         onClick={() => setIsPasswordType(!isPasswordType)}
+        type="button"
       >
-        {isPasswordType ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-      </div>
+        {isPasswordType ? <EyeOffIcon /> : <EyeIcon />}
+      </button>
     </div>
   );
 };
