@@ -2,7 +2,7 @@
   "name": "Пожиратель слов",
   "short_name": "WordEater",
   "description": "Изучение иностранных слов",
-  "lang": "ru",
+  "lang": "ru-RU",
   "id": "/",
   "start_url": "/",
   "scope": "/",
@@ -10,6 +10,9 @@
   "orientation": "portrait",
   "background_color": "#f2edeb",
   "theme_color": "#e59500",
+  "display_override": [
+    "window-controls-overlay"
+  ],
   "icons": [
     {
       "src": "/icon-192.png",

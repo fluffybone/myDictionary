@@ -157,7 +157,7 @@ Known route details:
 PWA support is intentionally minimal after previous mobile loading issues.
 
 Current policy:
-- Manifest lives at `frontend/public/manifest.webmanifest`.
+- Manifest lives at `frontend/public/manifest.json`.
 - Icons live in `frontend/public`: `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`.
 - Service worker lives at `frontend/public/sw.js`.
 - Service worker must stay network-only: no precache, no runtime cache, no API cache.

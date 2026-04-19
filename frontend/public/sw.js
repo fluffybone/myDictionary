@@ -42,7 +42,7 @@ self.addEventListener("fetch", (event) => {
     url.origin !== self.location.origin ||
     url.pathname.startsWith("/api/") ||
     url.pathname === "/sw.js" ||
-    url.pathname === "/manifest.webmanifest"
+    url.pathname === "/manifest.json"
   ) {
     return;
   }
