@@ -13,7 +13,23 @@ if (rootNode === null) {
 const store = setupStore();
 const root = createRoot(rootNode);
 
-// Service worker registration is intentionally disabled while debugging mobile loading.
+const registerServiceWorker = async () => {
+  if ("serviceWorker" in navigator) {
+    try {
+      await navigator.serviceWorker.register("/sw.js", {
+        updateViaCache: "none",
+      });
+    } catch (error) {
+      console.error("Service Worker registration failed:", error);
+    }
+  }
+};
+
+if (import.meta.env.PROD) {
+  window.addEventListener("load", () => {
+    registerServiceWorker();
+  });
+}
 
 root.render(
   <>

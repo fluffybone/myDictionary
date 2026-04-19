@@ -159,9 +159,12 @@ PWA support is intentionally minimal after previous mobile loading issues.
 Current policy:
 - Manifest lives at `frontend/public/manifest.json`.
 - Icons live in `frontend/public`: `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`.
-- `frontend/public/sw.js` exists only to unregister old service workers and clear caches.
-- Do not register `navigator.serviceWorker` in `frontend/src/main.tsx` until PWA is re-tested from scratch.
-- If install UI is added later, keep it separate from the service worker and test mobile/desktop before deploy.
+- `frontend/public/sw.js` uses soft caching only.
+- Service worker must not intercept HTML navigation, `/api/`, `/manifest.json`, or `/sw.js`.
+- Service worker may cache app icons and hashed build assets from `/assets/`.
+- `navigator.serviceWorker` registration lives in `frontend/src/main.tsx` and must stay production-only.
+- Install UI lives in `frontend/src/features/Layout/index.tsx`.
+- Install UI uses `beforeinstallprompt` where supported and an iOS manual-install hint otherwise.
 
 If mobile users still have old installed app behavior, tell them to remove the home-screen app and clear site data for the domain.
 

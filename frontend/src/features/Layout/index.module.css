@@ -1,16 +1,76 @@
 .layout {
+  position: relative;
   min-height: 100dvh;
   background-color: #f4f4f2;
   background-image:
     radial-gradient(at 80% 0%, rgba(229, 149, 0, 0.4) 0px, transparent 50%),
     radial-gradient(at 0% 50%, rgba(206, 106, 133, 0.4) 0px, transparent 50%),
-    radial-gradient(at 80% 100%, rgba(103, 111, 84, 0.4) 0px, transparent 50%),
+    radial-gradient(at 80% 100%, rgba(244, 162, 97, 0.35) 0px, transparent 50%),
     linear-gradient(180deg, #f4f4f2 0%, #eaeaea 100%);
   background-attachment: fixed;
   background-size: cover;
-  padding: 1vw 8vw;
+  padding: max(1vw, env(safe-area-inset-top)) 8vw
+    max(1vw, env(safe-area-inset-bottom));
 
   @media (max-width: 640px) {
-    padding: 12px;
+    padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right))
+      max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+  }
+}
+
+.installBanner {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: min(520px, calc(100vw - 32px));
+  padding: 18px;
+  border: 1px solid rgb(255 255 255 / 70%);
+  border-radius: 24px;
+  background:
+    linear-gradient(135deg, rgb(255 250 247 / 96%), rgb(244 244 242 / 94%)),
+    radial-gradient(circle at 10% 20%, rgb(229 149 0 / 22%), transparent 36%);
+  box-shadow: 0 20px 60px rgb(43 45 66 / 18%);
+  backdrop-filter: blur(16px);
+}
+
+.installTitle {
+  margin: 0 0 4px;
+  color: var(--main);
+  font-family: var(--font-bold);
+  font-size: var(--text-base);
+}
+
+.installText {
+  margin: 0;
+  color: var(--secondary);
+  font-size: var(--text-sm);
+}
+
+.installActions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+@media (max-width: 640px) {
+  .installBanner {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    flex-direction: column;
+    align-items: stretch;
+    width: auto;
+  }
+
+  .installActions {
+    justify-content: stretch;
+  }
+
+  .installActions button {
+    flex: 1;
   }
 }
