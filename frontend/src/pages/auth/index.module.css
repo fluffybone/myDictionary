@@ -1,9 +1,14 @@
 .container {
   margin: 0 auto;
-  height: 100dvh;
+  min-height: calc(100dvh - max(1vw, env(safe-area-inset-top)) - max(1vw, env(safe-area-inset-bottom)));
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow: hidden;
+
+  @media (max-width: 640px) {
+    min-height: calc(100dvh - max(12px, env(safe-area-inset-top)) - max(12px, env(safe-area-inset-bottom)));
+  }
 }
 
 .text {
@@ -22,7 +27,7 @@
   align-self: center;
   margin: 24px auto;
   @media (max-width: 640px) {
-    margin-top: 12px auto;
+    margin: 12px auto;
   }
 }
 

@@ -36,7 +36,7 @@ table tr:first-child {
   -webkit-overflow-scrolling: touch;
 
   @media (max-width: 640px) {
-    height: 46dvh;
+    height: 45dvh;
     padding: 1vw 16px;
   }
 }
