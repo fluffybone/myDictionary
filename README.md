@@ -10,3 +10,7 @@
 > docs **http://localhost:8000/docs**
 
 > запуск прод сборки `docker compose -f docker-compose.prod.yml up -d --build`
+
+## Идеи
+
+Идеи для развития проекта лежат в `IDEAS.md`.

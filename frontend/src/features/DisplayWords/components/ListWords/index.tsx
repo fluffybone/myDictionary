@@ -8,6 +8,7 @@ import {
   DeleteOutlined,
   DownOutlined,
   EditOutlined,
+  SoundOutlined,
   UpOutlined,
 } from "@ant-design/icons";
 import {
@@ -15,6 +16,10 @@ import {
   type TWordResponse,
 } from "../../../../store/words/api";
 import { Checkbox } from "../../../../components/Checkbox";
+import {
+  canUseSpeechSynthesis,
+  speakEnglishWord,
+} from "../../../../utils/speech";
 
 type TProps = {
   words: TWordResponse[];
@@ -144,7 +149,22 @@ export const ListWords: FC<TProps> = ({
                   })
                 }
               >
-                <td>
+                <td className={classes.actionTd}>
+                  {mode === "show" && (
+                    <button
+                      className={classes.soundButton}
+                      type="button"
+                      disabled={!canUseSpeechSynthesis()}
+                      aria-label={`Воспроизвести ${word.orig_word}`}
+                      title="Воспроизвести"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        speakEnglishWord(word.orig_word);
+                      }}
+                    >
+                      <SoundOutlined />
+                    </button>
+                  )}
                   {mode === "delete" && (
                     <Checkbox
                       className={classes.checkbox}

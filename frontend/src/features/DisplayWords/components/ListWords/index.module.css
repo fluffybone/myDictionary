@@ -15,6 +15,39 @@ table tr:first-child {
   min-width: 100px;
 }
 
+.actionTd {
+  min-width: 36px;
+  text-align: center;
+}
+
+.soundButton {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  color: var(--secondary);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.soundButton span svg {
+  width: 22px;
+  height: 22px;
+}
+
+.soundButton:hover:not(:disabled) {
+  color: var(--primary);
+  transform: scale(1.08);
+}
+
+.soundButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .descriptionTd {
   min-width: 240px;
   width: 100%;
