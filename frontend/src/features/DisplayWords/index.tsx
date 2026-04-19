@@ -10,6 +10,8 @@ import {
 import { getErrorText } from "../../store/utils/getErrorText";
 import { ListWords } from "./components/ListWords";
 import { useAppDispatch } from "../../store/utils/useAppDispatch";
+import { SoundOutlined } from "@ant-design/icons";
+import { canUseSpeechSynthesis, speakEnglishWord } from "../../utils/speech";
 
 type TProps = {
   words: TWordResponse[];
@@ -38,8 +40,13 @@ export const DisplayWords: FC<TProps> = ({ words, isOpenDefaultWordList }) => {
   const [error, setError] = useState<null | string>(null);
   const [learningWords, setLearningWords] = useState<TWordResponse[]>([]);
   const [isInvalidateCacheWord, setIsInvalidateCacheWord] = useState(false)
+  const [isOrigWordTouched, setIsOrigWordTouched] = useState(false);
 
   const dispatch = useAppDispatch()
+  const canPlayWord =
+    isOrigWordTouched &&
+    wordForm.origWord.trim().length > 0 &&
+    canUseSpeechSynthesis();
 
   const handleCreateWord = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -53,6 +60,7 @@ export const DisplayWords: FC<TProps> = ({ words, isOpenDefaultWordList }) => {
     if ("data" in response && response.data) {
       setLearningWords([...learningWords, response.data]);
       setWordForm({ origWord: "", translateWord: "", description: "" });
+      setIsOrigWordTouched(false);
       setIsInvalidateCacheWord(true)
     }
     if ("error" in response) {
@@ -76,6 +84,7 @@ export const DisplayWords: FC<TProps> = ({ words, isOpenDefaultWordList }) => {
 
     if ("data" in response && response.data) {
       setWordForm({ origWord: "", translateWord: "", description: "" });
+      setIsOrigWordTouched(false);
       setIsInvalidateCacheWord(true)
     }
     if ("error" in response) {
@@ -111,24 +120,43 @@ useEffect(()=>{
           className={classes.form}
         >
           <div className={classes.inputContainer}>
-            <input
-              className={error && error.includes("Слово") ? "error" : undefined}
-              placeholder="Новое слово"
-              id="origWord"
-              name="origWord"
-              autoFocus={!!wordForm?.wordId}
-              type="text"
-              required
-              onFocus={(event) => !!wordForm?.wordId && event.target.focus()}
-              value={wordForm.origWord}
-              onChange={(e) => {
-                setError(null);
-                setWordForm((prev) => ({
-                  ...prev,
-                  origWord: e.target.value,
-                }));
-              }}
-            />
+            <div className={classes.wordInputWrapper}>
+              <input
+                className={
+                  error && error.includes("Слово") ? "error" : undefined
+                }
+                placeholder="Новое слово"
+                id="origWord"
+                name="origWord"
+                autoFocus={!!wordForm?.wordId}
+                type="text"
+                required
+                onFocus={(event) => !!wordForm?.wordId && event.target.focus()}
+                onBlur={() => {
+                  setIsOrigWordTouched(wordForm.origWord.trim().length > 0);
+                }}
+                value={wordForm.origWord}
+                onChange={(e) => {
+                  setError(null);
+                  setIsOrigWordTouched(false);
+                  setWordForm((prev) => ({
+                    ...prev,
+                    origWord: e.target.value,
+                  }));
+                }}
+              />
+              {canPlayWord && (
+                <button
+                  className={classes.soundButton}
+                  type="button"
+                  aria-label="Воспроизвести английское слово"
+                  title="Воспроизвести"
+                  onClick={() => speakEnglishWord(wordForm.origWord)}
+                >
+                  <SoundOutlined />
+                </button>
+              )}
+            </div>
             <input
               className={
                 error && error.includes("Перевод") ? "error" : undefined
@@ -162,15 +190,17 @@ useEffect(()=>{
             }
             className={classes.textarea}
           />
-          <button
-            className={clsx("btn btn-secondary", classes.button)}
-            type="submit"
-            disabled={isAddWordLoading || isUpdateWordLoading}
-          >
-            {mode === "edit" && wordForm.wordId
-              ? "Сохранить изменения"
-              : "Записать"}
-          </button>
+          <div className={classes.formActions}>
+            <button
+              className={clsx("btn btn-secondary", classes.button)}
+              type="submit"
+              disabled={isAddWordLoading || isUpdateWordLoading}
+            >
+              {mode === "edit" && wordForm.wordId
+                ? "Сохранить изменения"
+                : "Записать"}
+            </button>
+          </div>
         </form>
       )}
       <ListWords
