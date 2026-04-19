@@ -9,12 +9,14 @@
     linear-gradient(180deg, #f4f4f2 0%, #eaeaea 100%);
   background-attachment: fixed;
   background-size: cover;
-  padding: max(1vw, env(safe-area-inset-top)) 8vw
-    max(1vw, env(safe-area-inset-bottom));
+  padding: max(1vw, env(safe-area-inset-top)) 8vw max(1vw, env(safe-area-inset-bottom));
+
+  @media (max-width: 1200px) {
+    padding: max(1vw, env(safe-area-inset-top)) 4vw max(1vw, env(safe-area-inset-bottom));
+  }
 
   @media (max-width: 640px) {
-    padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right))
-      max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
   }
 }
 
