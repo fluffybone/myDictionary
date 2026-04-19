@@ -13,6 +13,8 @@ if (rootNode === null) {
 const store = setupStore();
 const root = createRoot(rootNode);
 
+// Service worker registration is intentionally disabled while debugging mobile loading.
+
 root.render(
   <>
     <ReduxProvider store={store}>
