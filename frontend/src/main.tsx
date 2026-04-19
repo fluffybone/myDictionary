@@ -13,22 +13,6 @@ if (rootNode === null) {
 const store = setupStore();
 const root = createRoot(rootNode);
 
-const registerServiceWorker = async () => {
-  if ("serviceWorker" in navigator) {
-    try {
-      await navigator.serviceWorker.register("/sw.js", {
-        updateViaCache: "none",
-      });
-    } catch (error) {
-      console.error("Service Worker registration failed:", error);
-    }
-  }
-};
-
-if (import.meta.env.PROD) {
-  registerServiceWorker();
-}
-
 root.render(
   <>
     <ReduxProvider store={store}>
