@@ -1,23 +1,25 @@
 @font-face {
   font-family: "SnBold";
   src: url("/fonts/SNPro-Bold.ttf") format("truetype");
-  font-weight: bold;
+  font-weight: 700;
   font-style: normal;
-  font-display: optional;
+  font-display: swap;
 }
 
 @font-face {
   font-family: "SnRegular";
   src: url("/fonts/SNPro-Regular.ttf") format("truetype");
-  font-display: optional;
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
   font-family: "SnMedium";
-  font-weight: bold;
-  font-style: italic;
   src: url("/fonts/SNPro-Medium.ttf") format("truetype");
-  font-display: optional;
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
 }
 
 :root {
