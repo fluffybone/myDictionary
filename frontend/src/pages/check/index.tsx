@@ -170,6 +170,7 @@ export const Check = () => {
                             ? "error"
                             : undefined
                         }
+                        placeholder="Ваш ответ"
                         required
                         name={word[key]}
                         onChange={(value) => {
