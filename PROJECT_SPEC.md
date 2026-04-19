@@ -129,7 +129,7 @@ Style conventions:
 - Reuse global button classes: `btn`, `btn-primary`, `btn-secondary`, `btn-small`, `btn-transparent`.
 - Use CSS modules for feature/page-specific layout.
 - Existing font families are `SnRegular`, `SnMedium`, `SnBold`.
-- PWA is intentionally minimal: manifest + network-only service worker, no asset/API caching.
+- PWA is intentionally minimal: manifest + service worker that caches only app icons.
 
 ## API Notes
 
@@ -160,7 +160,8 @@ Current policy:
 - Manifest lives at `frontend/public/manifest.json`.
 - Icons live in `frontend/public`: `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`.
 - Service worker lives at `frontend/public/sw.js`.
-- Service worker must stay network-only: no precache, no runtime cache, no API cache.
+- Service worker must not intercept pages, JS/CSS, manifest, `sw.js`, or API requests.
+- Service worker may cache only app icons: `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`.
 - `navigator.serviceWorker` registration should remain production-only in `frontend/src/main.tsx`.
 - If install UI is added later, keep it separate from the service worker and test mobile/desktop before deploy.
 
