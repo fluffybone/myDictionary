@@ -32,11 +32,11 @@ table tr:first-child {
   max-width: 99vw;
   margin: 0px auto;
   overflow: auto;
-  height: 54dvh;
+  height: 56dvh;
   -webkit-overflow-scrolling: touch;
 
   @media (max-width: 640px) {
-    height: 42dvh;
+    height: 46dvh;
     padding: 1vw 16px;
   }
 }
