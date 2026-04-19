@@ -1,6 +1,6 @@
-const CACHE_NAME = "wordeater-v3";
+const CACHE_NAME = "wordeater-v4";
 
-const PRECACHE_URLS = [
+const ICON_URLS = [
   "/icon-192.png",
   "/icon-512.png",
   "/apple-touch-icon.png",
@@ -10,7 +10,7 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(CACHE_NAME)
-      .then((cache) => cache.addAll(PRECACHE_URLS))
+      .then((cache) => cache.addAll(ICON_URLS))
       .then(() => self.skipWaiting()),
   );
 });
@@ -37,18 +37,16 @@ self.addEventListener("fetch", (event) => {
   if (
     request.method !== "GET" ||
     url.origin !== self.location.origin ||
-    url.pathname.startsWith("/api/") ||
-    url.pathname === "/sw.js" ||
-    url.pathname === "/manifest.json" ||
-    request.mode === "navigate"
+    !ICON_URLS.includes(url.pathname)
   ) {
     return;
   }
 
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
-      const networkResponse = fetch(request)
-        .then((response) => {
+      return (
+        cachedResponse ||
+        fetch(request).then((response) => {
           if (response.ok) {
             const responseClone = response.clone();
             caches.open(CACHE_NAME).then((cache) => {
@@ -58,9 +56,7 @@ self.addEventListener("fetch", (event) => {
 
           return response;
         })
-        .catch(() => cachedResponse);
-
-      return cachedResponse || networkResponse;
+      );
     }),
   );
 });

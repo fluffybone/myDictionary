@@ -14,27 +14,13 @@ const store = setupStore();
 const root = createRoot(rootNode);
 
 const registerServiceWorker = async () => {
-  if ('serviceWorker' in navigator) {
+  if ("serviceWorker" in navigator) {
     try {
-      const registration = await navigator.serviceWorker.register('/sw.js', {
+      await navigator.serviceWorker.register("/sw.js", {
         updateViaCache: "none",
       });
-
-      registration.addEventListener('updatefound', () => {
-        const newWorker = registration.installing;
-        if (newWorker) {
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              if (confirm('Доступна новая версия приложения. Обновить?')) {
-                window.location.reload();
-              }
-            }
-          });
-        }
-      });
-      
     } catch (error) {
-      console.error('❌ Service Worker registration failed:', error);
+      console.error("Service Worker registration failed:", error);
     }
   }
 };
