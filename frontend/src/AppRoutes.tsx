@@ -1,10 +1,15 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { Layout } from "./features/Layout";
 import { AuthPage } from "./pages/auth";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "./shared";
-import { Dictionary } from "./pages/dictionary";
 import { useGetMeQuery } from "./store/authorization/api";
+
+const Dictionary = lazy(() =>
+  import("./pages/dictionary").then((module) => ({
+    default: module.Dictionary,
+  })),
+);
 
 export const AppRoutes = () => {
   const { data: authorizedUser, error } = useGetMeQuery();
@@ -28,7 +33,14 @@ export const AppRoutes = () => {
       </Route>
       {authorizedUser && (
         <Route element={<Layout />}>
-          <Route element={<Dictionary />} path="/" />
+          <Route
+            element={
+              <Suspense fallback={null}>
+                <Dictionary />
+              </Suspense>
+            }
+            path="/"
+          />
         </Route>
       )}
     </Routes>
