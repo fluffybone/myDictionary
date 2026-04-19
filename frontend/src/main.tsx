@@ -16,7 +16,9 @@ const root = createRoot(rootNode);
 const registerServiceWorker = async () => {
   if ('serviceWorker' in navigator) {
     try {
-      const registration = await navigator.serviceWorker.register('/sw.js');
+      const registration = await navigator.serviceWorker.register('/sw.js', {
+        updateViaCache: "none",
+      });
 
       registration.addEventListener('updatefound', () => {
         const newWorker = registration.installing;

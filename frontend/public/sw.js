@@ -1,9 +1,6 @@
-const CACHE_NAME = "wordeater-v2";
-const APP_SHELL_URL = "/index.html";
+const CACHE_NAME = "wordeater-v3";
 
 const PRECACHE_URLS = [
-  "/",
-  APP_SHELL_URL,
   "/icon-192.png",
   "/icon-512.png",
   "/apple-touch-icon.png",
@@ -42,15 +39,9 @@ self.addEventListener("fetch", (event) => {
     url.origin !== self.location.origin ||
     url.pathname.startsWith("/api/") ||
     url.pathname === "/sw.js" ||
-    url.pathname === "/manifest.json"
+    url.pathname === "/manifest.json" ||
+    request.mode === "navigate"
   ) {
-    return;
-  }
-
-  if (request.mode === "navigate") {
-    event.respondWith(
-      fetch(request).catch(() => caches.match(APP_SHELL_URL)),
-    );
     return;
   }
 

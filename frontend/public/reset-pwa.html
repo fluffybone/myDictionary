@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Сброс приложения</title>
+    <style>
+      body {
+        display: grid;
+        min-height: 100vh;
+        margin: 0;
+        place-items: center;
+        background: #f2edeb;
+        color: #241915;
+        font-family: system-ui, sans-serif;
+      }
+
+      main {
+        width: min(90vw, 420px);
+        padding: 28px;
+        border-radius: 24px;
+        background: #fffaf7;
+        box-shadow: 0 20px 60px rgb(36 25 21 / 14%);
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 24px;
+      }
+
+      p {
+        margin: 0;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Сбрасываю приложение</h1>
+      <p id="status">Удаляю service worker и кеш...</p>
+    </main>
+
+    <script>
+      const statusNode = document.querySelector("#status");
+
+      const resetPwa = async () => {
+        if ("serviceWorker" in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(
+            registrations.map((registration) => registration.unregister()),
+          );
+        }
+
+        if ("caches" in window) {
+          const cacheNames = await caches.keys();
+          await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+        }
+
+        statusNode.textContent = "Готово. Сейчас открою сайт заново.";
+
+        window.setTimeout(() => {
+          window.location.replace("/");
+        }, 1200);
+      };
+
+      resetPwa().catch((error) => {
+        console.error("PWA reset failed:", error);
+        statusNode.textContent =
+          "Не получилось сбросить автоматически. Очисти данные сайта в настройках браузера.";
+      });
+    </script>
+  </body>
+</html>
