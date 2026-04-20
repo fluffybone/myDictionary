@@ -32,13 +32,29 @@ const getEnglishVoice = () => {
   );
 };
 
-export const speakEnglishWord = (word: string) => {
+export const getEnglishSpeechVoices = () => {
+  if (!canUseSpeechSynthesis()) return [];
+
+  return speechSynthesis.getVoices().filter(isEnglishVoice);
+};
+
+const getVoiceByUri = (voiceURI?: string) => {
+  if (!voiceURI) return null;
+
+  return (
+    speechSynthesis
+      .getVoices()
+      .find((voice) => voice.voiceURI === voiceURI) ?? null
+  );
+};
+
+export const speakEnglishWord = (word: string, voiceURI?: string) => {
   const text = word.trim();
 
   if (!text || !canUseSpeechSynthesis()) return;
 
   const utterance = new SpeechSynthesisUtterance(text);
-  const voice = getEnglishVoice();
+  const voice = getVoiceByUri(voiceURI) ?? getEnglishVoice();
 
   utterance.lang = "en-US";
   utterance.voice = voice;

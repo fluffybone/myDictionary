@@ -1,0 +1,97 @@
+.container {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+}
+
+.label {
+  color: var(--main);
+  font-family: var(--font-bold);
+  font-size: var(--text-sm);
+}
+
+.selectWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.select {
+  display: block;
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 48px 12px 16px;
+  font-family: inherit;
+  font-size: var(--text-base);
+  color: var(--main);
+  background-color: var(--background-secondary);
+  border: 2px solid var(--background-secondary);
+  border-radius: var(--element-radius);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.select:hover:not(:disabled):not(.error) {
+  border-color: var(--primary);
+}
+
+.select:focus {
+  border-color: var(--primary);
+}
+
+.select:disabled {
+  color: var(--disabled);
+  background-color: var(--bacground-disabled);
+  border-color: var(--bacground-disabled);
+  cursor: not-allowed;
+}
+
+.select.error {
+  color: var(--error);
+  border-color: var(--error);
+}
+
+.select.error:focus {
+  border-color: var(--error);
+}
+
+.chevron {
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--secondary);
+  border-bottom: 2px solid var(--secondary);
+  pointer-events: none;
+  transform: translateY(-65%) rotate(45deg);
+  transition: border-color 0.2s ease;
+}
+
+.selectWrapper:has(.select:hover:not(:disabled)) .chevron,
+.selectWrapper:has(.select:focus) .chevron {
+  border-color: var(--primary);
+}
+
+.selectWrapper:has(.select:disabled) .chevron {
+  border-color: var(--disabled);
+}
+
+.errorMessage {
+  color: var(--error);
+  font-size: 0.8rem;
+  font-weight: 500;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -2,6 +2,8 @@ import type { FC } from "react";
 import { useEffect, useState } from "react";
 import classes from "./index.module.css";
 import { Outlet } from "react-router-dom";
+import { SpeechSettings } from "../../pages/settings/SpeechSettings";
+import { SpeechSettingsProvider } from "../../hooks/useSpeechSettings";
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -100,33 +102,36 @@ export const Layout: FC = () => {
   };
 
   return (
-    <div className={classes.layout}>
-      {isBannerVisible && (
-        <aside className={classes.installBanner}>
-          <div>
-            <p className={classes.installTitle}>WordEater можно открыть как приложение</p>
-            <p className={classes.installText}>
-              {iosInstallHint === "other" &&
-                "На iPhone установка доступна через Safari: откройте сайт в Safari, нажмите «Поделиться», затем «На экран Домой»."}
-              {iosInstallHint === "safari" &&
-                "Нажмите «Поделиться», затем «На экран Домой»."}
-              {!iosInstallHint &&
-                "Установите сайт на устройство, чтобы запускать его с рабочего стола."}
-            </p>
-          </div>
-          <div className={classes.installActions}>
-            {installPrompt && (
-              <button className="btn btn-primary btn-small" type="button" onClick={handleInstall}>
-                Установить
+    <SpeechSettingsProvider>
+      <div className={classes.layout}>
+        {isBannerVisible && (
+          <aside className={classes.installBanner}>
+            <div>
+              <p className={classes.installTitle}>WordEater можно открыть как приложение</p>
+              <p className={classes.installText}>
+                {iosInstallHint === "other" &&
+                  "На iPhone установка доступна через Safari: откройте сайт в Safari, нажмите «Поделиться», затем «На экран Домой»."}
+                {iosInstallHint === "safari" &&
+                  "Нажмите «Поделиться», затем «На экран Домой»."}
+                {!iosInstallHint &&
+                  "Установите сайт на устройство, чтобы запускать его с рабочего стола."}
+              </p>
+            </div>
+            <div className={classes.installActions}>
+              {installPrompt && (
+                <button className="btn btn-primary btn-small" type="button" onClick={handleInstall}>
+                  Установить
+                </button>
+              )}
+              <button className="btn btn-secondary btn-small" type="button" onClick={handleDismiss}>
+                Позже
               </button>
-            )}
-            <button className="btn btn-secondary btn-small" type="button" onClick={handleDismiss}>
-              Позже
-            </button>
-          </div>
-        </aside>
-      )}
-      <Outlet />
-    </div>
+            </div>
+          </aside>
+        )}
+        <SpeechSettings />
+        <Outlet />
+      </div>
+    </SpeechSettingsProvider>
   );
 };

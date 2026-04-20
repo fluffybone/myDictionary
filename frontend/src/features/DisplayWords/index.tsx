@@ -12,6 +12,7 @@ import { ListWords } from "./components/ListWords";
 import { useAppDispatch } from "../../store/utils/useAppDispatch";
 import { SoundOutlined } from "@ant-design/icons";
 import { canUseSpeechSynthesis, speakEnglishWord } from "../../utils/speech";
+import { useSpeechSettings } from "../../hooks/useSpeechSettings";
 
 type TProps = {
   words: TWordResponse[];
@@ -41,6 +42,7 @@ export const DisplayWords: FC<TProps> = ({ words, isOpenDefaultWordList }) => {
   const [learningWords, setLearningWords] = useState<TWordResponse[]>([]);
   const [isInvalidateCacheWord, setIsInvalidateCacheWord] = useState(false)
   const [isOrigWordTouched, setIsOrigWordTouched] = useState(false);
+  const { selectedVoiceURI } = useSpeechSettings();
 
   const dispatch = useAppDispatch()
   const canPlayWord =
@@ -151,7 +153,9 @@ useEffect(()=>{
                   type="button"
                   aria-label="Воспроизвести английское слово"
                   title="Воспроизвести"
-                  onClick={() => speakEnglishWord(wordForm.origWord)}
+                  onClick={() =>
+                    speakEnglishWord(wordForm.origWord, selectedVoiceURI)
+                  }
                 >
                   <SoundOutlined  size={20}/>
                 </button>
@@ -211,6 +215,7 @@ useEffect(()=>{
         mode={mode}
         setWordForm={setWordForm}
         setIsInvalidateCacheWord={setIsInvalidateCacheWord}
+        selectedVoiceURI={selectedVoiceURI}
       />
     </div>
   );

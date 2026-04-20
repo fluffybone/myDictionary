@@ -27,6 +27,7 @@ type TProps = {
   setShowSection: (show: "all" | "words") => void;
   setMode: (mode: "show" | "delete" | "edit") => void;
   mode: "show" | "delete" | "edit";
+  selectedVoiceURI: string;
   setWordForm: ({
     origWord,
     translateWord,
@@ -47,6 +48,7 @@ export const ListWords: FC<TProps> = ({
   setMode,
   setIsInvalidateCacheWord,
   mode,
+  selectedVoiceURI,
   setWordForm,
 }) => {
   const [selectedIds, setSelectedIds] = useState<TWordResponse["id"][]>([]);
@@ -159,7 +161,7 @@ export const ListWords: FC<TProps> = ({
                         title="Воспроизвести"
                         onClick={(event) => {
                           event.stopPropagation();
-                          speakEnglishWord(word.orig_word);
+                          speakEnglishWord(word.orig_word, selectedVoiceURI);
                         }}
                       >
                       <SoundOutlined />
