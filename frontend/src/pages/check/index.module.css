@@ -4,13 +4,19 @@
 }
 
 .listSelect {
-  width: min(100%, 280px);
+  width: min(100%, 230px);
+
+  @media (max-width: 640px) {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 .block {
   display: flex;
   align-items: anchor-center;
   gap: 16px;
+  width: 230px;
 }
 
 .text {
@@ -152,8 +158,8 @@ table tr:first-child {
 .settings {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
+  flex-wrap: wrap;
 
   @media (max-width: 840px) {
     flex-direction: column;

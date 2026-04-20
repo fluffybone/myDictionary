@@ -21,6 +21,7 @@ import {
   speakEnglishWord,
 } from "../../../../utils/speech";
 import { Pagination } from "../../../../components/Pagination";
+import { formatDate } from "../../../../utils/formatDate";
 
 type TProps = {
   words: TWordResponse[];
@@ -221,6 +222,9 @@ export const ListWords: FC<TProps> = ({
                 <td className={classes.wordTd}>{word.orig_word}</td>
                 <td className={classes.wordTd}>{word.translate_word}</td>
                 <td className={classes.descriptionTd}>{word.description}</td>
+                {!isLearning && (
+                  <td className={classes.dateTd}>{formatDate(word.created_at)}</td>
+                )}
               </tr>
             ))}
           </tbody>
