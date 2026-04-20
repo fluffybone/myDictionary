@@ -3,5 +3,11 @@ import { useGetWordsQuery } from "../../store/words/api";
 
 export const LearningWords = () => {
   const { data: words } = useGetWordsQuery({ isLearning: true });
-  return <>{words && <DisplayWords words={words} isLearning />}</>;
+  return (
+    <>
+      {words && (
+        <DisplayWords words={words.items} isLearning totalWords={words.total} />
+      )}
+    </>
+  );
 };

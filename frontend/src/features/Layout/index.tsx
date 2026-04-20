@@ -2,7 +2,7 @@ import type { FC } from "react";
 import { useEffect, useState } from "react";
 import classes from "./index.module.css";
 import { Outlet } from "react-router-dom";
-import { SpeechSettings } from "../../pages/settings/SpeechSettings";
+import { Settings } from "../../pages/settings/SpeechSettings";
 import { SpeechSettingsProvider } from "../../hooks/useSpeechSettings";
 
 type BeforeInstallPromptEvent = Event & {
@@ -129,7 +129,7 @@ export const Layout: FC = () => {
             </div>
           </aside>
         )}
-        <SpeechSettings />
+        {!window.location.pathname.includes("auth") && <Settings />}
         <Outlet />
       </div>
     </SpeechSettingsProvider>

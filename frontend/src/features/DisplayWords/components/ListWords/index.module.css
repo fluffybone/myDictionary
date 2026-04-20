@@ -76,7 +76,9 @@ table tr:first-child {
   -webkit-overflow-scrolling: touch;
 
   @media (max-width: 640px) {
-    height: 45dvh;
+    height: auto;
+    min-height: 140px;
+    max-height: 36vh;
     padding: 1vw 16px;
   }
 }
@@ -108,6 +110,7 @@ table tr:first-child {
   height: 84dvh;
 
   @media (max-width: 640px) {
+    max-height: none;
     height: 70dvh;
   }
 }

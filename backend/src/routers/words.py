@@ -12,6 +12,7 @@ from src.models.words import Word as WordDb
 from src.schemas.words import (
     Word,
     WordCreate,
+    WordsPage,
     DeleteWordsRequest,
     WordUpdate,
     BulkUpdateLearningStatusRequest,
@@ -65,7 +66,7 @@ async def create_word(
     return db_word
 
 
-@router.get("/learning", response_model=List[Word])
+@router.get("/learning", response_model=WordsPage)
 async def read_my_words(
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[UserDb, Depends(auth.get_current_user)],
@@ -77,6 +78,9 @@ async def read_my_words(
     limit: int = Query(
         100, ge=1, le=1000, description="Максимальное количество записей"
     ),
+    random: bool = Query(
+        False, description="Вернуть случайные слова после применения фильтров"
+    ),
     date_from: Optional[date] = Query(
         None, description="Начальная дата создания слова в формате YYYY-MM-DD"
     ),
@@ -84,27 +88,38 @@ async def read_my_words(
         None, description="Конечная дата создания слова в формате YYYY-MM-DD"
     ),
 ):
-    query = select(WordDb).where(WordDb.owner_id == current_user.id)
+    filters = [WordDb.owner_id == current_user.id]
 
     if is_learning is not None:
-        query = query.where(WordDb.is_learning == is_learning)
+        filters.append(WordDb.is_learning == is_learning)
 
     if date_from is not None:
-        query = query.where(
+        filters.append(
             WordDb.created_at >= datetime.combine(date_from, time.min)
         )
 
     if date_to is not None:
         next_day = date_to + timedelta(days=1)
-        query = query.where(WordDb.created_at < datetime.combine(next_day, time.min))
+        filters.append(WordDb.created_at < datetime.combine(next_day, time.min))
 
-    query = query.offset(skip).limit(limit)
-    query = query.order_by(WordDb.created_at.desc())
+    total_query = select(func.count()).select_from(WordDb).where(*filters)
+    total_result = await db.execute(total_query)
+    total = total_result.scalar() or 0
+
+    query = (
+        select(WordDb)
+        .where(*filters)
+    )
+
+    if random:
+        query = query.order_by(func.random()).limit(limit)
+    else:
+        query = query.order_by(WordDb.created_at.desc()).offset(skip).limit(limit)
 
     result = await db.execute(query)
     words = result.scalars().all()
 
-    return words
+    return {"items": words, "total": total}
 
 
 @router.delete("/delete", status_code=status.HTTP_204_NO_CONTENT)

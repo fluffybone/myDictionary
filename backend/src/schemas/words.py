@@ -39,6 +39,11 @@ class Word(WordBase):
         from_attributes = True  # Важно для работы с ORM
 
 
+class WordsPage(BaseModel):
+    items: List[Word]
+    total: int
+
+
 class DeleteWordsRequest(BaseModel):
     word_ids: List[int]
 

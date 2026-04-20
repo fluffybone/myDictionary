@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FC } from "react";
+import { useState, type FC } from "react";
 
 import classes from "./index.module.css";
 import { clsx } from "clsx";
@@ -29,7 +29,11 @@ type TProps = {
   setShowSection: (show: "all" | "words") => void;
   setMode: (mode: "show" | "delete" | "edit") => void;
   mode: "show" | "delete" | "edit";
-  pageSize?: number;
+  pagination?: {
+    currentPage: number;
+    onPageChange: (page: number) => void;
+    totalPages: number;
+  };
   selectedVoiceURI: string;
   setWordForm: ({
     origWord,
@@ -43,6 +47,7 @@ type TProps = {
   }) => void;
   setIsInvalidateCacheWord: (isInvalidateCacheWord: boolean) => void;
   isLearning?: boolean;
+  totalWords?: number;
 };
 
 export const ListWords: FC<TProps> = ({
@@ -52,29 +57,16 @@ export const ListWords: FC<TProps> = ({
   setMode,
   setIsInvalidateCacheWord,
   mode,
-  pageSize,
+  pagination,
   selectedVoiceURI,
   setWordForm,
   isLearning,
+  totalWords,
 }) => {
   const [selectedIds, setSelectedIds] = useState<TWordResponse["id"][]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [deleteWords, { isLoading: isDeleteLoading }] =
     useDeleteWordsMutation();
-  const totalPages = pageSize ? Math.ceil(words.length / pageSize) : 1;
-  const visibleWords = useMemo(() => {
-    if (!pageSize) return words;
-
-    const start = (currentPage - 1) * pageSize;
-
-    return words.slice(start, start + pageSize);
-  }, [currentPage, pageSize, words]);
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(Math.max(totalPages, 1));
-    }
-  }, [currentPage, totalPages]);
+  const wordsCount = totalWords ?? words.length;
 
   return (
     <div className={classes.learningWordsContainer}>
@@ -127,7 +119,7 @@ export const ListWords: FC<TProps> = ({
                 const response = await deleteWords({ ids: selectedIds });
                 if ("data" in response) {
                   setMode("show");
-                  setIsInvalidateCacheWord(true)
+                  setIsInvalidateCacheWord(true);
                 }
               }}
             >
@@ -149,7 +141,9 @@ export const ListWords: FC<TProps> = ({
             </>
           )}
         </div>
-        <p>{isLearning ? `${words.length} / 10` : `Всего слов: ${words.length}`}</p>
+        <p>
+          {isLearning ? `${wordsCount} / 10` : `Всего слов: ${wordsCount}`}
+        </p>
       </div>
       <div
         className={clsx(classes.learnWords, {
@@ -158,7 +152,7 @@ export const ListWords: FC<TProps> = ({
       >
         <table>
           <tbody>
-            {visibleWords.map((word) => (
+            {words.map((word) => (
               <tr
                 key={word.id}
                 className={classes.tableTr}
@@ -223,20 +217,22 @@ export const ListWords: FC<TProps> = ({
                 <td className={classes.wordTd}>{word.translate_word}</td>
                 <td className={classes.descriptionTd}>{word.description}</td>
                 {!isLearning && (
-                  <td className={classes.dateTd}>{formatDate(word.created_at)}</td>
+                  <td className={classes.dateTd}>
+                    {formatDate(word.created_at)}
+                  </td>
                 )}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      {pageSize && (
+      {pagination && (
         <Pagination
           className={classes.pagination}
-          currentPage={currentPage}
-          totalPages={totalPages}
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
           onChange={(page) => {
-            setCurrentPage(page);
+            pagination.onPageChange(page);
             setSelectedIds([]);
           }}
         />
