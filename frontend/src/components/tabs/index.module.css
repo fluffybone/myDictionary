@@ -19,8 +19,9 @@
   @media (max-width: 640px) {
     position: absolute;
     top: -66px;
-    left: 22px;
+    left: 16px;
     flex-direction: row;
+    gap: 4px;
   }
 }
 
@@ -30,10 +31,12 @@
   border-color: inherit;
   border: none !important;
   transition: all 0.3s;
+
   svg {
     transition: all 0.3s;
     fill: var(--main);
   }
+
 }
 
 .tabsNav button:hover {

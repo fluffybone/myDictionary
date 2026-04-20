@@ -3,6 +3,10 @@
   text-decoration: underline;
 }
 
+.listSelect {
+  width: min(100%, 280px);
+}
+
 .block {
   display: flex;
   align-items: anchor-center;
@@ -10,8 +14,10 @@
 }
 
 .text {
-  font-size: var(--text-base);
-  margin: 4px;
+  margin: 6px 0;
+  color: var(--main);
+  font-family: var(--font-bold);
+  font-size: var(--text-sm);
 }
 
 .tableContainer {
@@ -97,6 +103,9 @@ table tr:first-child {
   position: absolute !important;
   top: 20px;
   right: 20px;
+  padding: 0;
+  border: 0;
+  background: transparent;
   cursor: pointer;
 }
 
@@ -110,6 +119,7 @@ table tr:first-child {
   column-gap: 12px;
   margin: 20px 0 8px 0;
   justify-content: space-between;
+
   button {
     width: 50%;
   }
@@ -120,8 +130,13 @@ table tr:first-child {
   font-size: var(--text-lg);
 }
 
+.doneButton {
+  width: 100%;
+  margin: 12px 0 8px;
+}
+
 .addedWordBlock {
-  height: 180px;
+  height: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -131,4 +146,12 @@ table tr:first-child {
 .addedWordTitle {
   text-align: center;
   margin: 0;
+}
+
+
+.settings {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }

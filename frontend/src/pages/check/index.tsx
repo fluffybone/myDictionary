@@ -8,10 +8,30 @@ import {
 } from "../../store/words/api";
 import clsx from "clsx";
 import { CloseOutlined } from "@ant-design/icons";
+import { Select } from "../../components/Select";
+
+type TCheckWordsSource = "learning" | "all" | "learned";
+type TSelectedOption = "origWord" | "translateWord";
+type TWordResult = Record<number, { answer: string; correctAnswer: string }>;
+
+const getEmptyMessage = (wordsSource: TCheckWordsSource) => {
+  if (wordsSource === "learned") return "У Вас нет выученных слов";
+  if (wordsSource === "learning") return "Добавьте слова для изучения";
+
+  return "Добавьте слова";
+};
 
 export const Check = () => {
-  const [selectedOption, setSelectedOption] = useState("origWord");
-  const { data: words } = useGetWordsQuery({ isLearning: true });
+  const [selectedOption, setSelectedOption] =
+    useState<TSelectedOption>("origWord");
+  const [wordsSource, setWordsSource] = useState<TCheckWordsSource>("learning");
+  const {
+    data: words,
+    isError,
+    isLoading,
+  } = useGetWordsQuery({
+    isLearning: wordsSource === "all" ? undefined : wordsSource === "learning",
+  });
   const [isViewResult, setIsViewResult] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isWin, setIsWin] = useState(false);
@@ -19,10 +39,7 @@ export const Check = () => {
 
   const [addedWordsInDictionary] = useUpdateLearningStatusWordMutation();
 
-  const [wordResult, setWordResult] = useState<Record<
-    string,
-    { answer: string; correctAnswer: string }
-  > | null>(null);
+  const [wordResult, setWordResult] = useState<TWordResult>({});
 
   useEffect(() => {
     if (words) {
@@ -31,175 +48,225 @@ export const Check = () => {
     }
   }, [words]);
 
-  if (!shuffledWords) {
-    return;
-  }
+  useEffect(() => {
+    setWordResult({});
+    setIsViewResult(false);
+    setHasError(false);
+    setIsWin(false);
+  }, [wordsSource]);
 
-  const hadleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsWin(false);
     setIsViewResult(true);
-    if (!wordResult) return;
-    let hasErrorInSubmit = false;
-    for (const [, value] of Object.entries(wordResult)) {
-      if (
-        value.answer.trimEnd().toLocaleLowerCase() !==
-        value.correctAnswer.trimEnd().toLocaleLowerCase()
-      ) {
-        hasErrorInSubmit = true;
-        setHasError(true);
-      }
-    }
+
+    const hasErrorInSubmit = shuffledWords?.some((word) => {
+      const result = wordResult[word.id];
+
+      return (
+        !result ||
+        result.answer.trim().toLocaleLowerCase() !==
+        result.correctAnswer.trim().toLocaleLowerCase()
+      );
+    });
+
+    setHasError(Boolean(hasErrorInSubmit));
+
     if (!hasErrorInSubmit) {
       setIsWin(true);
     }
   };
 
-  if (!words) {
+  if (isLoading || !shuffledWords) {
+    return <h2>Загружаем слова...</h2>;
+  }
+
+  if (isError || !words) {
     return <h2>Не удалось загрузить слова</h2>;
   }
 
-  if (words?.length === 0) {
+  const isEmptyWords = words.length === 0;
+  const canMoveWordsToLearned = wordsSource === "learning";
+  const isAnswerError = (word: TWordResponse) => {
+    if (!isViewResult || !hasError) return false;
+
+    const result = wordResult[word.id];
+
     return (
-      <div className={classes.addedWordBlock}>
-        <h3 className={classes.addedWordTitle}>Добавьте слова для изучения</h3>
-      </div>
+      !result ||
+      result.answer.trim().toLocaleLowerCase() !==
+        result.correctAnswer.trim().toLocaleLowerCase()
     );
-  }
+  };
 
   return (
     <div>
-      <h3>
-        Проверить себя по списку:
-        <span className={classes.list}>Сейчас учу</span>
-      </h3>
-      <div className={classes.container}>
-        <p className={classes.text}>Пишу</p>
-        <div className={classes.block}>
-          <RadioGroup
-            className={classes.radio}
-            name="options"
-            value={selectedOption}
-            onChange={(value) => {
-              setSelectedOption(value);
-              setWordResult(null);
-              setIsViewResult(false);
-            }}
-            options={[
-              { value: "origWord", label: "Слово" },
-              { value: "translateWord", label: "Перевод слова" },
-            ]}
-            horizontal
-          />
-        </div>
-      </div>
-      <form
-        onSubmit={hadleSubmit}
-        className={classes.form}
-        key={selectedOption + isWin}
-      >
-        {isWin && (
-          <div className={classes.blockWin}>
-            <h3>Правильно! 🎉🎉🎉 </h3>
-            <div
-              className={clsx(classes.close)}
-              onClick={() => {
-                setIsWin(false);
-                setWordResult(null);
+      <div className={classes.settings}>
+        <div className={classes.container}>
+          <p className={classes.text}>Пишу</p>
+          <div className={classes.block}>
+            <RadioGroup
+              className={classes.radio}
+              name="options"
+              value={selectedOption}
+              onChange={(value) => {
+                setSelectedOption(value as TSelectedOption);
+                setWordResult({});
+                setIsViewResult(false);
               }}
-            >
-              <CloseOutlined size={24} />
-            </div>
-            <div className={classes.writeBlock}>Записать выученные слова?</div>
-            <div className={classes.buttonActionAfterTest}>
+              options={[
+                { value: "origWord", label: "Слово" },
+                { value: "translateWord", label: "Перевод слова" },
+              ]}
+              horizontal
+            />
+          </div>
+        </div>
+        <Select
+          className={classes.listSelect}
+          name="wordsSource"
+          value={wordsSource}
+          label="Список"
+          size="small"
+          onChange={(event) => {
+            setWordsSource(event.target.value as TCheckWordsSource);
+          }}
+          options={[
+            { value: "learning", label: "Сейчас учу" },
+            { value: "learned", label: "По выученным" },
+            { value: "all", label: "Все слова" },
+          ]}
+        />
+      </div>
+      {isEmptyWords && (
+        <div className={classes.addedWordBlock}>
+          <h3 className={classes.addedWordTitle}>
+            {getEmptyMessage(wordsSource)}
+          </h3>
+        </div>
+      )}
+      {!isEmptyWords && (
+        <form
+          onSubmit={handleSubmit}
+          className={classes.form}
+          key={`${selectedOption}-${wordsSource}-${isWin}`}
+        >
+          {isWin && (
+            <div className={classes.blockWin}>
+              <h3>Правильно! 🎉🎉🎉 </h3>
               <button
                 type="button"
+                className={clsx(classes.close)}
                 onClick={() => {
                   setIsWin(false);
-                  setWordResult(null);
+                  setWordResult({});
                 }}
-                className={clsx("btn btn-secondary btn-small")}
               >
-                Пока нет
+                <CloseOutlined size={24} />
               </button>
-              <button
-                type="button"
-                onClick={async () => {
-                  const response = await addedWordsInDictionary({
-                    wordsIds: words.map((item) => item.id),
-                  });
-                  if (response) {
+              <div className={classes.writeBlock}>
+                {canMoveWordsToLearned
+                  ? "Записать выученные слова?"
+                  : "Тренировка завершена"}
+              </div>
+              {canMoveWordsToLearned ? (
+                <div className={classes.buttonActionAfterTest}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsWin(false);
+                      setWordResult({});
+                    }}
+                    className={clsx("btn btn-secondary btn-small")}
+                  >
+                    Пока нет
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const response = await addedWordsInDictionary({
+                        wordsIds: words.map((item) => item.id),
+                      });
+                      if (response) {
+                        setIsWin(false);
+                        setWordResult({});
+                      }
+                    }}
+                    className={clsx("btn btn-primary btn-small")}
+                  >
+                    Да
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
                     setIsWin(false);
-                    setWordResult(null);
-                  }
-                }}
-                className={clsx("btn btn-primary btn-small")}
-              >
-                Да
-              </button>
+                    setWordResult({});
+                  }}
+                  className={clsx(
+                    "btn btn-primary btn-small",
+                    classes.doneButton,
+                  )}
+                >
+                  Готово
+                </button>
+              )}
             </div>
-          </div>
-        )}
-        <div
-          className={clsx(classes.tableContainer, { [classes.isWin]: isWin })}
-        >
-          <table className={classes.table}>
-            <tbody>
-              {shuffledWords.map((word) => {
-                const key =
-                  selectedOption === "origWord"
-                    ? "orig_word"
-                    : "translate_word";
-
-                const keyRightWord =
-                  selectedOption === "origWord"
-                    ? "translate_word"
-                    : "orig_word";
-
-                return (
-                  <tr key={word.id} className={classes.tableTr}>
-                    <td className={classes.wordTd}>{word[key]}</td>
-                    <td className={classes.wordTd}>
-                      <input
-                        className={
-                          isViewResult &&
-                          wordResult &&
-                          hasError &&
-                          wordResult[word[key]].answer !==
-                            wordResult[word[key]].correctAnswer
-                            ? "error"
-                            : undefined
-                        }
-                        placeholder="Ваш ответ"
-                        required
-                        name={word[key]}
-                        onChange={(value) => {
-                          setHasError(false);
-                          setWordResult({
-                            ...wordResult,
-                            [word[key]]: {
-                              answer: value.target.value,
-                              correctAnswer: word[keyRightWord],
-                            },
-                          });
-                        }}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-        {!isWin && (
-          <button
-            className={clsx(classes.button, "btn btn-secondary")}
-            type="submit"
+          )}
+          <div
+            className={clsx(classes.tableContainer, { [classes.isWin]: isWin })}
           >
-            Отправить
-          </button>
-        )}
-      </form>
+            <table className={classes.table}>
+              <tbody>
+                {shuffledWords.map((word) => {
+                  const key =
+                    selectedOption === "origWord"
+                      ? "orig_word"
+                      : "translate_word";
+
+                  const keyRightWord =
+                    selectedOption === "origWord"
+                      ? "translate_word"
+                      : "orig_word";
+
+                  return (
+                    <tr key={word.id} className={classes.tableTr}>
+                      <td className={classes.wordTd}>{word[key]}</td>
+                      <td className={classes.wordTd}>
+                        <input
+                          className={isAnswerError(word) ? "error" : undefined}
+                          placeholder="Ваш ответ"
+                          required
+                          name={word[key]}
+                          onChange={(event) => {
+                            setHasError(false);
+                            setWordResult((prev) => ({
+                              ...prev,
+                              [word.id]: {
+                                answer: event.target.value,
+                                correctAnswer: word[keyRightWord],
+                              },
+                            }));
+                          }}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          {!isWin && (
+            <button
+              className={clsx(classes.button, "btn btn-secondary")}
+              type="submit"
+            >
+              Отправить
+            </button>
+          )}
+        </form>
+      )}
     </div>
   );
 };
