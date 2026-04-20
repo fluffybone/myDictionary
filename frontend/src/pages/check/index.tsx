@@ -10,7 +10,7 @@ import clsx from "clsx";
 import { CloseOutlined } from "@ant-design/icons";
 import { Select } from "../../components/Select";
 
-type TCheckWordsSource = "learning" | "all" | "learned";
+type TCheckWordsSource = "learning" | "learned";
 type TSelectedOption = "origWord" | "translateWord";
 type TWordResult = Record<number, { answer: string; correctAnswer: string }>;
 
@@ -30,7 +30,7 @@ export const Check = () => {
     isError,
     isLoading,
   } = useGetWordsQuery({
-    isLearning: wordsSource === "all" ? undefined : wordsSource === "learning",
+    isLearning: wordsSource === "learning",
   });
   const [isViewResult, setIsViewResult] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -95,7 +95,7 @@ export const Check = () => {
     return (
       !result ||
       result.answer.trim().toLocaleLowerCase() !==
-        result.correctAnswer.trim().toLocaleLowerCase()
+      result.correctAnswer.trim().toLocaleLowerCase()
     );
   };
 
@@ -134,7 +134,6 @@ export const Check = () => {
           options={[
             { value: "learning", label: "Сейчас учу" },
             { value: "learned", label: "По выученным" },
-            { value: "all", label: "Все слова" },
           ]}
         />
       </div>
@@ -235,6 +234,7 @@ export const Check = () => {
                       <td className={classes.wordTd}>{word[key]}</td>
                       <td className={classes.wordTd}>
                         <input
+                          autoComplete="off"
                           className={isAnswerError(word) ? "error" : undefined}
                           placeholder="Ваш ответ"
                           required

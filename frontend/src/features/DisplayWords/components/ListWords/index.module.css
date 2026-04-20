@@ -101,7 +101,7 @@ table tr:first-child {
   height: 84dvh;
 
   @media (max-width: 640px) {
-    height: 76dvh;
+    height: 70dvh;
   }
 }
 
@@ -110,4 +110,8 @@ table tr:first-child {
   height: 20px;
   text-align: center;
   display: block;
+}
+
+.pagination {
+  margin-top: 8px;
 }
