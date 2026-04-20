@@ -15,20 +15,35 @@ export type TWordResponse = {
   translate_word: string;
 };
 
+export type TWordsResponse = {
+  items: TWordResponse[];
+  total: number;
+};
+
 export const wordsApi = createApi({
   baseQuery: customBaseQuery,
   tagTypes: ["LEARNING_WORDS"],
   endpoints: (builder) => ({
     getWords: builder.query<
-      TWordResponse[],
-      { dateFrom?: string; dateTo?: string; isLearning?: boolean }
+      TWordsResponse,
+      {
+        dateFrom?: string;
+        dateTo?: string;
+        isLearning?: boolean;
+        limit?: number;
+        random?: boolean;
+        skip?: number;
+      }
     >({
-      query: ({ dateFrom, dateTo, isLearning }) => ({
+      query: ({ dateFrom, dateTo, isLearning, limit, random, skip }) => ({
         url: "/api/words/learning",
         params: {
           ...(isLearning == undefined ? {} : { is_learning: isLearning }),
           ...(dateFrom ? { date_from: dateFrom } : {}),
           ...(dateTo ? { date_to: dateTo } : {}),
+          ...(limit !== undefined ? { limit } : {}),
+          ...(random !== undefined ? { random } : {}),
+          ...(skip !== undefined ? { skip } : {}),
         },
       }),
       providesTags: ["LEARNING_WORDS"],

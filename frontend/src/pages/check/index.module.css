@@ -164,5 +164,6 @@ table tr:first-child {
   @media (max-width: 840px) {
     flex-direction: column;
     align-items: start;
+    gap: 6px;
   }
 }

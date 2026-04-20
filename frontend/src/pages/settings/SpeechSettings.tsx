@@ -5,7 +5,7 @@ import { Select } from "../../components/Select";
 import { useSpeechSettings } from "../../hooks/useSpeechSettings";
 import classes from "./SpeechSettings.module.css";
 
-export const SpeechSettings = () => {
+export const Settings = () => {
     const [isOpen, setIsOpen] = useState(false);
     const { englishVoices, selectedVoiceURI, setSelectedVoiceURI } =
         useSpeechSettings();

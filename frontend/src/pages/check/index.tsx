@@ -46,6 +46,8 @@ export const Check = () => {
     dateFrom: wordsSource === "learned" ? dateRange.dateFrom : undefined,
     dateTo: wordsSource === "learned" ? dateRange.dateTo : undefined,
     isLearning: wordsSource === "learning",
+    limit: 100,
+    random: true,
   });
   const [isViewResult, setIsViewResult] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -59,7 +61,7 @@ export const Check = () => {
   useEffect(() => {
     if (words) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setShuffledWords([...words].sort(() => Math.random() - 0.5));
+      setShuffledWords([...words.items].sort(() => Math.random() - 0.5));
     }
   }, [words]);
 
@@ -100,7 +102,7 @@ export const Check = () => {
     return <h2>Не удалось загрузить слова</h2>;
   }
 
-  const isEmptyWords = words.length === 0;
+  const isEmptyWords = words.items.length === 0;
   const canMoveWordsToLearned = wordsSource === "learning";
   const isAnswerError = (word: TWordResponse) => {
     if (!isViewResult || !hasError) return false;
@@ -211,7 +213,7 @@ export const Check = () => {
                     type="button"
                     onClick={async () => {
                       const response = await addedWordsInDictionary({
-                        wordsIds: words.map((item) => item.id),
+                        wordsIds: words.items.map((item) => item.id),
                       });
                       if (response) {
                         setIsWin(false);

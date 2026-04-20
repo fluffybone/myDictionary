@@ -15,17 +15,23 @@ import { canUseSpeechSynthesis, speakEnglishWord } from "../../utils/speech";
 import { useSpeechSettings } from "../../hooks/useSpeechSettings";
 
 type TProps = {
-  words: TWordResponse[];
-  isOpenDefaultWordList?: boolean;
-  listPageSize?: number;
   isLearning?: boolean;
+  isOpenDefaultWordList?: boolean;
+  pagination?: {
+    currentPage: number;
+    onPageChange: (page: number) => void;
+    totalPages: number;
+  };
+  totalWords?: number;
+  words: TWordResponse[];
 };
 
 export const DisplayWords: FC<TProps> = ({
   words,
   isOpenDefaultWordList,
-  listPageSize,
-  isLearning
+  isLearning,
+  pagination,
+  totalWords,
 }) => {
   const [showSection, setShowSection] = useState<"all" | "words">(
     isOpenDefaultWordList ? "words" : "all",
@@ -47,11 +53,11 @@ export const DisplayWords: FC<TProps> = ({
 
   const [error, setError] = useState<null | string>(null);
   const [learningWords, setLearningWords] = useState<TWordResponse[]>([]);
-  const [isInvalidateCacheWord, setIsInvalidateCacheWord] = useState(false)
+  const [isInvalidateCacheWord, setIsInvalidateCacheWord] = useState(false);
   const [isOrigWordTouched, setIsOrigWordTouched] = useState(false);
   const { selectedVoiceURI } = useSpeechSettings();
 
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const canPlayWord =
     isOrigWordTouched &&
     wordForm.origWord.trim().length > 0 &&
@@ -70,7 +76,7 @@ export const DisplayWords: FC<TProps> = ({
       setLearningWords([...learningWords, response.data]);
       setWordForm({ origWord: "", translateWord: "", description: "" });
       setIsOrigWordTouched(false);
-      setIsInvalidateCacheWord(true)
+      setIsInvalidateCacheWord(true);
     }
     if ("error" in response) {
       const responseError = getErrorText({
@@ -94,7 +100,7 @@ export const DisplayWords: FC<TProps> = ({
     if ("data" in response && response.data) {
       setWordForm({ origWord: "", translateWord: "", description: "" });
       setIsOrigWordTouched(false);
-      setIsInvalidateCacheWord(true)
+      setIsInvalidateCacheWord(true);
     }
     if ("error" in response) {
       const responseError = getErrorText({
@@ -105,14 +111,12 @@ export const DisplayWords: FC<TProps> = ({
   };
 
   useEffect(() => {
-
     return () => {
       if (isInvalidateCacheWord) {
-        dispatch(wordsApi.util.invalidateTags(['LEARNING_WORDS']));
+        dispatch(wordsApi.util.invalidateTags(["LEARNING_WORDS"]));
       }
-    }
-
-  }, [isInvalidateCacheWord])
+    };
+  }, [dispatch, isInvalidateCacheWord]);
 
   useEffect(() => {
     if (words) {
@@ -221,10 +225,11 @@ export const DisplayWords: FC<TProps> = ({
         setMode={setMode}
         isLearning={isLearning}
         mode={mode}
-        pageSize={listPageSize}
+        pagination={pagination}
         setWordForm={setWordForm}
         setIsInvalidateCacheWord={setIsInvalidateCacheWord}
         selectedVoiceURI={selectedVoiceURI}
+        totalWords={totalWords}
       />
     </div>
   );

@@ -63,7 +63,7 @@
   .settings {
     position: fixed;
     left: max(12px, env(safe-area-inset-left));
-    bottom: calc(max(12px, env(safe-area-inset-bottom)) + 32px);
+    bottom: calc(max(12px, env(safe-area-inset-bottom)) + 12px);
   }
 
   .panel {
