@@ -153,7 +153,7 @@ useEffect(()=>{
                   title="Воспроизвести"
                   onClick={() => speakEnglishWord(wordForm.origWord)}
                 >
-                  <SoundOutlined />
+                  <SoundOutlined  size={20}/>
                 </button>
               )}
             </div>

@@ -34,8 +34,8 @@ table tr:first-child {
 }
 
 .soundButton span svg {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
 }
 
 .soundButton:hover:not(:disabled) {

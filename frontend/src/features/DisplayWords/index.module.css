@@ -35,6 +35,11 @@
     transform 0.2s ease;
 }
 
+.soundButton span svg {
+  width: 18px;
+  height: 18px;
+}
+
 .soundButton:hover:not(:disabled) {
   color: var(--primary);
   transform: translateY(-50%) scale(1.08);

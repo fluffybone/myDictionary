@@ -156,12 +156,12 @@ export const ListWords: FC<TProps> = ({
                       type="button"
                       disabled={!canUseSpeechSynthesis()}
                       aria-label={`Воспроизвести ${word.orig_word}`}
-                      title="Воспроизвести"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        speakEnglishWord(word.orig_word);
-                      }}
-                    >
+                        title="Воспроизвести"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          speakEnglishWord(word.orig_word);
+                        }}
+                      >
                       <SoundOutlined />
                     </button>
                   )}
