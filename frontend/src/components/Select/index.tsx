@@ -8,13 +8,14 @@ type TSelectOption = {
   value: string;
 };
 
-type TSelectProps = Omit<ComponentProps<"select">, "children"> & {
+type TSelectProps = Omit<ComponentProps<"select">, "children" | "size"> & {
   className?: string;
   error?: string;
   label?: string;
   options: TSelectOption[];
   placeholder?: string;
   selectClassName?: string;
+  size?: "medium" | "small";
 };
 
 export const Select: FC<TSelectProps> = ({
@@ -27,6 +28,7 @@ export const Select: FC<TSelectProps> = ({
   placeholder,
   required,
   selectClassName,
+  size = "medium",
   value,
   ...props
 }) => {
@@ -43,6 +45,7 @@ export const Select: FC<TSelectProps> = ({
         <select
           className={clsx(
             classes.select,
+            { [classes.small]: size === "small" },
             { [classes.error]: error },
             selectClassName,
           )}

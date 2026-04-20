@@ -32,6 +32,12 @@
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.select.small {
+  min-height: 40px;
+  padding: 8px 40px 8px 12px;
+  font-size: var(--text-sm);
+}
+
 .select:hover:not(:disabled):not(.error) {
   border-color: var(--primary);
 }
