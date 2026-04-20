@@ -101,7 +101,7 @@
 
 .radioGroupContainer.horizontal {
   flex-direction: row;
-  gap: 24px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 

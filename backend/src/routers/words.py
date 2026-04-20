@@ -1,3 +1,4 @@
+from datetime import date, datetime, time, timedelta
 from typing import List, Optional
 from fastapi import APIRouter, Depends, Query
 from fastapi import HTTPException, status
@@ -76,11 +77,26 @@ async def read_my_words(
     limit: int = Query(
         100, ge=1, le=1000, description="Максимальное количество записей"
     ),
+    date_from: Optional[date] = Query(
+        None, description="Начальная дата создания слова в формате YYYY-MM-DD"
+    ),
+    date_to: Optional[date] = Query(
+        None, description="Конечная дата создания слова в формате YYYY-MM-DD"
+    ),
 ):
     query = select(WordDb).where(WordDb.owner_id == current_user.id)
 
     if is_learning is not None:
         query = query.where(WordDb.is_learning == is_learning)
+
+    if date_from is not None:
+        query = query.where(
+            WordDb.created_at >= datetime.combine(date_from, time.min)
+        )
+
+    if date_to is not None:
+        next_day = date_to + timedelta(days=1)
+        query = query.where(WordDb.created_at < datetime.combine(next_day, time.min))
 
     query = query.offset(skip).limit(limit)
     query = query.order_by(WordDb.created_at.desc())

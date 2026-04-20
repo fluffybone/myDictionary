@@ -19,11 +19,17 @@ export const wordsApi = createApi({
   baseQuery: customBaseQuery,
   tagTypes: ["LEARNING_WORDS"],
   endpoints: (builder) => ({
-    getWords: builder.query<TWordResponse[], { isLearning?: boolean }>({
-      query: ({ isLearning }) => ({
+    getWords: builder.query<
+      TWordResponse[],
+      { dateFrom?: string; dateTo?: string; isLearning?: boolean }
+    >({
+      query: ({ dateFrom, dateTo, isLearning }) => ({
         url: "/api/words/learning",
-        params:
-          isLearning == undefined ? undefined : { is_learning: isLearning },
+        params: {
+          ...(isLearning == undefined ? {} : { is_learning: isLearning }),
+          ...(dateFrom ? { date_from: dateFrom } : {}),
+          ...(dateTo ? { date_to: dateTo } : {}),
+        },
       }),
       providesTags: ["LEARNING_WORDS"],
     }),

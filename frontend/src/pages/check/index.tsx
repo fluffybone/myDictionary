@@ -9,13 +9,25 @@ import {
 import clsx from "clsx";
 import { CloseOutlined } from "@ant-design/icons";
 import { Select } from "../../components/Select";
+import { DateRangeFilter } from "../../components/DateRangeFilter";
+import { getCurrentMonthRange } from "../../utils/dateRange";
 
-type TCheckWordsSource = "learning" | "all" | "learned";
+type TCheckWordsSource = "learning" | "learned";
 type TSelectedOption = "origWord" | "translateWord";
 type TWordResult = Record<number, { answer: string; correctAnswer: string }>;
 
-const getEmptyMessage = (wordsSource: TCheckWordsSource) => {
-  if (wordsSource === "learned") return "У Вас нет выученных слов";
+const formatDateLabel = (date: string) => date.split("-").reverse().join(".");
+
+const getEmptyMessage = (
+  wordsSource: TCheckWordsSource,
+  dateRange: { dateFrom: string; dateTo: string },
+) => {
+  if (wordsSource === "learned") {
+    return `За период ${formatDateLabel(dateRange.dateFrom)} — ${formatDateLabel(
+      dateRange.dateTo,
+    )} выученных слов не найдено. Попробуйте выбрать другой период.`;
+  }
+
   if (wordsSource === "learning") return "Добавьте слова для изучения";
 
   return "Добавьте слова";
@@ -25,12 +37,15 @@ export const Check = () => {
   const [selectedOption, setSelectedOption] =
     useState<TSelectedOption>("origWord");
   const [wordsSource, setWordsSource] = useState<TCheckWordsSource>("learning");
+  const [dateRange, setDateRange] = useState(getCurrentMonthRange);
   const {
     data: words,
     isError,
     isLoading,
   } = useGetWordsQuery({
-    isLearning: wordsSource === "all" ? undefined : wordsSource === "learning",
+    dateFrom: wordsSource === "learned" ? dateRange.dateFrom : undefined,
+    dateTo: wordsSource === "learned" ? dateRange.dateTo : undefined,
+    isLearning: wordsSource === "learning",
   });
   const [isViewResult, setIsViewResult] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -53,7 +68,7 @@ export const Check = () => {
     setIsViewResult(false);
     setHasError(false);
     setIsWin(false);
-  }, [wordsSource]);
+  }, [dateRange.dateFrom, dateRange.dateTo, wordsSource]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -95,7 +110,7 @@ export const Check = () => {
     return (
       !result ||
       result.answer.trim().toLocaleLowerCase() !==
-        result.correctAnswer.trim().toLocaleLowerCase()
+      result.correctAnswer.trim().toLocaleLowerCase()
     );
   };
 
@@ -134,14 +149,25 @@ export const Check = () => {
           options={[
             { value: "learning", label: "Сейчас учу" },
             { value: "learned", label: "По выученным" },
-            { value: "all", label: "Все слова" },
           ]}
         />
+        {wordsSource === "learned" && (
+          <DateRangeFilter
+            dateFrom={dateRange.dateFrom}
+            dateTo={dateRange.dateTo}
+            onDateFromChange={(dateFrom) =>
+              setDateRange((prev) => ({ ...prev, dateFrom }))
+            }
+            onDateToChange={(dateTo) =>
+              setDateRange((prev) => ({ ...prev, dateTo }))
+            }
+          />
+        )}
       </div>
       {isEmptyWords && (
         <div className={classes.addedWordBlock}>
           <h3 className={classes.addedWordTitle}>
-            {getEmptyMessage(wordsSource)}
+            {getEmptyMessage(wordsSource, dateRange)}
           </h3>
         </div>
       )}
@@ -235,6 +261,7 @@ export const Check = () => {
                       <td className={classes.wordTd}>{word[key]}</td>
                       <td className={classes.wordTd}>
                         <input
+                          autoComplete="off"
                           className={isAnswerError(word) ? "error" : undefined}
                           placeholder="Ваш ответ"
                           required

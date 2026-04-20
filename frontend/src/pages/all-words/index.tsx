@@ -16,6 +16,14 @@ export const AllWords = () => {
   }
 
   return (
-    <div>{words && <DisplayWords words={words} isOpenDefaultWordList />}</div>
+    <div>
+      {words && (
+        <DisplayWords
+          words={words}
+          isOpenDefaultWordList
+          listPageSize={10}
+        />
+      )}
+    </div>
   );
 };

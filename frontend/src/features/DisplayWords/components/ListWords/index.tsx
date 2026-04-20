@@ -1,4 +1,4 @@
-import { useState, type FC } from "react";
+import { useEffect, useMemo, useState, type FC } from "react";
 
 import classes from "./index.module.css";
 import { clsx } from "clsx";
@@ -20,6 +20,8 @@ import {
   canUseSpeechSynthesis,
   speakEnglishWord,
 } from "../../../../utils/speech";
+import { Pagination } from "../../../../components/Pagination";
+import { formatDate } from "../../../../utils/formatDate";
 
 type TProps = {
   words: TWordResponse[];
@@ -27,6 +29,7 @@ type TProps = {
   setShowSection: (show: "all" | "words") => void;
   setMode: (mode: "show" | "delete" | "edit") => void;
   mode: "show" | "delete" | "edit";
+  pageSize?: number;
   selectedVoiceURI: string;
   setWordForm: ({
     origWord,
@@ -38,7 +41,8 @@ type TProps = {
     description: string;
     wordId?: number;
   }) => void;
-  setIsInvalidateCacheWord:(isInvalidateCacheWord:boolean)=>void;
+  setIsInvalidateCacheWord: (isInvalidateCacheWord: boolean) => void;
+  isLearning?: boolean;
 };
 
 export const ListWords: FC<TProps> = ({
@@ -48,12 +52,29 @@ export const ListWords: FC<TProps> = ({
   setMode,
   setIsInvalidateCacheWord,
   mode,
+  pageSize,
   selectedVoiceURI,
   setWordForm,
+  isLearning,
 }) => {
   const [selectedIds, setSelectedIds] = useState<TWordResponse["id"][]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [deleteWords, { isLoading: isDeleteLoading }] =
     useDeleteWordsMutation();
+  const totalPages = pageSize ? Math.ceil(words.length / pageSize) : 1;
+  const visibleWords = useMemo(() => {
+    if (!pageSize) return words;
+
+    const start = (currentPage - 1) * pageSize;
+
+    return words.slice(start, start + pageSize);
+  }, [currentPage, pageSize, words]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(Math.max(totalPages, 1));
+    }
+  }, [currentPage, totalPages]);
 
   return (
     <div className={classes.learningWordsContainer}>
@@ -128,7 +149,7 @@ export const ListWords: FC<TProps> = ({
             </>
           )}
         </div>
-        <p>{words.length} / 10</p>
+        <p>{isLearning ? `${words.length} / 10` : `Всего слов: ${words.length}`}</p>
       </div>
       <div
         className={clsx(classes.learnWords, {
@@ -137,7 +158,7 @@ export const ListWords: FC<TProps> = ({
       >
         <table>
           <tbody>
-            {words.map((word) => (
+            {visibleWords.map((word) => (
               <tr
                 key={word.id}
                 className={classes.tableTr}
@@ -158,12 +179,12 @@ export const ListWords: FC<TProps> = ({
                       type="button"
                       disabled={!canUseSpeechSynthesis()}
                       aria-label={`Воспроизвести ${word.orig_word}`}
-                        title="Воспроизвести"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          speakEnglishWord(word.orig_word, selectedVoiceURI);
-                        }}
-                      >
+                      title="Воспроизвести"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        speakEnglishWord(word.orig_word, selectedVoiceURI);
+                      }}
+                    >
                       <SoundOutlined />
                     </button>
                   )}
@@ -201,11 +222,25 @@ export const ListWords: FC<TProps> = ({
                 <td className={classes.wordTd}>{word.orig_word}</td>
                 <td className={classes.wordTd}>{word.translate_word}</td>
                 <td className={classes.descriptionTd}>{word.description}</td>
+                {!isLearning && (
+                  <td className={classes.dateTd}>{formatDate(word.created_at)}</td>
+                )}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      {pageSize && (
+        <Pagination
+          className={classes.pagination}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onChange={(page) => {
+            setCurrentPage(page);
+            setSelectedIds([]);
+          }}
+        />
+      )}
     </div>
   );
 };

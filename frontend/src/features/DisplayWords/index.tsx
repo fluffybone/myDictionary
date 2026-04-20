@@ -17,9 +17,16 @@ import { useSpeechSettings } from "../../hooks/useSpeechSettings";
 type TProps = {
   words: TWordResponse[];
   isOpenDefaultWordList?: boolean;
+  listPageSize?: number;
+  isLearning?: boolean;
 };
 
-export const DisplayWords: FC<TProps> = ({ words, isOpenDefaultWordList }) => {
+export const DisplayWords: FC<TProps> = ({
+  words,
+  isOpenDefaultWordList,
+  listPageSize,
+  isLearning
+}) => {
   const [showSection, setShowSection] = useState<"all" | "words">(
     isOpenDefaultWordList ? "words" : "all",
   );
@@ -97,15 +104,15 @@ export const DisplayWords: FC<TProps> = ({ words, isOpenDefaultWordList }) => {
     }
   };
 
-useEffect(()=>{
+  useEffect(() => {
 
-  return ()=>{
-    if(isInvalidateCacheWord){
-     dispatch(wordsApi.util.invalidateTags(['LEARNING_WORDS']));
+    return () => {
+      if (isInvalidateCacheWord) {
+        dispatch(wordsApi.util.invalidateTags(['LEARNING_WORDS']));
+      }
     }
-  }
 
-},[isInvalidateCacheWord])
+  }, [isInvalidateCacheWord])
 
   useEffect(() => {
     if (words) {
@@ -157,7 +164,7 @@ useEffect(()=>{
                     speakEnglishWord(wordForm.origWord, selectedVoiceURI)
                   }
                 >
-                  <SoundOutlined  size={20}/>
+                  <SoundOutlined size={20} />
                 </button>
               )}
             </div>
@@ -212,7 +219,9 @@ useEffect(()=>{
         setShowSection={setShowSection}
         showSection={showSection}
         setMode={setMode}
+        isLearning={isLearning}
         mode={mode}
+        pageSize={listPageSize}
         setWordForm={setWordForm}
         setIsInvalidateCacheWord={setIsInvalidateCacheWord}
         selectedVoiceURI={selectedVoiceURI}
