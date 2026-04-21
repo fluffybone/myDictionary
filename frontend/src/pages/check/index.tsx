@@ -18,6 +18,9 @@ type TWordResult = Record<number, { answer: string; correctAnswer: string }>;
 
 const formatDateLabel = (date: string) => date.split("-").reverse().join(".");
 
+const normalizeAnswer = (value: string) =>
+  value.trim().toLocaleLowerCase().replaceAll("ё", "е");
+
 const getEmptyMessage = (
   wordsSource: TCheckWordsSource,
   dateRange: { dateFrom: string; dateTo: string },
@@ -82,8 +85,7 @@ export const Check = () => {
 
       return (
         !result ||
-        result.answer.trim().toLocaleLowerCase() !==
-        result.correctAnswer.trim().toLocaleLowerCase()
+        normalizeAnswer(result.answer) !== normalizeAnswer(result.correctAnswer)
       );
     });
 
@@ -111,8 +113,7 @@ export const Check = () => {
 
     return (
       !result ||
-      result.answer.trim().toLocaleLowerCase() !==
-      result.correctAnswer.trim().toLocaleLowerCase()
+      normalizeAnswer(result.answer) !== normalizeAnswer(result.correctAnswer)
     );
   };
 
