@@ -80,6 +80,9 @@ export const Layout: FC = () => {
     };
   }, []);
 
+
+
+
   const handleInstall = async () => {
     if (!installPrompt) {
       return;

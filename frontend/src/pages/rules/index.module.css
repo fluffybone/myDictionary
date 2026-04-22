@@ -1,0 +1,264 @@
+.page {
+  display: grid;
+  gap: 20px;
+  max-height: 72dvh;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.header {
+  display: grid;
+  gap: 6px;
+}
+
+.title {
+  margin: 0;
+  color: var(--main);
+  font-family: var(--font-bold);
+  font-size: var(--text-2xl);
+}
+
+.subtitle {
+  margin: 0;
+  color: color-mix(in srgb, var(--main) 72%, transparent);
+  font-size: var(--text-sm);
+}
+
+.form,
+.filters {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.44);
+  border: 1px solid rgba(255, 255, 255, 0.74);
+  border-radius: 24px;
+  box-shadow: 0 18px 40px -32px rgba(43, 45, 66, 0.42);
+}
+
+.formTitle,
+.filtersTitle {
+  margin: 0;
+  color: var(--main);
+  font-family: var(--font-bold);
+  font-size: var(--text-lg);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 260px);
+  gap: 12px;
+}
+
+.inputGroup {
+  display: grid;
+  gap: 6px;
+}
+
+.inputLabel {
+  color: var(--main);
+  font-family: var(--font-bold);
+  font-size: var(--text-sm);
+}
+
+.submitButton {
+  justify-self: end;
+}
+
+.filterList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.card {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.54);
+  border: 1px solid rgba(255, 255, 255, 0.74);
+  border-radius: 24px;
+  box-shadow: 0 18px 40px -30px rgba(43, 45, 66, 0.42);
+}
+
+.customCard {
+  background:
+    linear-gradient(135deg, rgba(229, 149, 0, 0.14), transparent 42%),
+    rgba(255, 255, 255, 0.58);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ruleTitle {
+  margin: 0;
+  color: var(--main);
+  font-family: var(--font-bold);
+  font-size: var(--text-lg);
+  line-height: 1.2;
+}
+
+.badge {
+  flex: 0 0 auto;
+  padding: 3px 10px;
+  color: var(--secondary);
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: 999px;
+  font-family: var(--font-bold);
+  font-size: var(--text-xs);
+}
+
+.description {
+  margin: 0;
+  color: var(--main);
+  font-size: var(--text-sm);
+}
+
+.examples {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.example {
+  padding-left: 10px;
+  border-left: 3px solid var(--primary);
+  color: color-mix(in srgb, var(--main) 78%, transparent);
+  font-family: var(--font-medium);
+  font-size: var(--text-sm);
+}
+
+.empty {
+  margin: 0;
+  color: color-mix(in srgb, var(--main) 68%, transparent);
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .page {
+    max-height: 68dvh;
+  }
+
+  .form,
+  .filters,
+  .card {
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .formGrid,
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .submitButton {
+    justify-self: stretch;
+  }
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.editButton {
+  justify-self: end;
+  color: var(--main);
+}
+
+@media (max-width: 640px) {
+  .formActions {
+    display: grid;
+  }
+
+  .editButton {
+    justify-self: stretch;
+  }
+}
+
+.cardActions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+.editButton.editButton:hover {
+  color: var(--btn-text);
+  background-color: var(--primary);
+  box-shadow: 0 6px 16px var(--btn-primary-shadow);
+}
+
+.deleteButton {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  color: var(--secondary);
+  background: rgba(255, 255, 255, 0.72);
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.deleteButton span svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.deleteButton:hover {
+  color: var(--error);
+  background: rgba(255, 255, 255, 0.96);
+  transform: translateY(-1px) scale(1.04);
+}
+
+@media (max-width: 640px) {
+  .cardActions {
+    display: grid;
+    grid-template-columns: 1fr 42px;
+  }
+
+  .deleteButton {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+.footnote {
+  margin: 2px 0 0;
+  color: color-mix(in srgb, var(--main) 62%, transparent);
+  font-size: var(--text-xs);
+}
+
+.notice {
+  padding: 14px 16px;
+  color: var(--main);
+  background:
+    linear-gradient(135deg, rgba(229, 149, 0, 0.16), transparent 48%),
+    rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.74);
+  border-left: 4px solid var(--primary);
+  border-radius: 18px;
+  font-family: var(--font-medium);
+  font-size: var(--text-sm);
+  box-shadow: 0 18px 40px -34px rgba(43, 45, 66, 0.42);
+}

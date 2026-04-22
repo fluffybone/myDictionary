@@ -13,6 +13,7 @@ import { useAppDispatch } from "../../store/utils/useAppDispatch";
 import { SoundOutlined } from "@ant-design/icons";
 import { canUseSpeechSynthesis, speakEnglishWord } from "../../utils/speech";
 import { useSpeechSettings } from "../../hooks/useSpeechSettings";
+import { useLazyGetRuleHintQuery } from "../../store/rules/api";
 
 type TProps = {
   isLearning?: boolean;
@@ -50,6 +51,7 @@ export const DisplayWords: FC<TProps> = ({
   const [addWord, { isLoading: isAddWordLoading }] = useAddWordMutation();
   const [updateWord, { isLoading: isUpdateWordLoading }] =
     useUpdateWordMutation();
+  const [getRuleHint] = useLazyGetRuleHintQuery();
 
   const [error, setError] = useState<null | string>(null);
   const [learningWords, setLearningWords] = useState<TWordResponse[]>([]);
@@ -66,10 +68,18 @@ export const DisplayWords: FC<TProps> = ({
   const handleCreateWord = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const ruleHint = wordForm.description.trim()
+      ? null
+      : await getRuleHint({ word: wordForm.origWord })
+          .unwrap()
+          .then((response) => response.hint)
+          .catch(() => null);
+    const preparedDescription = wordForm.description.trim() || ruleHint || "";
+
     const response = await addWord({
       orig_word: wordForm.origWord,
       translate_word: wordForm.translateWord,
-      description: wordForm.description,
+      description: preparedDescription,
     });
 
     if ("data" in response && response.data) {
@@ -145,8 +155,29 @@ export const DisplayWords: FC<TProps> = ({
                 type="text"
                 required
                 onFocus={(event) => !!wordForm?.wordId && event.target.focus()}
-                onBlur={() => {
-                  setIsOrigWordTouched(wordForm.origWord.trim().length > 0);
+                onBlur={async () => {
+                  const preparedWord = wordForm.origWord.trim();
+                  setIsOrigWordTouched(preparedWord.length > 0);
+
+                  if (
+                    mode !== "show" ||
+                    !preparedWord ||
+                    wordForm.description.trim()
+                  ) {
+                    return;
+                  }
+
+                  const ruleHint = await getRuleHint({ word: preparedWord })
+                    .unwrap()
+                    .then((response) => response.hint)
+                    .catch(() => null);
+
+                  if (ruleHint) {
+                    setWordForm((prev) => ({
+                      ...prev,
+                      description: prev.description.trim() || ruleHint,
+                    }));
+                  }
                 }}
                 value={wordForm.origWord}
                 onChange={(e) => {
@@ -192,19 +223,37 @@ export const DisplayWords: FC<TProps> = ({
             />
           </div>
           {error && <div className={classes.errorText}>{error}</div>}
-          <textarea
-            id="description"
-            name="description"
-            placeholder="Заметки к слову"
-            value={wordForm.description}
-            onChange={(e) =>
-              setWordForm((prev) => ({
-                ...prev,
-                description: e.target.value,
-              }))
-            }
-            className={classes.textarea}
-          />
+          <div className={classes.textareaWrapper}>
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Заметки к слову"
+              value={wordForm.description}
+              onChange={(e) =>
+                setWordForm((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
+              className={classes.textarea}
+            />
+            {wordForm.description && (
+              <button
+                className={classes.clearDescriptionButton}
+                type="button"
+                aria-label="Очистить заметки к слову"
+                title="Очистить"
+                onClick={() =>
+                  setWordForm((prev) => ({
+                    ...prev,
+                    description: "",
+                  }))
+                }
+              >
+                ×
+              </button>
+            )}
+          </div>
           <div className={classes.formActions}>
             <button
               className={clsx("btn btn-secondary", classes.button)}
