@@ -5,7 +5,7 @@ psycopg2-binary
 pwdlib[argon2] 
 pyjwt          
 python-multipart
-black==26.1.0
+black==25.11.0
 asyncpg
 greenlet
 alembic==1.18.3

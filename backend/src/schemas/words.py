@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from datetime import datetime
 from .validators import validate_not_empty
 from typing import List, Optional
@@ -32,11 +32,10 @@ class WordCreate(WordBase):
 
 # Схема для чтения (то, что возвращает бэкенд, включая ID)
 class Word(WordBase):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     created_at: datetime
-
-    class Config:
-        from_attributes = True  # Важно для работы с ORM
 
 
 class WordsPage(BaseModel):

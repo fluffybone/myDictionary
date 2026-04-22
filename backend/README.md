@@ -1,14 +1,155 @@
-### Сделать виртуальное окружение
+## Локальное окружение backend
 
-`python3 -m venv venv`
+### Важно: Python должен быть 3.11
+
+В production backend запускается в Docker на Python 3.11:
+
+```dockerfile
+FROM python:3.11-slim
+```
+
+Поэтому локально для backend тоже нужно использовать Python 3.11.
+
+Если создать окружение на системном `python3` macOS, часто получится Python 3.9. Тогда `pip` будет скачивать пакеты с пометкой `cp39`, например:
+
+```text
+greenlet-3.2.5-cp39-cp39-macosx_11_0_universal2.whl
+```
+
+`cp39` означает Python 3.9. В таком окружении свежие зависимости могут не установиться, например:
+
+```text
+ERROR: No matching distribution found for alembic==1.18.3
+```
+
+Это не значит, что Alembic сломан. Это значит, что активное виртуальное окружение создано на старой версии Python.
+
+### Проверить текущую версию Python
+
+```bash
+python --version
+```
+
+После активации правильного окружения должно быть:
+
+```text
+Python 3.11.x
+```
+
+### Установить Python 3.11 на macOS
+
+Если команды `python3.11` нет:
+
+```bash
+brew install python@3.11
+```
+
+Проверить:
+
+```bash
+python3.11 --version
+```
+
+### Если уже есть старый venv на Python 3.9
+
+Если в терминале видно:
+
+```bash
+(venv)
+```
+
+и зависимости ставятся как `cp39`, значит активировано старое окружение на Python 3.9.
+
+Выйти из него:
+
+```bash
+deactivate
+```
+
+Удалить старое окружение из папки `backend`:
+
+```bash
+rm -rf venv
+```
+
+### Создать новое окружение на Python 3.11
+
+Из папки `backend`:
+
+```bash
+python3.11 -m venv .venv
+```
 
 ### Активировать окружение
 
-`source venv/bin/activate`
+```bash
+source .venv/bin/activate
+```
+
+Проверить, что окружение правильное:
+
+```bash
+python --version
+```
 
 ### Установить зависимости
 
-`pip install -r requirements.txt`
+Сначала обновить `pip`:
+
+```bash
+python -m pip install --upgrade pip
+```
+
+Для обычного запуска backend:
+
+```bash
+pip install -r requirements.txt
+```
+
+Для разработки и тестов:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+### Частая ошибка: `requirements-dev.txt: command not found`
+
+Если ввести:
+
+```bash
+requirements-dev.txt
+```
+
+терминал ответит:
+
+```text
+zsh: command not found: requirements-dev.txt
+```
+
+Это нормально: `requirements-dev.txt` — файл, а не команда.
+
+Правильно устанавливать его через `pip`:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+### Полная команда с нуля
+
+Из папки `backend`:
+
+```bash
+deactivate
+rm -rf venv
+python3.11 -m venv .venv
+source .venv/bin/activate
+python --version
+python -m pip install --upgrade pip
+pip install -r requirements-dev.txt
+python -m pytest
+```
+
+Если `deactivate` пишет ошибку, значит окружение не было активировано. Можно просто идти дальше со следующей команды.
 
 ## Создать main.py
 
@@ -114,3 +255,16 @@ docker compose -f docker-compose.prod.yml up -d --build (пересобрали 
 
 2. **Автоматический запуск миграций на Проде**
 Чтобы не заходить каждый раз руками на сервер и не писать alembic upgrade head, добавьте эту команду в скрипт запуска контейнера.
+
+> Запуск тестов
+
+Тесты используют зависимости из `requirements-dev.txt`, поэтому перед первым запуском нужно поставить dev-зависимости.
+
+```bash
+cd backend
+source .venv/bin/activate
+pip install -r requirements-dev.txt
+python -m pytest
+```
+
+Если снова появляется ошибка про `alembic==1.18.3` или пакеты `cp39`, значит активировано окружение на Python 3.9. Нужно пересоздать окружение через `python3.11 -m venv .venv`.
