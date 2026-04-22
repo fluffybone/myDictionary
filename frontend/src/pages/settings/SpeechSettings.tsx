@@ -23,6 +23,13 @@ export const Settings = () => {
     <aside className={classes.settings} aria-label="Настройки приложения">
       <div className={classes.panel} data-open={isOpen}>
         <p className={classes.title}>Настройки произношения</p>
+        <div className={classes.translateNotice}>
+          <p className={classes.noticeTitle}>Быстрый перевод</p>
+          <p className={classes.noticeText}>
+            Вы можете выделить любое слово на странице и нажать “Перевести”
+            в системном меню браузера или телефона.
+          </p>
+        </div>
         <Select
           name="voice"
           placeholder="Голос по умолчанию"

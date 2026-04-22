@@ -37,6 +37,10 @@
     fill: var(--main);
   }
 
+   @media (max-width: 640px) {
+    max-width: 112px;
+   }
+
 }
 
 .tabsNav button:hover {

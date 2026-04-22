@@ -82,3 +82,30 @@
     width: min(320px, calc(100vw - 24px));
   }
 }
+
+.translateNotice {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 12px;
+  padding: 12px;
+  color: var(--main);
+  background:
+    radial-gradient(circle at 8% 20%, rgba(229, 149, 0, 0.14), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(224, 239, 255, 0.94) 52%, rgba(196, 221, 248, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.86);
+  border-left: 4px solid #5b8ec4;
+  border-radius: 16px;
+}
+
+.noticeTitle {
+  margin: 0;
+  color: var(--main);
+  font-family: var(--font-bold);
+  font-size: var(--text-sm);
+}
+
+.noticeText {
+  margin: 0;
+  color: color-mix(in srgb, var(--main) 78%, transparent);
+  font-size: var(--text-xs);
+}

@@ -82,3 +82,40 @@
 .textarea {
   margin-top: 20px;
 }
+
+.textareaWrapper {
+  position: relative;
+}
+
+.textareaWrapper .textarea {
+  padding-right: 44px;
+}
+
+.clearDescriptionButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: var(--secondary);
+  background: rgba(255, 255, 255, 0.7);
+  border: 0;
+  border-radius: 50%;
+  font-family: var(--font-bold);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.clearDescriptionButton:hover {
+  color: var(--primary);
+  background: rgba(255, 255, 255, 0.95);
+  transform: scale(1.06);
+}
