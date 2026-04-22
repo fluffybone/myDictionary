@@ -11,6 +11,8 @@ import { CloseOutlined } from "@ant-design/icons";
 import { Select } from "../../components/Select";
 import { DateRangeFilter } from "../../components/DateRangeFilter";
 import { getCurrentMonthRange } from "../../utils/dateRange";
+import { Button } from "../../components/Button";
+import { IconButton } from "../../components/IconButton";
 
 type TCheckWordsSource = "learning" | "learned";
 type TSelectedOption = "origWord" | "translateWord";
@@ -183,16 +185,17 @@ export const Check = () => {
           {isWin && (
             <div className={classes.blockWin}>
               <h3>Правильно! 🎉🎉🎉 </h3>
-              <button
-                type="button"
-                className={clsx(classes.close)}
+              <IconButton
+                className={classes.close}
+                variant="ghost"
+                size="medium"
                 onClick={() => {
                   setIsWin(false);
                   setWordResult({});
                 }}
               >
                 <CloseOutlined size={24} />
-              </button>
+              </IconButton>
               <div className={classes.writeBlock}>
                 {canMoveWordsToLearned
                   ? "Записать выученные слова?"
@@ -200,18 +203,17 @@ export const Check = () => {
               </div>
               {canMoveWordsToLearned ? (
                 <div className={classes.buttonActionAfterTest}>
-                  <button
-                    type="button"
+                  <Button
                     onClick={() => {
                       setIsWin(false);
                       setWordResult({});
                     }}
-                    className={clsx("btn btn-secondary btn-small")}
+                    variant="secondary"
+                    size="small"
                   >
                     Пока нет
-                  </button>
-                  <button
-                    type="button"
+                  </Button>
+                  <Button
                     onClick={async () => {
                       const response = await addedWordsInDictionary({
                         wordsIds: words.items.map((item) => item.id),
@@ -221,25 +223,24 @@ export const Check = () => {
                         setWordResult({});
                       }
                     }}
-                    className={clsx("btn btn-primary btn-small")}
+                    variant="primary"
+                    size="small"
                   >
                     Да
-                  </button>
+                  </Button>
                 </div>
               ) : (
-                <button
-                  type="button"
+                <Button
                   onClick={() => {
                     setIsWin(false);
                     setWordResult({});
                   }}
-                  className={clsx(
-                    "btn btn-primary btn-small",
-                    classes.doneButton,
-                  )}
+                  className={classes.doneButton}
+                  variant="primary"
+                  size="small"
                 >
                   Готово
-                </button>
+                </Button>
               )}
             </div>
           )}
@@ -288,12 +289,13 @@ export const Check = () => {
             </table>
           </div>
           {!isWin && (
-            <button
-              className={clsx(classes.button, "btn btn-secondary")}
+            <Button
+              className={classes.button}
+              variant="secondary"
               type="submit"
             >
               Отправить
-            </button>
+            </Button>
           )}
         </form>
       )}

@@ -1,6 +1,7 @@
 import { useState, type FC, type ReactNode } from "react";
 import classes from "./index.module.css";
 import clsx from "clsx";
+import { Button } from "../Button";
 
 type TProps = {
   tabs: { name: ReactNode; children: ReactNode }[];
@@ -15,16 +16,16 @@ export const Tabs: FC<TProps> = ({ tabs, className }) => {
       <div className={classes.tabsNav}>
         {tabs.map((tab, index) => {
           return (
-            <button
+            <Button
               key={index}
-              type="button"
-              className={clsx("btn", {
+              variant="plain"
+              className={clsx({
                 [classes.activeTab]: activeIndexTab === index,
               })}
               onClick={() => setActiveIndexTab(index)}
             >
               {tab.name}
-            </button>
+            </Button>
           );
         })}
       </div>

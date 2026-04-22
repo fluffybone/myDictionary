@@ -6,6 +6,7 @@ import { useState, type ChangeEvent, type FormEvent } from "react";
 import { PasswordInput } from "../components/PasswordInput";
 import { getErrorText } from "../../../store/utils/getErrorText";
 import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "../../../shared";
+import { Button } from "../../../components/Button";
 
 export const Login = () => {
   const [login, { isLoading, error }] = useLoginMutation();
@@ -82,13 +83,14 @@ export const Login = () => {
               value={formValues.password}
             />
           </div>
-          <button
-            className={clsx(classes.button, "btn btn-secondary")}
+          <Button
+            className={classes.button}
+            variant="secondary"
             type="submit"
             disabled={isLoading}
           >
             Войти
-          </button>
+          </Button>
           <p className={classes.authText}>
             Нет аккаунта?{" "}
             <Link to="/auth/registration">Зарегистрироваться</Link>

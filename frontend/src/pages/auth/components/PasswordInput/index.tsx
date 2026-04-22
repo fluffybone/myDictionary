@@ -2,6 +2,7 @@ import { useState, type ChangeEvent, type FC } from "react";
 import classes from "./index.module.css";
 import { clsx } from "clsx";
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
+import { IconButton } from "../../../../components/IconButton";
 
 type TProps = {
   value: string;
@@ -36,14 +37,15 @@ export const PasswordInput: FC<TProps> = ({
         value={value}
         placeholder={placeholder}
       />
-      <button
+      <IconButton
         aria-label={label}
         className={classes.passwordIcon}
         onClick={() => setIsPasswordType(!isPasswordType)}
-        type="button"
+        variant="ghost"
+        size="small"
       >
         {isPasswordType ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-      </button>
+      </IconButton>
     </div>
   );
 };

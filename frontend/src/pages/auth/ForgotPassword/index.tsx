@@ -9,6 +9,7 @@ import {
 } from "../../../store/authorization/api";
 import { getErrorText } from "../../../store/utils/getErrorText";
 import { AuthenticationCodeInput } from "../components/AuthenticationCodeInput";
+import { Button } from "../../../components/Button";
 
 const BUTTON_TEXT_BY_STEP: Record<number, string> = {
   1: "Продолжить",
@@ -118,13 +119,14 @@ export const ForgotPassword = () => {
               </>
             )}
             {step < 4 && (
-              <button
-                className={clsx(classes.button, "btn btn-secondary")}
+              <Button
+                className={classes.button}
+                variant="secondary"
                 type="submit"
                 disabled={isForgotPasswordLoading || isResetPasswordLoading}
               >
                 {BUTTON_TEXT_BY_STEP[step]}
-              </button>
+              </Button>
             )}
             <p className={classes.authText}>
               <Link to="/auth/login">Войти</Link>

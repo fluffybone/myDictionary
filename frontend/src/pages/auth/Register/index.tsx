@@ -11,6 +11,7 @@ import { PasswordInput } from "../components/PasswordInput";
 import { getErrorText } from "../../../store/utils/getErrorText";
 import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "../../../shared";
 import { AuthenticationCodeInput } from "../components/AuthenticationCodeInput";
+import { Button } from "../../../components/Button";
 
 export const Registration = () => {
   const [step, setStep] = useState(1);
@@ -131,13 +132,14 @@ export const Registration = () => {
                 <AuthenticationCodeInput value={code} onChange={setCode} />
               </>
             )}
-            <button
-              className={clsx(classes.button, "btn btn-secondary")}
+            <Button
+              className={classes.button}
+              variant="secondary"
               type="submit"
               disabled={isRegistrationLoading || isVerifyEmailLoading}
             >
               {step == 1 ? "Зарегистрироваться" : "Отправить"}
-            </button>
+            </Button>
             <p className={classes.authText}>
               Есть аккаунт? <Link to="/auth/login">Войти</Link>
             </p>

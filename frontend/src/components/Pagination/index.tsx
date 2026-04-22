@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import type { FC } from "react";
+import { Button } from "../Button";
 import classes from "./index.module.css";
 
 type TProps = {
@@ -31,14 +32,15 @@ export const Pagination: FC<TProps> = ({
 
   return (
     <nav className={clsx(classes.pagination, className)} aria-label="Пагинация">
-      <button
-        className={clsx("btn btn-secondary btn-small", classes.button)}
-        type="button"
+      <Button
+        className={classes.button}
+        variant="secondary"
+        size="small"
         disabled={currentPage === 1}
         onClick={() => onChange(currentPage - 1)}
       >
         Назад
-      </button>
+      </Button>
       <div className={classes.pages}>
         {visiblePages.map((page) => (
           <button
@@ -54,14 +56,15 @@ export const Pagination: FC<TProps> = ({
           </button>
         ))}
       </div>
-      <button
-        className={clsx("btn btn-secondary btn-small", classes.button)}
-        type="button"
+      <Button
+        className={classes.button}
+        variant="secondary"
+        size="small"
         disabled={currentPage === totalPages}
         onClick={() => onChange(currentPage + 1)}
       >
         Вперед
-      </button>
+      </Button>
     </nav>
   );
 };

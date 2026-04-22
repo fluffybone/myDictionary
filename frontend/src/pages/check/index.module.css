@@ -32,11 +32,11 @@
   padding: 1vw 24px;
   border-radius: var(--element-radius);
   border: 2px solid var(--primary);
-  max-height: 70dvh;
+  height: 74dvh;
   overflow: auto;
 
   @media (max-width: 640px) {
-    max-height: 46dvh;
+    height: 54dvh;
   }
 }
 
@@ -109,10 +109,6 @@ table tr:first-child {
   position: absolute !important;
   top: 20px;
   right: 20px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
 }
 
 .blockWin h3 {
