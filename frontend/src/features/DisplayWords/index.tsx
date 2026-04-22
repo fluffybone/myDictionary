@@ -72,7 +72,10 @@ export const DisplayWords: FC<TProps> = ({
     const ruleHint = wordForm.description.trim()
       ? null
       : activeLanguage.code === "en"
-        ? await getRuleHint({ word: wordForm.origWord })
+        ? await getRuleHint({
+            language: activeLanguage.code,
+            word: wordForm.origWord,
+          })
           .unwrap()
           .then((response) => response.hint)
           .catch(() => null)
@@ -174,7 +177,10 @@ export const DisplayWords: FC<TProps> = ({
 
                   const ruleHint =
                     activeLanguage.code === "en"
-                      ? await getRuleHint({ word: preparedWord })
+                      ? await getRuleHint({
+                          language: activeLanguage.code,
+                          word: preparedWord,
+                        })
                           .unwrap()
                           .then((response) => response.hint)
                           .catch(() => null)

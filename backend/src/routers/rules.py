@@ -1,4 +1,4 @@
-from typing import Annotated, Callable, Dict, List
+from typing import Annotated, Callable, Dict, List, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import delete, select
@@ -6,16 +6,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import auth
 from src.database import get_db
-from src.models.rules import EnglishRule as EnglishRuleDb
+from src.models.rules import LanguageRule as LanguageRuleDb
 from src.models.users import User as UserDb
 from src.schemas.rules import (
-    EnglishRule,
-    EnglishRuleCreate,
-    EnglishRuleHint,
-    EnglishRuleUpdate,
+    LanguageRule,
+    LanguageRuleCreate,
+    LanguageRuleHint,
+    LanguageRuleUpdate,
 )
 
 router = APIRouter(prefix="/api/rules", tags=["rules"])
+SupportedLanguage = Literal["en", "de", "fr", "es", "it"]
 
 DEFAULT_RULES = [
     {
@@ -134,8 +135,16 @@ MATCHERS: Dict[str, Callable[[str], bool]] = {
 async def ensure_default_rules(
     db: AsyncSession,
     current_user: UserDb,
+    language: SupportedLanguage,
 ) -> None:
-    count_query = select(EnglishRuleDb.id).where(EnglishRuleDb.owner_id == current_user.id).limit(1)
+    if language != "en":
+        return
+
+    count_query = (
+        select(LanguageRuleDb.id)
+        .where(LanguageRuleDb.owner_id == current_user.id, LanguageRuleDb.language == language)
+        .limit(1)
+    )
     result = await db.execute(count_query)
 
     if result.scalar_one_or_none() is not None:
@@ -143,9 +152,10 @@ async def ensure_default_rules(
 
     for rule in DEFAULT_RULES:
         db.add(
-            EnglishRuleDb(
+            LanguageRuleDb(
                 **rule,
                 is_default=True,
+                language=language,
                 owner_id=current_user.id,
             )
         )
@@ -153,35 +163,42 @@ async def ensure_default_rules(
     await db.commit()
 
 
-@router.get("", response_model=List[EnglishRule])
+@router.get("", response_model=List[LanguageRule])
 async def read_rules(
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[UserDb, Depends(auth.get_current_user)],
+    language: SupportedLanguage = Query(
+        "en", description="Язык правил: en, de, fr, es или it"
+    ),
 ):
-    await ensure_default_rules(db, current_user)
+    await ensure_default_rules(db, current_user, language)
 
     query = (
-        select(EnglishRuleDb)
-        .where(EnglishRuleDb.owner_id == current_user.id)
-        .order_by(EnglishRuleDb.is_default.asc(), EnglishRuleDb.created_at.desc(), EnglishRuleDb.id.asc())
+        select(LanguageRuleDb)
+        .where(LanguageRuleDb.owner_id == current_user.id, LanguageRuleDb.language == language)
+        .order_by(LanguageRuleDb.is_default.asc(), LanguageRuleDb.created_at.desc(), LanguageRuleDb.id.asc())
     )
     result = await db.execute(query)
 
     return result.scalars().all()
 
 
-@router.get("/hint", response_model=EnglishRuleHint)
+@router.get("/hint", response_model=LanguageRuleHint)
 async def get_rule_hint(
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[UserDb, Depends(auth.get_current_user)],
     word: str = Query(..., min_length=1),
+    language: SupportedLanguage = Query(
+        "en", description="Язык правил: en, de, fr, es или it"
+    ),
 ):
-    await ensure_default_rules(db, current_user)
+    await ensure_default_rules(db, current_user, language)
 
     normalized_word = normalize_word(word)
-    query = select(EnglishRuleDb).where(
-        EnglishRuleDb.owner_id == current_user.id,
-        EnglishRuleDb.matcher_key.is_not(None),
+    query = select(LanguageRuleDb).where(
+        LanguageRuleDb.owner_id == current_user.id,
+        LanguageRuleDb.language == language,
+        LanguageRuleDb.matcher_key.is_not(None),
     )
     result = await db.execute(query)
     rules = result.scalars().all()
@@ -194,13 +211,13 @@ async def get_rule_hint(
     return {"hint": None}
 
 
-@router.post("", response_model=EnglishRule, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=LanguageRule, status_code=status.HTTP_201_CREATED)
 async def create_rule(
-    rule: EnglishRuleCreate,
+    rule: LanguageRuleCreate,
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[UserDb, Depends(auth.get_current_user)],
 ):
-    db_rule = EnglishRuleDb(
+    db_rule = LanguageRuleDb(
         **rule.model_dump(),
         is_default=False,
         owner_id=current_user.id,
@@ -212,16 +229,16 @@ async def create_rule(
     return db_rule
 
 
-@router.put("/{rule_id}", response_model=EnglishRule)
+@router.put("/{rule_id}", response_model=LanguageRule)
 async def update_rule(
     rule_id: int,
-    rule_update: EnglishRuleUpdate,
+    rule_update: LanguageRuleUpdate,
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[UserDb, Depends(auth.get_current_user)],
 ):
-    query = select(EnglishRuleDb).where(
-        EnglishRuleDb.id == rule_id,
-        EnglishRuleDb.owner_id == current_user.id,
+    query = select(LanguageRuleDb).where(
+        LanguageRuleDb.id == rule_id,
+        LanguageRuleDb.owner_id == current_user.id,
     )
     result = await db.execute(query)
     db_rule = result.scalar_one_or_none()
@@ -249,9 +266,9 @@ async def delete_rule(
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[UserDb, Depends(auth.get_current_user)],
 ):
-    query = delete(EnglishRuleDb).where(
-        EnglishRuleDb.id == rule_id,
-        EnglishRuleDb.owner_id == current_user.id,
+    query = delete(LanguageRuleDb).where(
+        LanguageRuleDb.id == rule_id,
+        LanguageRuleDb.owner_id == current_user.id,
     )
     result = await db.execute(query)
     await db.commit()

@@ -7,7 +7,7 @@
 ```mermaid
 erDiagram
     users ||--o{ words : owns
-    users ||--o{ english_rules : owns
+    users ||--o{ language_rules : owns
 
     users {
         int id PK
@@ -30,12 +30,13 @@ erDiagram
         boolean is_learning
     }
 
-    english_rules {
+    language_rules {
         int id PK
         string title
         string description
         json examples
         string category
+        string language
         string matcher_key
         boolean is_default
         int owner_id FK
@@ -45,7 +46,7 @@ erDiagram
 ```
 
 Сейчас все слова лежат в одной таблице `words` и принадлежат пользователю через `owner_id`.
-Поле `language` хранит код языка слова: `en`, `de`, `fr`, `es` или `it`.
+Поле `language` в `words` и `language_rules` хранит код языка: `en`, `de`, `fr`, `es` или `it`.
 
 ## Принцип нескольких языков
 
@@ -54,7 +55,7 @@ erDiagram
 ```mermaid
 erDiagram
     users ||--o{ words : owns
-    users ||--o{ english_rules : owns
+    users ||--o{ language_rules : owns
 
     users {
         int id PK
@@ -75,12 +76,13 @@ erDiagram
         int owner_id FK
     }
 
-    english_rules {
+    language_rules {
         int id PK
         string title
         string description
         json examples
         string category
+        string language
         string matcher_key
         boolean is_default
         int owner_id FK
@@ -112,9 +114,9 @@ id | owner_id | language | orig_word | translate_word | is_learning
 
 Одна таблица `words` с полем `language` проще и масштабируется нормально.
 
-## Индексы для будущей мультиязычности
+## Индексы для мультиязычности
 
-Когда появится поле `language`, полезно добавить индексы под основные запросы:
+Для слов полезны индексы под основные запросы:
 
 ```sql
 CREATE INDEX ix_words_owner_language
@@ -127,12 +129,15 @@ CREATE INDEX ix_words_owner_language_created_at
 ON words (owner_id, language, created_at DESC);
 ```
 
-Эти индексы помогут быстро получать словарь конкретного пользователя по выбранному языку.
+Эти индексы помогают быстро получать словарь конкретного пользователя по выбранному языку.
+
+Для правил полезны индексы:
+
+```sql
+CREATE INDEX ix_language_rules_owner_language
+ON language_rules (owner_id, language);
+```
 
 ## Следующий возможный этап
 
-После слов можно расширить правила:
-
-- переименовать `english_rules` в более универсальную таблицу `language_rules`;
-- добавить поле `language`;
-- хранить стартовые правила отдельно для каждого языка.
+Таблица правил называется `language_rules` и хранит правила для разных языков через поле `language`.

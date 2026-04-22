@@ -18,4 +18,4 @@ class User(Base):
     # Связь с таблицей слов
     # back_populates создает виртуальное поле "owner" в модели Word
     words = relationship("Word", back_populates="owner")
-    english_rules = relationship("EnglishRule", back_populates="owner")
+    language_rules = relationship("LanguageRule", back_populates="owner")
