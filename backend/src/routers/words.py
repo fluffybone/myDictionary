@@ -1,5 +1,5 @@
 from datetime import date, datetime, time, timedelta
-from typing import List, Optional
+from typing import List, Literal, Optional
 from fastapi import APIRouter, Depends, Query
 from fastapi import HTTPException, status
 from typing import Annotated
@@ -22,6 +22,7 @@ from sqlalchemy import select, func, delete
 router = APIRouter(prefix="/api/words", tags=["words"])
 
 MAX_WORDS_PER_USER = 10
+SupportedLanguage = Literal["en", "de", "fr", "es", "it"]
 
 
 # Для слов Изучаю сейчас
@@ -33,7 +34,9 @@ async def create_word(
 ):
 
     existing_word_query = select(WordDb).where(
-        WordDb.owner_id == current_user.id, WordDb.orig_word.ilike(word.orig_word)
+        WordDb.owner_id == current_user.id,
+        WordDb.language == word.language,
+        WordDb.orig_word.ilike(word.orig_word),
     )
 
     existing_word_result = await db.execute(existing_word_query)
@@ -47,6 +50,7 @@ async def create_word(
 
     learning_words_count_query = select(func.count()).where(
         WordDb.owner_id == current_user.id,
+        WordDb.language == word.language,
         WordDb.is_learning == True,
     )
     learning_words_count_result = await db.execute(learning_words_count_query)
@@ -87,8 +91,11 @@ async def read_my_words(
     date_to: Optional[date] = Query(
         None, description="Конечная дата создания слова в формате YYYY-MM-DD"
     ),
+    language: SupportedLanguage = Query(
+        "en", description="Язык словаря: en, de, fr, es или it"
+    ),
 ):
-    filters = [WordDb.owner_id == current_user.id]
+    filters = [WordDb.owner_id == current_user.id, WordDb.language == language]
 
     if is_learning is not None:
         filters.append(WordDb.is_learning == is_learning)
@@ -168,10 +175,13 @@ async def update_word(
             status_code=status.HTTP_404_NOT_FOUND, detail="Слово не найдено"
         )
 
-    if word_update.orig_word is not None:
+    if word_update.orig_word is not None or word_update.language is not None:
+        next_orig_word = word_update.orig_word or db_word.orig_word
+        next_language = word_update.language or db_word.language
         existing_word_query = select(WordDb).where(
             WordDb.owner_id == current_user.id,
-            WordDb.orig_word.ilike(word_update.orig_word),
+            WordDb.language == next_language,
+            WordDb.orig_word.ilike(next_orig_word),
             WordDb.id != word_id,
         )
 
@@ -181,7 +191,7 @@ async def update_word(
         if existing_word:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Слово '{word_update.orig_word}' уже существует в вашем словаре",
+                detail=f"Слово '{next_orig_word}' уже существует в вашем словаре",
             )
     update_data = word_update.model_dump(exclude_unset=True)
     for field, value in update_data.items():

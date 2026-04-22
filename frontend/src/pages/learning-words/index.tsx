@@ -1,8 +1,14 @@
 import { DisplayWords } from "../../features/DisplayWords";
+import { useSpeechSettings } from "../../hooks/useSpeechSettings";
 import { useGetWordsQuery } from "../../store/words/api";
 
 export const LearningWords = () => {
-  const { data: words } = useGetWordsQuery({ isLearning: true });
+  const { activeLanguage } = useSpeechSettings();
+  const { data: words } = useGetWordsQuery({
+    isLearning: true,
+    language: activeLanguage.code,
+  });
+
   return (
     <>
       {words && (

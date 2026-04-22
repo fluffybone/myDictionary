@@ -10,7 +10,7 @@ import { getErrorText } from "../../store/utils/getErrorText";
 import { ListWords } from "./components/ListWords";
 import { useAppDispatch } from "../../store/utils/useAppDispatch";
 import { SoundOutlined } from "@ant-design/icons";
-import { canUseSpeechSynthesis, speakEnglishWord } from "../../utils/speech";
+import { canUseSpeechSynthesis, speakWord } from "../../utils/speech";
 import { useSpeechSettings } from "../../hooks/useSpeechSettings";
 import { useLazyGetRuleHintQuery } from "../../store/rules/api";
 import { Button } from "../../components/Button";
@@ -58,7 +58,7 @@ export const DisplayWords: FC<TProps> = ({
   const [learningWords, setLearningWords] = useState<TWordResponse[]>([]);
   const [isInvalidateCacheWord, setIsInvalidateCacheWord] = useState(false);
   const [isOrigWordTouched, setIsOrigWordTouched] = useState(false);
-  const { selectedVoiceURI } = useSpeechSettings();
+  const { activeLanguage, selectedVoiceURI } = useSpeechSettings();
 
   const dispatch = useAppDispatch();
   const canPlayWord =
@@ -71,13 +71,16 @@ export const DisplayWords: FC<TProps> = ({
 
     const ruleHint = wordForm.description.trim()
       ? null
-      : await getRuleHint({ word: wordForm.origWord })
+      : activeLanguage.code === "en"
+        ? await getRuleHint({ word: wordForm.origWord })
           .unwrap()
           .then((response) => response.hint)
-          .catch(() => null);
+          .catch(() => null)
+        : null;
     const preparedDescription = wordForm.description.trim() || ruleHint || "";
 
     const response = await addWord({
+      language: activeLanguage.code,
       orig_word: wordForm.origWord,
       translate_word: wordForm.translateWord,
       description: preparedDescription,
@@ -102,6 +105,7 @@ export const DisplayWords: FC<TProps> = ({
     if (!wordForm.wordId) return;
 
     const response = await updateWord({
+      language: activeLanguage.code,
       orig_word: wordForm.origWord,
       translate_word: wordForm.translateWord,
       description: wordForm.description,
@@ -168,10 +172,13 @@ export const DisplayWords: FC<TProps> = ({
                     return;
                   }
 
-                  const ruleHint = await getRuleHint({ word: preparedWord })
-                    .unwrap()
-                    .then((response) => response.hint)
-                    .catch(() => null);
+                  const ruleHint =
+                    activeLanguage.code === "en"
+                      ? await getRuleHint({ word: preparedWord })
+                          .unwrap()
+                          .then((response) => response.hint)
+                          .catch(() => null)
+                      : null;
 
                   if (ruleHint) {
                     setWordForm((prev) => ({
@@ -195,10 +202,14 @@ export const DisplayWords: FC<TProps> = ({
                   className={classes.soundButton}
                   variant="ghost"
                   size="small"
-                  aria-label="Воспроизвести английское слово"
+                  aria-label="Воспроизвести слово"
                   title="Воспроизвести"
                   onClick={() =>
-                    speakEnglishWord(wordForm.origWord, selectedVoiceURI)
+                    speakWord(
+                      wordForm.origWord,
+                      activeLanguage.speechLang,
+                      selectedVoiceURI,
+                    )
                   }
                 >
                   <SoundOutlined size={20} />
@@ -281,6 +292,7 @@ export const DisplayWords: FC<TProps> = ({
         pagination={pagination}
         setWordForm={setWordForm}
         setIsInvalidateCacheWord={setIsInvalidateCacheWord}
+        speechLang={activeLanguage.speechLang}
         selectedVoiceURI={selectedVoiceURI}
         totalWords={totalWords}
       />

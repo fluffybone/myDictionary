@@ -1,7 +1,9 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
+import type { TLanguageCode } from "../../constants/languages";
 import { customBaseQuery } from "../utils/customBaseQuery";
 
 export type TWord = {
+  language: TLanguageCode;
   orig_word: string;
   translate_word: string;
   description: string;
@@ -11,6 +13,7 @@ export type TWordResponse = {
   created_at: string;
   description: string;
   id: number;
+  language: TLanguageCode;
   orig_word: string;
   translate_word: string;
 };
@@ -30,17 +33,19 @@ export const wordsApi = createApi({
         dateFrom?: string;
         dateTo?: string;
         isLearning?: boolean;
+        language: TLanguageCode;
         limit?: number;
         random?: boolean;
         skip?: number;
       }
     >({
-      query: ({ dateFrom, dateTo, isLearning, limit, random, skip }) => ({
+      query: ({ dateFrom, dateTo, isLearning, language, limit, random, skip }) => ({
         url: "/api/words/learning",
         params: {
           ...(isLearning == undefined ? {} : { is_learning: isLearning }),
           ...(dateFrom ? { date_from: dateFrom } : {}),
           ...(dateTo ? { date_to: dateTo } : {}),
+          language,
           ...(limit !== undefined ? { limit } : {}),
           ...(random !== undefined ? { random } : {}),
           ...(skip !== undefined ? { skip } : {}),

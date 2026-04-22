@@ -16,10 +16,7 @@ import {
   type TWordResponse,
 } from "../../../../store/words/api";
 import { Checkbox } from "../../../../components/Checkbox";
-import {
-  canUseSpeechSynthesis,
-  speakEnglishWord,
-} from "../../../../utils/speech";
+import { canUseSpeechSynthesis, speakWord } from "../../../../utils/speech";
 import { Pagination } from "../../../../components/Pagination";
 import { formatDate } from "../../../../utils/formatDate";
 import { Button } from "../../../../components/Button";
@@ -37,6 +34,7 @@ type TProps = {
     totalPages: number;
   };
   selectedVoiceURI: string;
+  speechLang: string;
   setWordForm: ({
     origWord,
     translateWord,
@@ -61,6 +59,7 @@ export const ListWords: FC<TProps> = ({
   mode,
   pagination,
   selectedVoiceURI,
+  speechLang,
   setWordForm,
   isLearning,
   totalWords,
@@ -180,7 +179,7 @@ export const ListWords: FC<TProps> = ({
                       title="Воспроизвести"
                       onClick={(event) => {
                         event.stopPropagation();
-                        speakEnglishWord(word.orig_word, selectedVoiceURI);
+                        speakWord(word.orig_word, speechLang, selectedVoiceURI);
                       }}
                     >
                       <SoundOutlined />

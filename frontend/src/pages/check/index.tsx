@@ -13,6 +13,7 @@ import { DateRangeFilter } from "../../components/DateRangeFilter";
 import { getCurrentMonthRange } from "../../utils/dateRange";
 import { Button } from "../../components/Button";
 import { IconButton } from "../../components/IconButton";
+import { useSpeechSettings } from "../../hooks/useSpeechSettings";
 
 type TCheckWordsSource = "learning" | "learned";
 type TSelectedOption = "origWord" | "translateWord";
@@ -43,6 +44,7 @@ export const Check = () => {
     useState<TSelectedOption>("origWord");
   const [wordsSource, setWordsSource] = useState<TCheckWordsSource>("learning");
   const [dateRange, setDateRange] = useState(getCurrentMonthRange);
+  const { activeLanguage } = useSpeechSettings();
   const {
     data: words,
     isError,
@@ -51,6 +53,7 @@ export const Check = () => {
     dateFrom: wordsSource === "learned" ? dateRange.dateFrom : undefined,
     dateTo: wordsSource === "learned" ? dateRange.dateTo : undefined,
     isLearning: wordsSource === "learning",
+    language: activeLanguage.code,
     limit: 100,
     random: true,
   });
@@ -75,7 +78,7 @@ export const Check = () => {
     setIsViewResult(false);
     setHasError(false);
     setIsWin(false);
-  }, [dateRange.dateFrom, dateRange.dateTo, wordsSource]);
+  }, [activeLanguage.code, dateRange.dateFrom, dateRange.dateTo, wordsSource]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

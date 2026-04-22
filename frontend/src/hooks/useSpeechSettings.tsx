@@ -7,14 +7,26 @@ import {
   type FC,
   type ReactNode,
 } from "react";
-import { canUseSpeechSynthesis, getEnglishSpeechVoices } from "../utils/speech";
+import {
+  DEFAULT_LANGUAGE,
+  getLanguageByCode,
+  type TLanguage,
+  type TLanguageCode,
+} from "../constants/languages";
+import {
+  canUseSpeechSynthesis,
+  getSpeechVoicesByLanguage,
+} from "../utils/speech";
 
 const SPEECH_VOICE_STORAGE_KEY = "wordeater_speech_voice_uri";
+const ACTIVE_LANGUAGE_STORAGE_KEY = "wordeater_active_language";
 
 type TSpeechSettingsContext = {
-  englishVoices: SpeechSynthesisVoice[];
+  activeLanguage: TLanguage;
   selectedVoiceURI: string;
+  setActiveLanguageCode: (languageCode: TLanguageCode) => void;
   setSelectedVoiceURI: (voiceURI: string) => void;
+  voices: SpeechSynthesisVoice[];
 };
 
 const SpeechSettingsContext = createContext<TSpeechSettingsContext | null>(null);
@@ -24,16 +36,31 @@ type TProps = {
 };
 
 export const SpeechSettingsProvider: FC<TProps> = ({ children }) => {
-  const [englishVoices, setEnglishVoices] = useState<SpeechSynthesisVoice[]>([]);
-  const [selectedVoiceURI, setSelectedVoiceURIState] = useState(() =>
-    localStorage.getItem(SPEECH_VOICE_STORAGE_KEY) ?? "",
+  const [activeLanguage, setActiveLanguage] = useState<TLanguage>(() =>
+    getLanguageByCode(localStorage.getItem(ACTIVE_LANGUAGE_STORAGE_KEY)),
   );
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [voiceByLanguage, setVoiceByLanguage] = useState<
+    Partial<Record<TLanguageCode, string>>
+  >(
+    () => {
+      try {
+        return JSON.parse(
+          localStorage.getItem(SPEECH_VOICE_STORAGE_KEY) ?? "{}",
+        );
+      } catch {
+        return {};
+      }
+    },
+  );
+
+  const selectedVoiceURI = voiceByLanguage[activeLanguage.code] ?? "";
 
   useEffect(() => {
     if (!canUseSpeechSynthesis()) return;
 
     const syncVoices = () => {
-      setEnglishVoices(getEnglishSpeechVoices());
+      setVoices(getSpeechVoicesByLanguage(activeLanguage.speechLang));
     };
 
     syncVoices();
@@ -42,21 +69,40 @@ export const SpeechSettingsProvider: FC<TProps> = ({ children }) => {
     return () => {
       speechSynthesis.removeEventListener("voiceschanged", syncVoices);
     };
-  }, []);
+  }, [activeLanguage.speechLang]);
+
+  const setActiveLanguageCode = (languageCode: TLanguageCode) => {
+    const nextLanguage = getLanguageByCode(languageCode) ?? DEFAULT_LANGUAGE;
+
+    setActiveLanguage(nextLanguage);
+    localStorage.setItem(ACTIVE_LANGUAGE_STORAGE_KEY, nextLanguage.code);
+  };
 
   const setSelectedVoiceURI = (voiceURI: string) => {
-    setSelectedVoiceURIState(voiceURI);
+    setVoiceByLanguage((prev) => {
+      const next = { ...prev };
 
-    if (voiceURI) {
-      localStorage.setItem(SPEECH_VOICE_STORAGE_KEY, voiceURI);
-    } else {
-      localStorage.removeItem(SPEECH_VOICE_STORAGE_KEY);
-    }
+      if (voiceURI) {
+        next[activeLanguage.code] = voiceURI;
+      } else {
+        delete next[activeLanguage.code];
+      }
+
+      localStorage.setItem(SPEECH_VOICE_STORAGE_KEY, JSON.stringify(next));
+
+      return next;
+    });
   };
 
   const value = useMemo(
-    () => ({ englishVoices, selectedVoiceURI, setSelectedVoiceURI }),
-    [englishVoices, selectedVoiceURI],
+    () => ({
+      activeLanguage,
+      selectedVoiceURI,
+      setActiveLanguageCode,
+      setSelectedVoiceURI,
+      voices,
+    }),
+    [activeLanguage, selectedVoiceURI, voices],
   );
 
   return (
