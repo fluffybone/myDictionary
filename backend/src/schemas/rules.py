@@ -5,14 +5,16 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from .validators import validate_not_empty
 
-EnglishRuleCategory = Literal["grammar", "word-building", "phrases"]
+LanguageRuleCategory = Literal["grammar", "word-building", "phrases"]
+SupportedLanguage = Literal["en", "de", "fr", "es", "it"]
 
 
-class EnglishRuleBase(BaseModel):
+class LanguageRuleBase(BaseModel):
     title: str = Field(..., min_length=1)
     description: str = Field(..., min_length=1)
     examples: List[str] = Field(default_factory=list)
-    category: EnglishRuleCategory
+    category: LanguageRuleCategory
+    language: SupportedLanguage = Field(default="en", description="Язык правила")
 
     @field_validator("title")
     @classmethod
@@ -30,15 +32,16 @@ class EnglishRuleBase(BaseModel):
         return [example.strip() for example in value if example.strip()]
 
 
-class EnglishRuleCreate(EnglishRuleBase):
+class LanguageRuleCreate(LanguageRuleBase):
     pass
 
 
-class EnglishRuleUpdate(BaseModel):
+class LanguageRuleUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     examples: Optional[List[str]] = None
-    category: Optional[EnglishRuleCategory] = None
+    category: Optional[LanguageRuleCategory] = None
+    language: Optional[SupportedLanguage] = None
 
     @field_validator("title")
     @classmethod
@@ -62,7 +65,7 @@ class EnglishRuleUpdate(BaseModel):
         return [example.strip() for example in value if example.strip()]
 
 
-class EnglishRule(EnglishRuleBase):
+class LanguageRule(LanguageRuleBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -72,5 +75,5 @@ class EnglishRule(EnglishRuleBase):
     updated_at: Optional[datetime] = None
 
 
-class EnglishRuleHint(BaseModel):
+class LanguageRuleHint(BaseModel):
     hint: Optional[str] = None

@@ -10,6 +10,7 @@ class Word(Base):
     id = Column(Integer, primary_key=True, index=True)
     orig_word = Column(String, index=True)
     translate_word = Column(String)
+    language = Column(String(10), default="en", nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     description = Column(String)
     # Добавляем внешний ключ на таблицу пользователей

@@ -1,36 +1,40 @@
 import { CloseOutlined, DeleteOutlined } from "@ant-design/icons";
-import { useMemo, useRef, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import clsx from "clsx";
 import { Button } from "../../components/Button";
 import { Checkbox } from "../../components/Checkbox";
 import { IconButton } from "../../components/IconButton";
 import { Select } from "../../components/Select";
 import {
-  englishRuleCategories,
-  englishRuleCategoryLabels,
-  type TEnglishRuleCategory,
-} from "../../data/englishRules";
+  languageRuleCategories,
+  languageRuleCategoryLabels,
+  type TLanguageRuleCategory,
+} from "../../data/languageRules";
 import {
   useAddRuleMutation,
   useDeleteRuleMutation,
   useGetRulesQuery,
   useUpdateRuleMutation,
-  type TEnglishRule,
-  type TEnglishRulePayload,
+  type TLanguageRule,
+  type TLanguageRulePayload,
 } from "../../store/rules/api";
+import { useSpeechSettings } from "../../hooks/useSpeechSettings";
 import classes from "./index.module.css";
 
 const createEmptyFilters = () => {
-  return englishRuleCategories.reduce(
+  return languageRuleCategories.reduce(
     (filters, category) => ({ ...filters, [category]: true }),
-    {} as Record<TEnglishRuleCategory, boolean>,
+    {} as Record<TLanguageRuleCategory, boolean>,
   );
 };
 
-const createEmptyRuleForm = (): TEnglishRulePayload => ({
+const createEmptyRuleForm = (
+  language: TLanguageRulePayload["language"],
+): TLanguageRulePayload => ({
   category: "grammar",
   description: "",
   examples: [],
+  language,
   title: "",
 });
 
@@ -42,14 +46,19 @@ const parseExamples = (examples: string) => {
 };
 
 export const Rules = () => {
-  const { data: rules = [], isFetching: isRulesFetching } = useGetRulesQuery();
+  const { activeLanguage } = useSpeechSettings();
+  const { data: rules = [], isFetching: isRulesFetching } = useGetRulesQuery({
+    language: activeLanguage.code,
+  });
   const [addRule, { isLoading: isAddRuleLoading }] = useAddRuleMutation();
   const [updateRule, { isLoading: isUpdateRuleLoading }] = useUpdateRuleMutation();
   const [deleteRule] = useDeleteRuleMutation();
   const [categoryFilters, setCategoryFilters] = useState(createEmptyFilters);
-  const [editingRuleId, setEditingRuleId] = useState<null | TEnglishRule["id"]>(null);
+  const [editingRuleId, setEditingRuleId] = useState<null | TLanguageRule["id"]>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [ruleForm, setRuleForm] = useState<TEnglishRulePayload>(createEmptyRuleForm);
+  const [ruleForm, setRuleForm] = useState<TLanguageRulePayload>(() =>
+    createEmptyRuleForm(activeLanguage.code),
+  );
   const [examplesText, setExamplesText] = useState("");
   const pageRef = useRef<HTMLElement | null>(null);
 
@@ -59,21 +68,28 @@ export const Rules = () => {
 
   const isEditMode = editingRuleId !== null;
   const isSubmitLoading = isAddRuleLoading || isUpdateRuleLoading;
+  const isAnyCategorySelected = Object.values(categoryFilters).some(Boolean);
 
   const resetForm = () => {
     setEditingRuleId(null);
     setIsFormOpen(false);
-    setRuleForm(createEmptyRuleForm());
+    setRuleForm(createEmptyRuleForm(activeLanguage.code));
     setExamplesText("");
   };
 
-  const handleEditRule = (rule: TEnglishRule) => {
+  useEffect(() => {
+    resetForm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeLanguage.code]);
+
+  const handleEditRule = (rule: TLanguageRule) => {
     setIsFormOpen(true);
     setEditingRuleId(rule.id);
     setRuleForm({
       category: rule.category,
       description: rule.description,
       examples: rule.examples,
+      language: rule.language,
       title: rule.title,
     });
     setExamplesText(rule.examples.join("\n"));
@@ -86,7 +102,7 @@ export const Rules = () => {
     });
   };
 
-  const handleDeleteRule = async (ruleId: TEnglishRule["id"]) => {
+  const handleDeleteRule = async (ruleId: TLanguageRule["id"]) => {
     await deleteRule({ id: ruleId }).unwrap();
 
     if (editingRuleId === ruleId) {
@@ -101,6 +117,7 @@ export const Rules = () => {
       ...ruleForm,
       description: ruleForm.description.trim(),
       examples: parseExamples(examplesText),
+      language: activeLanguage.code,
       title: ruleForm.title.trim(),
     };
 
@@ -130,8 +147,9 @@ export const Rules = () => {
           )}
         </div>
         <p className={classes.footnote}>
-          Стартовые правила сгенерированы нейросетью. Проверяйте и адаптируйте их
-          под свой способ обучения.
+          Активный язык: {activeLanguage.label}. Стартовые правила
+          сгенерированы нейросетью. Проверяйте и адаптируйте их под свой способ
+          обучения.
         </p>
       </div>
 
@@ -166,14 +184,14 @@ export const Rules = () => {
             <Select
               label="Категория"
               value={ruleForm.category}
-              options={englishRuleCategories.map((category) => ({
-                label: englishRuleCategoryLabels[category],
+              options={languageRuleCategories.map((category) => ({
+                label: languageRuleCategoryLabels[category],
                 value: category,
               }))}
               onChange={(event) =>
                 setRuleForm((prev) => ({
                   ...prev,
-                  category: event.target.value as TEnglishRuleCategory,
+                  category: event.target.value as TLanguageRuleCategory,
                 }))
               }
             />
@@ -212,10 +230,10 @@ export const Rules = () => {
 
 
       <div className={clsx(classes.filterList, { [classes.hiddenOnMobileForm]: isFormOpen })}>
-        {englishRuleCategories.map((category) => (
+        {languageRuleCategories.map((category) => (
           <Checkbox
             key={category}
-            label={englishRuleCategoryLabels[category]}
+            label={languageRuleCategoryLabels[category]}
             checked={categoryFilters[category]}
             onChange={(event) =>
               setCategoryFilters((prev) => ({
@@ -230,7 +248,11 @@ export const Rules = () => {
       {isRulesFetching && <p className={classes.empty}>Загружаю правила...</p>}
 
       {!isRulesFetching && filteredRules.length === 0 && (
-        <p className={classes.empty}>Выбери хотя бы одну категорию правил.</p>
+        <p className={classes.empty}>
+          {isAnyCategorySelected
+            ? "Для выбранного языка правил пока нет. Можно добавить свое правило."
+            : "Выбери хотя бы одну категорию правил."}
+        </p>
       )}
 
       <div className={clsx(classes.grid, { [classes.hiddenOnMobileForm]: isFormOpen })}>
@@ -242,7 +264,7 @@ export const Rules = () => {
             <div className={classes.cardHeader}>
               <h3 className={classes.ruleTitle}>{rule.title}</h3>
               <span className={classes.badge}>
-                {rule.is_default ? englishRuleCategoryLabels[rule.category] : "мое правило"}
+                {rule.is_default ? languageRuleCategoryLabels[rule.category] : "мое правило"}
               </span>
             </div>
             <p className={classes.description}>{rule.description}</p>

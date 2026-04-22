@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from datetime import datetime
 from .validators import validate_not_empty
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 
 # --- Схемы для слов ---
@@ -13,6 +13,9 @@ class WordBase(BaseModel):
     )
     description: str
     is_learning: bool = Field(default=True, description="Слово в процессе изучения")
+    language: Literal["en", "de", "fr", "es", "it"] = Field(
+        default="en", description="Язык слова"
+    )
 
     @field_validator("orig_word")
     @classmethod
@@ -52,6 +55,7 @@ class WordUpdate(BaseModel):
     translate_word: Optional[str] = None
     description: Optional[str] = None
     is_learning: Optional[bool] = None
+    language: Optional[Literal["en", "de", "fr", "es", "it"]] = None
 
 
 class BulkUpdateLearningStatusRequest(BaseModel):

@@ -45,7 +45,7 @@
 }
 
 .panel[data-open="true"] {
-  max-height: 420px;
+  max-height: 520px;
   padding: 16px;
   opacity: 1;
   transform: translateY(0);
@@ -63,6 +63,10 @@
   width: 100%;
   gap: 8px;
   margin-top: 14px;
+}
+
+.select + .select {
+  margin-top: 10px;
 }
 
 .logoutButton svg {

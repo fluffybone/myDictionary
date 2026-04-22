@@ -3,6 +3,7 @@ import { LogoutOutlined, SettingOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button";
 import { Select } from "../../components/Select";
+import { LANGUAGES, type TLanguageCode } from "../../constants/languages";
 import { useSpeechSettings } from "../../hooks/useSpeechSettings";
 import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "../../shared";
 import { getStoredTheme, saveTheme, type TAppTheme } from "../../utils/theme";
@@ -11,8 +12,13 @@ import classes from "./SpeechSettings.module.css";
 export const Settings = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useState<TAppTheme>(() => getStoredTheme());
-  const { englishVoices, selectedVoiceURI, setSelectedVoiceURI } =
-    useSpeechSettings();
+  const {
+    activeLanguage,
+    selectedVoiceURI,
+    setActiveLanguageCode,
+    setSelectedVoiceURI,
+    voices,
+  } = useSpeechSettings();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -55,14 +61,29 @@ export const Settings = () => {
           </p>
         </div>
         <Select
+          className={classes.select}
+          name="language"
+          label="Язык изучения"
+          value={activeLanguage.code}
+          onChange={(event) =>
+            setActiveLanguageCode(event.target.value as TLanguageCode)
+          }
+          options={LANGUAGES.map((language) => ({
+            label: `${language.label} / ${language.nativeLabel}`,
+            value: language.code,
+          }))}
+        />
+        <Select
+          className={classes.select}
           name="voice"
+          label="Голос озвучки"
           placeholder="Голос по умолчанию"
           value={selectedVoiceURI}
           onChange={(event) => {
             setSelectedVoiceURI(event.target.value);
             setIsOpen(false);
           }}
-          options={englishVoices.map((voice) => ({
+          options={voices.map((voice) => ({
             label: `${voice.name} / ${voice.lang}`,
             value: voice.voiceURI,
           }))}
