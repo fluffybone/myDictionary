@@ -170,6 +170,12 @@
   }
 }
 
+@media (display-mode: browser) and (max-width: 640px) {
+  .page {
+    height: calc(100dvh - 112px);
+  }
+}
+
 .formActions {
   display: flex;
   justify-content: flex-end;
