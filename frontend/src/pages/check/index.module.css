@@ -67,7 +67,7 @@
 }
 
 .tableTr {
-  border-top: 1px solid white;
+  border-top: 1px solid var(--surface-white);
   position: relative;
 }
 
@@ -94,7 +94,7 @@ table tr:first-child {
 
 .blockWin {
   padding: 8px 16px;
-  background-color: white;
+  background-color: var(--surface-white);
   border-radius: 12px;
   position: relative;
   width: 350px;
@@ -113,7 +113,7 @@ table tr:first-child {
 
 .blockWin h3 {
   margin: 20px 0;
-  color: green;
+  color: var(--success);
 }
 
 .buttonActionAfterTest {

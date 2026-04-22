@@ -22,7 +22,7 @@
   justify-content: center;
   width: 20px;
   height: 20px;
-  background-color: white;
+  background-color: var(--surface-white);
   border: 2px solid var(--primary);
   border-radius: 4px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -30,11 +30,11 @@
 }
 
 .checkboxContainer:hover .checkboxCustom {
-  background-color: rgba(229, 149, 0, 0.1); /* primary с прозрачностью */
+  background-color: rgba(var(--primary-rgb), 0.1);
 }
 
 .checkboxContainer input[type="checkbox"]:focus + .checkboxCustom {
-  box-shadow: 0 0 0 3px rgba(229, 149, 0, 0.3);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.3);
 }
 
 .checkboxContainer input[type="checkbox"]:checked + .checkboxCustom {
@@ -47,7 +47,7 @@
   width: 14px;
   height: 14px;
   fill: none;
-  stroke: white;
+  stroke: var(--text-inverted);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;

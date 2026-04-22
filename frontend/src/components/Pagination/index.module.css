@@ -21,8 +21,8 @@
   color: var(--main);
   font-family: var(--font-bold);
   font-size: var(--text-sm);
-  background: rgba(255, 255, 255, 0.56);
-  border: 1px solid rgba(255, 255, 255, 0.82);
+  background: var(--surface-glass);
+  border: 1px solid var(--border-glass-strong);
   border-radius: 999px;
   cursor: pointer;
   transition:
@@ -37,7 +37,7 @@
 }
 
 .page.active {
-  color: white;
+  color: var(--text-inverted);
   background: var(--primary);
   border-color: var(--primary);
 }

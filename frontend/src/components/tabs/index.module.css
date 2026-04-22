@@ -54,14 +54,14 @@
 
 .content {
   padding: 24px;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--surface-glass-light);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  border-top: 1px solid rgba(255, 255, 255, 0.8);
-  border-right: 1px solid rgba(255, 255, 255, 0.4);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  border-top: 1px solid var(--border-glass-strong);
+  border-right: 1px solid var(--border-glass-light);
+  border-bottom: 1px solid var(--border-glass-light);
   border-radius: var(--card-radius);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 25px 50px -12px var(--shadow-neutral-soft);
   z-index: 10;
   font-size: var(--text-base);
 
@@ -73,22 +73,22 @@
 }
 
 .activeTab.activeTab {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--surface-glass-light);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  border-top: 1px solid rgba(255, 255, 255, 0.8) !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.4) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.8) !important;
+  border-top: 1px solid var(--border-glass-strong) !important;
+  border-left: 1px solid var(--border-glass-light) !important;
+  border-bottom: 1px solid var(--border-glass-strong) !important;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 25px 50px -12px var(--shadow-neutral-soft);
   z-index: 10;
   font-size: var(--text-base);
   color: var(--primary);
 
   @media (max-width: 640px) {
     border-bottom: none;
-    border-right: 1px solid rgba(255, 255, 255, 0.4) !important;
+    border-right: 1px solid var(--border-glass-light) !important;
     border-bottom-left-radius: 0;
     border-top-right-radius: var(--element-radius);
   }
