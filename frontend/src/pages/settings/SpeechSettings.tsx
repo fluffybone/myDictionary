@@ -22,7 +22,7 @@ export const Settings = () => {
   return (
     <aside className={classes.settings} aria-label="Настройки приложения">
       <div className={classes.panel} data-open={isOpen}>
-        <p className={classes.title}>Настройки произношения</p>
+        <p className={classes.title}>Дополнительные параметры</p>
         <div className={classes.translateNotice}>
           <p className={classes.noticeTitle}>Быстрый перевод</p>
           <p className={classes.noticeText}>
