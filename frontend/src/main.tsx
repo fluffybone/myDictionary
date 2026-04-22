@@ -5,6 +5,9 @@ import { BrowserRouter } from "react-router-dom";
 import { AppRoutes } from "./AppRoutes";
 import { setupStore } from "./store/store";
 import "./styles/index";
+import { applyStoredTheme } from "./utils/theme";
+
+applyStoredTheme();
 
 const rootNode = document.querySelector("#root");
 if (rootNode === null) {

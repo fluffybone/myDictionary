@@ -33,7 +33,7 @@
   border: 1px solid var(--border-glass);
   border-radius: 24px;
   background:
-    linear-gradient(135deg, rgba(255, 250, 247, 0.96), rgba(244, 244, 242, 0.94)),
+    linear-gradient(135deg, var(--surface-banner-start), var(--surface-banner-end)),
     radial-gradient(circle at 10% 20%, rgba(var(--primary-rgb), 0.22), transparent 36%);
   box-shadow: 0 20px 60px var(--shadow-main-soft);
   backdrop-filter: blur(16px);
@@ -70,7 +70,7 @@
   padding: 14px 16px;
   color: var(--main);
   background:
-    linear-gradient(135deg, var(--surface-glass-strong), rgba(226, 238, 255, 0.94)),
+    linear-gradient(135deg, var(--surface-info-start), var(--surface-info-end)),
     radial-gradient(circle at 8% 16%, rgba(var(--primary-rgb), 0.18), transparent 32%);
   border: 1px solid var(--border-glass-strong);
   border-radius: 20px;

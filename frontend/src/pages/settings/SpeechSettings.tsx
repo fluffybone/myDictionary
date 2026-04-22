@@ -5,10 +5,12 @@ import { Button } from "../../components/Button";
 import { Select } from "../../components/Select";
 import { useSpeechSettings } from "../../hooks/useSpeechSettings";
 import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "../../shared";
+import { getStoredTheme, saveTheme, type TAppTheme } from "../../utils/theme";
 import classes from "./SpeechSettings.module.css";
 
 export const Settings = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [theme, setTheme] = useState<TAppTheme>(() => getStoredTheme());
   const { englishVoices, selectedVoiceURI, setSelectedVoiceURI } =
     useSpeechSettings();
   const navigate = useNavigate();
@@ -19,10 +21,32 @@ export const Settings = () => {
     navigate("/auth/login", { replace: true });
   };
 
+  const handleThemeToggle = () => {
+    const nextTheme = theme === "neo" ? "warm" : "neo";
+
+    setTheme(nextTheme);
+    saveTheme(nextTheme);
+  };
+
   return (
     <aside className={classes.settings} aria-label="Настройки приложения">
       <div className={classes.panel} data-open={isOpen}>
         <p className={classes.title}>Дополнительные параметры</p>
+        <div className={classes.themeBlock}>
+          <div>
+            <p className={classes.settingLabel}>Тема</p>
+            <p className={classes.settingDescription}>
+              Сейчас: {theme}
+            </p>
+          </div>
+          <Button
+            variant={theme === "neo" ? "primary" : "secondary"}
+            size="small"
+            onClick={handleThemeToggle}
+          >
+            {theme === "neo" ? "warm" : "neo"}
+          </Button>
+        </div>
         <div className={classes.translateNotice}>
           <p className={classes.noticeTitle}>Быстрый перевод</p>
           <p className={classes.noticeText}>
