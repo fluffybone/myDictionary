@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Literal, Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from .validators import validate_not_empty
 
@@ -63,14 +63,13 @@ class EnglishRuleUpdate(BaseModel):
 
 
 class EnglishRule(EnglishRuleBase):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     is_default: bool
     matcher_key: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
 
 
 class EnglishRuleHint(BaseModel):

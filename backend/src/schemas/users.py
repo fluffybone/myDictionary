@@ -1,9 +1,9 @@
-from pydantic import BaseModel, EmailStr
-from typing import List, Annotated
+from pydantic import BaseModel, ConfigDict, EmailStr
+from typing import Annotated
 from pydantic_core import PydanticCustomError
 
 
-from pydantic import BaseModel, WrapValidator
+from pydantic import WrapValidator
 
 
 def validate_email(v, handler):
@@ -25,12 +25,11 @@ class UserCreate(UserBase):
 
 
 class User(UserBase):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     is_active: bool
     is_verified: bool = False
-
-    class Config:
-        from_attributes = True
 
 
 class ResendCodeRequest(BaseModel):
