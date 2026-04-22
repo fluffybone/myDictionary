@@ -26,12 +26,18 @@
   --animation-duration: 0.2s;
 
   --primary: #e59500;
+  --primary-rgb: 229, 149, 0;
   --background: #f2edeb;
   --background-secondary: #ffffff;
   --error: #ce6a85;
+  --error-rgb: 206, 106, 133;
   --success: #3f8f62;
   --main: #2b2d42;
+  --main-rgb: 43, 45, 66;
   --secondary: #676f54;
+  --accent-warm: #f4a261;
+  --accent-warm-rgb: 244, 162, 97;
+  --accent-blue: #5b8ec4;
 
   --card-radius: 30px;
   --element-radius: 12px;
@@ -41,6 +47,29 @@
 
   --primary-hover: #d68a00;
   --primary-focus: #d67d00;
+  --main-hover: #3a3c55;
+
+  --text-inverted: #ffffff;
+  --page-bg: #f4f4f2;
+  --page-bg-soft: #eaeaea;
+
+  --surface-glass-light: rgba(255, 255, 255, 0.2);
+  --surface-glass-soft: rgba(255, 255, 255, 0.44);
+  --surface-glass: rgba(255, 255, 255, 0.54);
+  --surface-glass-card: rgba(255, 255, 255, 0.58);
+  --surface-glass-medium: rgba(255, 255, 255, 0.72);
+  --surface-glass-panel: rgba(255, 255, 255, 0.82);
+  --surface-glass-strong: rgba(255, 255, 255, 0.96);
+  --surface-white: #ffffff;
+
+  --border-glass-light: rgba(255, 255, 255, 0.4);
+  --border-glass: rgba(255, 255, 255, 0.74);
+  --border-glass-strong: rgba(255, 255, 255, 0.8);
+
+  --shadow-main-soft: rgba(43, 45, 66, 0.18);
+  --shadow-main-medium: rgba(43, 45, 66, 0.4);
+  --shadow-neutral-soft: rgba(0, 0, 0, 0.15);
+  --shadow-primary: rgba(229, 149, 0, 0.4);
 
   /* Размеры шрифта */
   --text-xs: 0.75rem; /* 12px */

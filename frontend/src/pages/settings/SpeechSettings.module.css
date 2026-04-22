@@ -20,7 +20,7 @@
 .button svg {
   width: 22px;
   height: 22px;
-  fill: white;
+  fill: var(--text-inverted);
 }
 
 .panel {
@@ -28,10 +28,10 @@
   max-height: 0;
   padding: 0 16px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.78);
+  background: var(--surface-glass-panel);
+  border: 1px solid var(--border-glass-strong);
   border-radius: 22px;
-  box-shadow: 0 18px 54px rgba(43, 45, 66, 0.18);
+  box-shadow: 0 18px 54px var(--shadow-main-soft);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   opacity: 0;
@@ -68,7 +68,7 @@
 .logoutButton svg {
   width: 16px;
   height: 16px;
-  fill: white;
+  fill: var(--text-inverted);
 }
 
 @media (max-width: 640px) {
@@ -90,10 +90,10 @@
   padding: 12px;
   color: var(--main);
   background:
-    radial-gradient(circle at 8% 20%, rgba(229, 149, 0, 0.14), transparent 34%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(224, 239, 255, 0.94) 52%, rgba(196, 221, 248, 0.9) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.86);
-  border-left: 4px solid #5b8ec4;
+    radial-gradient(circle at 8% 20%, rgba(var(--primary-rgb), 0.14), transparent 34%),
+    linear-gradient(135deg, var(--surface-glass-strong) 0%, rgba(224, 239, 255, 0.94) 52%, rgba(196, 221, 248, 0.9) 100%);
+  border: 1px solid var(--border-glass-strong);
+  border-left: 4px solid var(--accent-blue);
   border-radius: 16px;
 }
 

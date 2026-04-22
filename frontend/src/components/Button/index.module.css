@@ -31,50 +31,50 @@
 }
 
 .primary {
-  color: #ffffff;
+  color: var(--text-inverted);
   background-color: var(--primary);
-  box-shadow: 0 4px 12px rgba(229, 149, 0, 0.4);
+  box-shadow: 0 4px 12px var(--shadow-primary);
 }
 
 .primary:hover {
   background-color: var(--primary-hover);
-  box-shadow: 0 6px 16px rgba(229, 149, 0, 0.4);
+  box-shadow: 0 6px 16px var(--shadow-primary);
   transform: translateY(-1px);
 }
 
 .primary:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 3px #ffffff,
+    0 0 0 3px var(--text-inverted),
     0 0 0 6px var(--primary);
 }
 
 .primary:active {
-  box-shadow: 0 2px 8px rgba(229, 149, 0, 0.4);
+  box-shadow: 0 2px 8px var(--shadow-primary);
   transform: translateY(0) scale(0.97);
 }
 
 .secondary {
-  color: #ffffff;
+  color: var(--text-inverted);
   background-color: var(--main);
-  box-shadow: 0 4px 12px rgba(43, 45, 66, 0.4);
+  box-shadow: 0 4px 12px var(--shadow-main-medium);
 }
 
 .secondary:hover {
-  background-color: #3a3c55;
-  box-shadow: 0 6px 16px rgba(43, 45, 66, 0.4);
+  background-color: var(--main-hover);
+  box-shadow: 0 6px 16px var(--shadow-main-medium);
   transform: translateY(-1px);
 }
 
 .secondary:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 3px #ffffff,
+    0 0 0 3px var(--text-inverted),
     0 0 0 6px var(--main);
 }
 
 .secondary:active {
-  box-shadow: 0 2px 8px rgba(43, 45, 66, 0.4);
+  box-shadow: 0 2px 8px var(--shadow-main-medium);
   transform: translateY(0) scale(0.97);
 }
 
@@ -101,7 +101,7 @@
 }
 
 .small:not(.transparent) svg {
-  fill: white;
+  fill: var(--text-inverted);
 }
 
 .fullWidth {
