@@ -4,6 +4,7 @@ import classes from "./index.module.css";
 import { Outlet } from "react-router-dom";
 import { Settings } from "../../pages/settings/SpeechSettings";
 import { SpeechSettingsProvider } from "../../hooks/useSpeechSettings";
+import { Button } from "../../components/Button";
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -15,6 +16,7 @@ type IosNavigator = Navigator & {
 };
 
 const INSTALL_BANNER_DISMISSED_KEY = "wordeater_install_banner_dismissed";
+const TRANSLATE_HINT_DISMISSED_KEY = "wordeater_translate_hint_dismissed";
 
 const isIos = () =>
   /iphone|ipad|ipod/i.test(window.navigator.userAgent) ||
@@ -41,6 +43,7 @@ export const Layout: FC = () => {
     null,
   );
   const [isBannerVisible, setIsBannerVisible] = useState(false);
+  const [isTranslateHintVisible, setIsTranslateHintVisible] = useState(false);
 
   useEffect(() => {
     if (isStandalone()) {
@@ -81,7 +84,18 @@ export const Layout: FC = () => {
   }, []);
 
 
+  useEffect(() => {
+    if (window.location.pathname.includes("auth")) {
+      return;
+    }
 
+    const isDismissed =
+      localStorage.getItem(TRANSLATE_HINT_DISMISSED_KEY) === "true";
+
+    if (!isDismissed) {
+      setIsTranslateHintVisible(true);
+    }
+  }, []);
 
   const handleInstall = async () => {
     if (!installPrompt) {
@@ -104,6 +118,11 @@ export const Layout: FC = () => {
     setIsBannerVisible(false);
   };
 
+  const handleTranslateHintDismiss = () => {
+    localStorage.setItem(TRANSLATE_HINT_DISMISSED_KEY, "true");
+    setIsTranslateHintVisible(false);
+  };
+
   return (
     <SpeechSettingsProvider>
       <div className={classes.layout}>
@@ -122,14 +141,25 @@ export const Layout: FC = () => {
             </div>
             <div className={classes.installActions}>
               {installPrompt && (
-                <button className="btn btn-primary btn-small" type="button" onClick={handleInstall}>
+                <Button variant="primary" size="small" onClick={handleInstall}>
                   Установить
-                </button>
+                </Button>
               )}
-              <button className="btn btn-secondary btn-small" type="button" onClick={handleDismiss}>
+              <Button variant="secondary" size="small" onClick={handleDismiss}>
                 Позже
-              </button>
+              </Button>
             </div>
+          </aside>
+        )}
+        {!window.location.pathname.includes("auth") && isTranslateHintVisible && (
+          <aside className={classes.translateHint}>
+            <p className={classes.translateHintText}>
+              Напоминаем: Вы можете выделить любое слово и нажать “Перевести”
+              в системном меню браузера или телефона.
+            </p>
+            <Button variant="primary" size="small" onClick={handleTranslateHintDismiss}>
+              Понятно
+            </Button>
           </aside>
         )}
         {!window.location.pathname.includes("auth") && <Settings />}

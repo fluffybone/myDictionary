@@ -21,31 +21,8 @@ table tr:first-child {
 }
 
 .soundButton {
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 0;
-  color: var(--secondary);
-  background: transparent;
-  cursor: pointer;
-  transition:
-    color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.soundButton span svg {
   width: 18px;
   height: 18px;
-}
-
-.soundButton:hover:not(:disabled) {
-  color: var(--primary);
-  transform: scale(1.08);
-}
-
-.soundButton:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
 }
 
 .descriptionTd {
@@ -78,7 +55,7 @@ table tr:first-child {
   @media (max-width: 640px) {
     height: auto;
     min-height: 140px;
-    max-height: 36vh;
+    height: 35vh;
     padding: 1vw 16px;
   }
 }
@@ -107,11 +84,11 @@ table tr:first-child {
 }
 
 .showFull {
-  height: 84dvh;
+  height: 85dvh;
 
   @media (max-width: 640px) {
     max-height: none;
-    height: 70dvh;
+    height: 75dvh;
   }
 }
 

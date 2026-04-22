@@ -1,6 +1,5 @@
 import { useEffect, useState, type FC, type FormEvent } from "react";
 import classes from "./index.module.css";
-import { clsx } from "clsx";
 import {
   useAddWordMutation,
   useUpdateWordMutation,
@@ -14,6 +13,8 @@ import { SoundOutlined } from "@ant-design/icons";
 import { canUseSpeechSynthesis, speakEnglishWord } from "../../utils/speech";
 import { useSpeechSettings } from "../../hooks/useSpeechSettings";
 import { useLazyGetRuleHintQuery } from "../../store/rules/api";
+import { Button } from "../../components/Button";
+import { IconButton } from "../../components/IconButton";
 
 type TProps = {
   isLearning?: boolean;
@@ -190,9 +191,10 @@ export const DisplayWords: FC<TProps> = ({
                 }}
               />
               {canPlayWord && (
-                <button
+                <IconButton
                   className={classes.soundButton}
-                  type="button"
+                  variant="ghost"
+                  size="small"
                   aria-label="Воспроизвести английское слово"
                   title="Воспроизвести"
                   onClick={() =>
@@ -200,7 +202,7 @@ export const DisplayWords: FC<TProps> = ({
                   }
                 >
                   <SoundOutlined size={20} />
-                </button>
+                </IconButton>
               )}
             </div>
             <input
@@ -238,9 +240,10 @@ export const DisplayWords: FC<TProps> = ({
               className={classes.textarea}
             />
             {wordForm.description && (
-              <button
+              <IconButton
                 className={classes.clearDescriptionButton}
-                type="button"
+                variant="input"
+                size="small"
                 aria-label="Очистить заметки к слову"
                 title="Очистить"
                 onClick={() =>
@@ -251,19 +254,20 @@ export const DisplayWords: FC<TProps> = ({
                 }
               >
                 ×
-              </button>
+              </IconButton>
             )}
           </div>
           <div className={classes.formActions}>
-            <button
-              className={clsx("btn btn-secondary", classes.button)}
+            <Button
+              className={classes.button}
+              variant="secondary"
               type="submit"
               disabled={isAddWordLoading || isUpdateWordLoading}
             >
               {mode === "edit" && wordForm.wordId
                 ? "Сохранить изменения"
                 : "Записать"}
-            </button>
+            </Button>
           </div>
         </form>
       )}

@@ -1,7 +1,9 @@
-import { DeleteOutlined } from "@ant-design/icons";
-import { useMemo, useState, type FormEvent } from "react";
+import { CloseOutlined, DeleteOutlined } from "@ant-design/icons";
+import { useMemo, useRef, useState, type FormEvent } from "react";
 import clsx from "clsx";
+import { Button } from "../../components/Button";
 import { Checkbox } from "../../components/Checkbox";
+import { IconButton } from "../../components/IconButton";
 import { Select } from "../../components/Select";
 import {
   englishRuleCategories,
@@ -46,8 +48,10 @@ export const Rules = () => {
   const [deleteRule] = useDeleteRuleMutation();
   const [categoryFilters, setCategoryFilters] = useState(createEmptyFilters);
   const [editingRuleId, setEditingRuleId] = useState<null | TEnglishRule["id"]>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [ruleForm, setRuleForm] = useState<TEnglishRulePayload>(createEmptyRuleForm);
   const [examplesText, setExamplesText] = useState("");
+  const pageRef = useRef<HTMLElement | null>(null);
 
   const filteredRules = useMemo(() => {
     return rules.filter((rule) => categoryFilters[rule.category]);
@@ -58,11 +62,13 @@ export const Rules = () => {
 
   const resetForm = () => {
     setEditingRuleId(null);
+    setIsFormOpen(false);
     setRuleForm(createEmptyRuleForm());
     setExamplesText("");
   };
 
   const handleEditRule = (rule: TEnglishRule) => {
+    setIsFormOpen(true);
     setEditingRuleId(rule.id);
     setRuleForm({
       category: rule.category,
@@ -71,6 +77,13 @@ export const Rules = () => {
       title: rule.title,
     });
     setExamplesText(rule.examples.join("\n"));
+
+    requestAnimationFrame(() => {
+      pageRef.current?.scrollTo({
+        behavior: "smooth",
+        top: 0,
+      });
+    });
   };
 
   const handleDeleteRule = async (ruleId: TEnglishRule["id"]) => {
@@ -101,103 +114,117 @@ export const Rules = () => {
   };
 
   return (
-    <section className={classes.page}>
+    <section ref={pageRef} className={clsx(classes.page, { [classes.pageWithForm]: isFormOpen })}>
       <div className={classes.header}>
-        <h2 className={classes.title}>Правила</h2>
-        <p className={classes.subtitle}>
-          Короткие подсказки, которые помогают замечать закономерности в словах.
-          Правила и примеры хранятся на backend, поэтому их можно редактировать.
-        </p>
+        <div className={classes.rules}>
+          <h2 className={classes.title}>Правила</h2>
+          {!isFormOpen && (
+            <Button
+              className={classes.addRuleButton}
+              variant="secondary"
+              size="small"
+              onClick={() => setIsFormOpen(true)}
+            >
+              Добавить правило
+            </Button>
+          )}
+        </div>
         <p className={classes.footnote}>
           Стартовые правила сгенерированы нейросетью. Проверяй и адаптируй их
           под свой способ обучения.
         </p>
       </div>
 
-      <form className={classes.form} onSubmit={handleSubmitRule}>
-        <h3 className={classes.formTitle}>
-          {isEditMode ? "Редактировать правило" : "Добавить свое правило"}
-        </h3>
-        <div className={classes.formGrid}>
-          <label className={classes.inputGroup}>
-            <span className={classes.inputLabel}>Название</span>
-            <input
-              required
-              type="text"
-              placeholder="Например: make / do"
-              value={ruleForm.title}
-              onChange={(event) =>
-                setRuleForm((prev) => ({ ...prev, title: event.target.value }))
-              }
-            />
-          </label>
-          <Select
-            label="Категория"
-            value={ruleForm.category}
-            options={englishRuleCategories.map((category) => ({
-              label: englishRuleCategoryLabels[category],
-              value: category,
-            }))}
-            onChange={(event) =>
-              setRuleForm((prev) => ({
-                ...prev,
-                category: event.target.value as TEnglishRuleCategory,
-              }))
-            }
-          />
-        </div>
-        <label className={classes.inputGroup}>
-          <span className={classes.inputLabel}>Описание правила</span>
-          <textarea
-            required
-            placeholder="Коротко объясни правило своими словами"
-            value={ruleForm.description}
-            onChange={(event) =>
-              setRuleForm((prev) => ({ ...prev, description: event.target.value }))
-            }
-          />
-        </label>
-        <label className={classes.inputGroup}>
-          <span className={classes.inputLabel}>Примеры</span>
-          <textarea
-            placeholder={"Каждый пример с новой строки\nI do homework.\nI make a decision."}
-            value={examplesText}
-            onChange={(event) => setExamplesText(event.target.value)}
-          />
-        </label>
-        <div className={classes.formActions}>
-          {isEditMode && (
-            <button className="btn" type="button" onClick={resetForm}>
-              Отмена
-            </button>
-          )}
-          <button
-            className={clsx("btn btn-secondary", classes.submitButton)}
-            type="submit"
-            disabled={isSubmitLoading}
-          >
-            {isEditMode ? "Сохранить правило" : "Добавить правило"}
-          </button>
-        </div>
-      </form>
 
-      <div className={classes.filters}>
-        <p className={classes.filtersTitle}>Фильтр по категориям:</p>
-        <div className={classes.filterList}>
-          {englishRuleCategories.map((category) => (
-            <Checkbox
-              key={category}
-              label={englishRuleCategoryLabels[category]}
-              checked={categoryFilters[category]}
+      {isFormOpen && (
+        <form className={classes.form} onSubmit={handleSubmitRule}>
+          <IconButton
+            className={classes.closeForm}
+            variant="surface"
+            size="medium"
+            aria-label="Закрыть форму правила"
+            onClick={resetForm}
+          >
+            <CloseOutlined />
+          </IconButton>
+          <h3 className={classes.formTitle}>
+            {isEditMode ? "Редактировать правило" : "Добавить свое правило"}
+          </h3>
+          <div className={classes.formGrid}>
+            <label className={classes.inputGroup}>
+              <span className={classes.inputLabel}>Название</span>
+              <input
+                required
+                type="text"
+                placeholder="Например: make / do"
+                value={ruleForm.title}
+                onChange={(event) =>
+                  setRuleForm((prev) => ({ ...prev, title: event.target.value }))
+                }
+              />
+            </label>
+            <Select
+              label="Категория"
+              value={ruleForm.category}
+              options={englishRuleCategories.map((category) => ({
+                label: englishRuleCategoryLabels[category],
+                value: category,
+              }))}
               onChange={(event) =>
-                setCategoryFilters((prev) => ({
+                setRuleForm((prev) => ({
                   ...prev,
-                  [category]: event.target.checked,
+                  category: event.target.value as TEnglishRuleCategory,
                 }))
               }
             />
-          ))}
-        </div>
+          </div>
+          <label className={classes.inputGroup}>
+            <span className={classes.inputLabel}>Описание правила</span>
+            <textarea
+              required
+              placeholder="Коротко объясни правило своими словами"
+              value={ruleForm.description}
+              onChange={(event) =>
+                setRuleForm((prev) => ({ ...prev, description: event.target.value }))
+              }
+            />
+          </label>
+          <label className={classes.inputGroup}>
+            <span className={classes.inputLabel}>Примеры</span>
+            <textarea
+              placeholder={"Каждый пример с новой строки\nI do homework.\nI make a decision."}
+              value={examplesText}
+              onChange={(event) => setExamplesText(event.target.value)}
+            />
+          </label>
+          <div className={classes.formActions}>
+            <Button
+              className={classes.submitButton}
+              variant="secondary"
+              type="submit"
+              disabled={isSubmitLoading}
+            >
+              {isEditMode ? "Сохранить правило" : "Добавить правило"}
+            </Button>
+          </div>
+        </form>
+      )}
+
+
+      <div className={clsx(classes.filterList, { [classes.hiddenOnMobileForm]: isFormOpen })}>
+        {englishRuleCategories.map((category) => (
+          <Checkbox
+            key={category}
+            label={englishRuleCategoryLabels[category]}
+            checked={categoryFilters[category]}
+            onChange={(event) =>
+              setCategoryFilters((prev) => ({
+                ...prev,
+                [category]: event.target.checked,
+              }))
+            }
+          />
+        ))}
       </div>
 
       {isRulesFetching && <p className={classes.empty}>Загружаю правила...</p>}
@@ -206,7 +233,7 @@ export const Rules = () => {
         <p className={classes.empty}>Выбери хотя бы одну категорию правил.</p>
       )}
 
-      <div className={classes.grid}>
+      <div className={clsx(classes.grid, { [classes.hiddenOnMobileForm]: isFormOpen })}>
         {filteredRules.map((rule) => (
           <article
             className={clsx(classes.card, { [classes.customCard]: !rule.is_default })}
@@ -229,22 +256,24 @@ export const Rules = () => {
               </ul>
             )}
             <div className={classes.cardActions}>
-              <button
-                className={clsx("btn btn-small", classes.editButton)}
-                type="button"
+              <Button
+                className={classes.editButton}
+                variant="plain"
+                size="small"
                 onClick={() => handleEditRule(rule)}
               >
                 Редактировать
-              </button>
-              <button
+              </Button>
+              <IconButton
                 className={classes.deleteButton}
-                type="button"
+                variant="danger"
+                size="medium"
                 aria-label={`Удалить правило ${rule.title}`}
                 title="Удалить правило"
                 onClick={() => handleDeleteRule(rule.id)}
               >
                 <DeleteOutlined />
-              </button>
+              </IconButton>
             </div>
           </article>
         ))}

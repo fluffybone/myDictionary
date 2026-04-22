@@ -22,6 +22,8 @@ import {
 } from "../../../../utils/speech";
 import { Pagination } from "../../../../components/Pagination";
 import { formatDate } from "../../../../utils/formatDate";
+import { Button } from "../../../../components/Button";
+import { IconButton } from "../../../../components/IconButton";
 
 type TProps = {
   words: TWordResponse[];
@@ -73,8 +75,8 @@ export const ListWords: FC<TProps> = ({
       <div className={classes.controlInfo}>
         <div className={classes.control}>
           {mode !== "show" && (
-            <button
-              className="btn-transparent"
+            <Button
+              variant="transparent"
               onClick={() => {
                 setShowSection("all");
                 setMode("show");
@@ -88,32 +90,33 @@ export const ListWords: FC<TProps> = ({
               }}
             >
               <ArrowLeftOutlined />
-            </button>
+            </Button>
           )}
           {mode === "show" && (
-            <button
-              className="btn-transparent"
+            <Button
+              variant="transparent"
               onClick={() =>
                 setShowSection(showSection === "words" ? "all" : "words")
               }
             >
               {showSection === "words" ? <DownOutlined /> : <UpOutlined />}
-            </button>
+            </Button>
           )}
           {mode === "show" && (
-            <button
-              className="btn-transparent"
+            <Button
+              variant="transparent"
               onClick={() => {
                 setMode("edit");
                 setShowSection("all");
               }}
             >
               <EditOutlined />
-            </button>
+            </Button>
           )}
           {mode === "delete" ? (
-            <button
-              className="btn btn-primary btn-small"
+            <Button
+              variant="primary"
+              size="small"
               disabled={selectedIds.length == 0 || isDeleteLoading}
               onClick={async () => {
                 const response = await deleteWords({ ids: selectedIds });
@@ -124,19 +127,19 @@ export const ListWords: FC<TProps> = ({
               }}
             >
               Удалить выбранные
-            </button>
+            </Button>
           ) : (
             <>
               {mode == "show" && (
-                <button
-                  className="btn-transparent"
+                <Button
+                  variant="transparent"
                   onClick={() => {
                     setMode("delete");
                     setShowSection("words");
                   }}
                 >
                   <DeleteOutlined />
-                </button>
+                </Button>
               )}
             </>
           )}
@@ -168,10 +171,11 @@ export const ListWords: FC<TProps> = ({
               >
                 <td className={classes.actionTd}>
                   {mode === "show" && (
-                    <button
+                    <IconButton
                       className={classes.soundButton}
-                      type="button"
                       disabled={!canUseSpeechSynthesis()}
+                      variant="ghost"
+                      size="small"
                       aria-label={`Воспроизвести ${word.orig_word}`}
                       title="Воспроизвести"
                       onClick={(event) => {
@@ -180,7 +184,7 @@ export const ListWords: FC<TProps> = ({
                       }}
                     >
                       <SoundOutlined />
-                    </button>
+                    </IconButton>
                   )}
                   {mode === "delete" && (
                     <Checkbox
@@ -198,8 +202,8 @@ export const ListWords: FC<TProps> = ({
                     />
                   )}
                   {mode === "edit" && (
-                    <button
-                      className="btn-transparent"
+                    <Button
+                      variant="transparent"
                       onClick={() =>
                         setWordForm({
                           origWord: word.orig_word,
@@ -210,7 +214,7 @@ export const ListWords: FC<TProps> = ({
                       }
                     >
                       <CheckOutlined />
-                    </button>
+                    </Button>
                   )}
                 </td>
                 <td className={classes.wordTd}>{word.orig_word}</td>

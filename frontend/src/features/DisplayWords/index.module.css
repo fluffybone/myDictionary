@@ -22,32 +22,11 @@
   position: absolute;
   top: 50%;
   right: 14px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 0;
-  color: var(--secondary);
-  background: transparent;
   transform: translateY(-50%);
-  cursor: pointer;
-  transition:
-    color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.soundButton span svg {
-  width: 18px;
-  height: 18px;
 }
 
 .soundButton:hover:not(:disabled) {
-  color: var(--primary);
   transform: translateY(-50%) scale(1.08);
-}
-
-.soundButton:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
 }
 
 .button.button {
@@ -95,27 +74,7 @@
   position: absolute;
   top: 8px;
   right: 8px;
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  color: var(--secondary);
-  background: rgba(255, 255, 255, 0.7);
-  border: 0;
-  border-radius: 50%;
   font-family: var(--font-bold);
   font-size: 22px;
   line-height: 1;
-  cursor: pointer;
-  transition:
-    color 0.2s ease,
-    background-color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.clearDescriptionButton:hover {
-  color: var(--primary);
-  background: rgba(255, 255, 255, 0.95);
-  transform: scale(1.06);
 }

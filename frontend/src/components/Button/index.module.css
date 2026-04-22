@@ -1,0 +1,121 @@
+.button {
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 0 24px;
+  overflow: hidden;
+  font-family: var(--font-bold);
+  font-size: var(--text-base);
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  background-color: inherit;
+  border: none;
+  border-radius: var(--element-radius);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.button:active {
+  transform: scale(0.97);
+}
+
+.button:disabled {
+  color: var(--disabled);
+  background-color: var(--bacground-disabled);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.primary {
+  color: #ffffff;
+  background-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(229, 149, 0, 0.4);
+}
+
+.primary:hover {
+  background-color: var(--primary-hover);
+  box-shadow: 0 6px 16px rgba(229, 149, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+.primary:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px #ffffff,
+    0 0 0 6px var(--primary);
+}
+
+.primary:active {
+  box-shadow: 0 2px 8px rgba(229, 149, 0, 0.4);
+  transform: translateY(0) scale(0.97);
+}
+
+.secondary {
+  color: #ffffff;
+  background-color: var(--main);
+  box-shadow: 0 4px 12px rgba(43, 45, 66, 0.4);
+}
+
+.secondary:hover {
+  background-color: #3a3c55;
+  box-shadow: 0 6px 16px rgba(43, 45, 66, 0.4);
+  transform: translateY(-1px);
+}
+
+.secondary:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px #ffffff,
+    0 0 0 6px var(--main);
+}
+
+.secondary:active {
+  box-shadow: 0 2px 8px rgba(43, 45, 66, 0.4);
+  transform: translateY(0) scale(0.97);
+}
+
+.plain {
+  color: inherit;
+}
+
+.transparent {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background-color: inherit;
+  transition: all 0.4s;
+}
+
+.transparent:hover svg {
+  fill: var(--primary-hover);
+  transition: all 0.4s;
+}
+
+.small {
+  height: 24px;
+  padding: 16px 12px;
+  font-size: 14px;
+}
+
+.small:not(.transparent) svg {
+  fill: white;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .button {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .transparent {
+    padding: 0;
+  }
+}

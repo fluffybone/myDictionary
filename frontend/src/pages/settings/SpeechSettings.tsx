@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { LogoutOutlined, SettingOutlined } from "@ant-design/icons";
-import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../../components/Button";
 import { Select } from "../../components/Select";
 import { useSpeechSettings } from "../../hooks/useSpeechSettings";
 import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "../../shared";
@@ -43,24 +43,25 @@ export const Settings = () => {
             value: voice.voiceURI,
           }))}
         />
-        <button
-          className={clsx("btn btn-secondary btn-small", classes.logoutButton)}
-          type="button"
+        <Button
+          className={classes.logoutButton}
+          variant="secondary"
+          size="small"
           onClick={handleLogout}
         >
           <LogoutOutlined />
           Выйти из аккаунта
-        </button>
+        </Button>
       </div>
-      <button
-        className={clsx("btn btn-secondary", classes.button)}
-        type="button"
+      <Button
+        className={classes.button}
+        variant="secondary"
         aria-expanded={isOpen}
         aria-label="Открыть настройки приложения"
         onClick={() => setIsOpen((prev) => !prev)}
       >
         <SettingOutlined />
-      </button>
+      </Button>
     </aside>
   );
 };
