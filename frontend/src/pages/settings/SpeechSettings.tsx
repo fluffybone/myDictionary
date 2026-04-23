@@ -6,6 +6,10 @@ import { Select } from "../../components/Select";
 import { LANGUAGES, type TLanguageCode } from "../../constants/languages";
 import { useSpeechSettings } from "../../hooks/useSpeechSettings";
 import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "../../shared";
+import { authorizationApi } from "../../store/authorization/api";
+import { rulesApi } from "../../store/rules/api";
+import { useAppDispatch } from "../../store/utils/useAppDispatch";
+import { wordsApi } from "../../store/words/api";
 import { getStoredTheme, saveTheme, type TAppTheme } from "../../utils/theme";
 import classes from "./SpeechSettings.module.css";
 
@@ -20,11 +24,16 @@ export const Settings = () => {
     voices,
   } = useSpeechSettings();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const handleLogout = () => {
     localStorage.removeItem(ACCESS_TOKEN_LOCALSTORAGE_KEY);
+    dispatch(authorizationApi.util.resetApiState());
+    dispatch(wordsApi.util.resetApiState());
+    dispatch(rulesApi.util.resetApiState());
     setIsOpen(false);
-    navigate("/auth/login", { replace: true });
+    navigate("/", { replace: true });
+    window.location.reload();
   };
 
   const handleThemeToggle = () => {
