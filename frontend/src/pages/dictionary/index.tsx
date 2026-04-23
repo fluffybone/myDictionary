@@ -6,7 +6,7 @@ import { AllWords } from "../all-words";
 import { LearningWords } from "../learning-words";
 import { Rules } from "../rules";
 import { useSpeechSettings } from "../../hooks/useSpeechSettings";
-import { Settings } from "../settings/SpeechSettings";
+
 
 export const Dictionary = () => {
   const { activeLanguage } = useSpeechSettings();
