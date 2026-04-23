@@ -28,7 +28,6 @@ export const Dictionary = () => {
           <span className={classes.languageBadge}>{activeLanguage.code}</span>
         }
       />
-      <Settings />
     </div>
   );
 };

@@ -20,6 +20,10 @@
   }
 }
 
+:global(:root[data-theme="neo"]) .layout {
+  background-image: none;
+}
+
 .scrollableLayout {
   height: 100dvh;
   overflow-y: auto;
