@@ -119,6 +119,10 @@ table tr:first-child {
     height: 72dvh;
   }
 
+  @media (display-mode: standalone) and (max-width: 640px) {
+    height: 48dvh;
+  }
+
 }
 
 :global(:root[data-theme="neo"]) .tableTr:not(:first-child) {
@@ -134,7 +138,7 @@ table tr:first-child {
 
 
   @media (max-width: 640px) {
-    height: 74dvh;
+    height: 78dvh;
   }
 
   @media (display-mode: standalone) and (max-width: 640px) {
