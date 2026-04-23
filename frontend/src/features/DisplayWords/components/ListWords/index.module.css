@@ -130,15 +130,15 @@ table tr:first-child {
 }
 
 .learningWordsContainer .showFull {
-  height: 88.5dvh;
+  height: 85vh;
 
 
   @media (max-width: 640px) {
-    height: 78dvh;
+    height: 74dvh;
   }
 
   @media (display-mode: standalone) and (max-width: 640px) {
-    height: 74.5dvh;
+    height: 72dvh;
   }
 
 }
