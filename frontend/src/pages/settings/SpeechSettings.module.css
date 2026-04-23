@@ -1,7 +1,7 @@
 .settings {
   position: absolute;
-  left: 24px;
-  bottom: 24px;
+  left: 44px;
+  bottom: 22px;
   z-index: 30;
   display: grid;
   justify-items: start;

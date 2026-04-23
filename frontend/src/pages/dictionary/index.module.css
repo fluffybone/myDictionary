@@ -1,3 +1,9 @@
+.dictionary {
+  position: relative;
+  width: fit-content;
+  margin: 0 auto;
+}
+
 .containerTabs.containerTabs {
   display: grid;
   grid-template-columns: 140px minmax(200px, calc(1000px - 140px));

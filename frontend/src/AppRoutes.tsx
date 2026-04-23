@@ -1,9 +1,10 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { Layout } from "./features/Layout";
 import { AuthPage } from "./pages/auth";
 import { lazy, Suspense, useEffect } from "react";
 import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "./shared";
 import { useGetMeQuery } from "./store/authorization/api";
+import { Home } from "./pages/home";
 
 const Dictionary = lazy(() =>
   import("./pages/dictionary").then((module) => ({
@@ -12,37 +13,37 @@ const Dictionary = lazy(() =>
 );
 
 export const AppRoutes = () => {
-  const { data: authorizedUser, error } = useGetMeQuery();
-  const navigate = useNavigate();
   const token = localStorage.getItem(ACCESS_TOKEN_LOCALSTORAGE_KEY);
+  const { data: authorizedUser, error } = useGetMeQuery(undefined, {
+    skip: !token,
+  });
+  const isCheckingUser = Boolean(token) && !authorizedUser && !error;
 
   useEffect(() => {
-    if ((error && "status" in error && error.status === 401) || !token) {
-      navigate("/auth/login");
+    if (error && "status" in error && error.status === 401) {
+      localStorage.removeItem(ACCESS_TOKEN_LOCALSTORAGE_KEY);
     }
-    if (authorizedUser) {
-      navigate("/");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [error, authorizedUser]);
+  }, [error]);
+
+  const dictionaryPage = isCheckingUser ? null : authorizedUser ? (
+    <Suspense fallback={null}>
+      <Dictionary />
+    </Suspense>
+  ) : (
+    <Home />
+  );
+  const authPage = isCheckingUser ? null : authorizedUser ? (
+    <Navigate to="/" replace />
+  ) : (
+    <AuthPage />
+  );
 
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route element={<AuthPage />} path="/auth/:type?" />
+        <Route element={dictionaryPage} path="/" />
+        <Route element={authPage} path="/auth/:type?" />
       </Route>
-      {authorizedUser && (
-        <Route element={<Layout />}>
-          <Route
-            element={
-              <Suspense fallback={null}>
-                <Dictionary />
-              </Suspense>
-            }
-            path="/"
-          />
-        </Route>
-      )}
     </Routes>
   );
 };

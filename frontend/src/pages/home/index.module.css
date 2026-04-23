@@ -1,0 +1,263 @@
+.screen {
+  width: 100%;
+}
+
+.page {
+  display: grid;
+  gap: 22px;
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  align-content: center;
+  min-height: 100%;
+  padding: 0 4px 24px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+  gap: 28px;
+  align-items: stretch;
+}
+
+.heroText,
+.previewCard,
+.featureCard,
+.installCard {
+  background: var(--surface-glass-card);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--card-radius);
+  box-shadow: 0 25px 50px -24px var(--shadow-main-medium);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.heroText {
+  display: grid;
+  align-content: center;
+  gap: 18px;
+  padding: clamp(28px, 5vw, 56px);
+}
+
+.kicker {
+  width: fit-content;
+  margin: 0;
+  padding: 7px 12px;
+  color: var(--primary);
+  background: var(--surface-glass-medium);
+  border: 1px solid var(--border-glass-strong);
+  border-radius: 999px;
+  font-family: var(--font-bold);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title {
+  max-width: 720px;
+  margin: 0;
+  color: var(--main);
+  font-family: var(--font-bold);
+  font-size: clamp(38px, 7vw, 76px);
+  line-height: 0.94;
+  letter-spacing: -0.06em;
+}
+
+.description {
+  max-width: 620px;
+  margin: 0;
+  color: color-mix(in srgb, var(--main) 78%, transparent);
+  font-size: clamp(var(--text-base), 2vw, var(--text-xl));
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.previewCard {
+  position: relative;
+  display: grid;
+  gap: 18px;
+  align-content: space-between;
+  overflow: hidden;
+  padding: clamp(24px, 4vw, 42px);
+}
+
+.previewCard::before {
+  content: "";
+  position: absolute;
+  inset: -30% -20% auto auto;
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(var(--primary-rgb), 0.24), transparent 68%);
+  pointer-events: none;
+}
+
+.previewHeader {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--secondary);
+  font-family: var(--font-bold);
+}
+
+.previewHeader strong,
+.languageBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  padding: 5px 10px;
+  color: var(--text-inverted);
+  background: linear-gradient(135deg, var(--primary), var(--accent-blue));
+  border-radius: 999px;
+  font-family: var(--font-bold);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.wordCard {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  padding: 28px;
+  background: var(--surface-glass-strong);
+  border: 1px solid var(--border-glass-strong);
+  border-radius: 24px;
+}
+
+.word {
+  color: var(--main);
+  font-family: var(--font-bold);
+  font-size: clamp(34px, 6vw, 62px);
+  line-height: 1;
+}
+
+.translation {
+  color: var(--primary);
+  font-family: var(--font-medium);
+  font-size: var(--text-xl);
+}
+
+.progressList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.progressList span {
+  padding: 10px 12px;
+  color: var(--main);
+  background: var(--surface-glass-medium);
+  border: 1px solid var(--border-glass);
+  border-radius: 16px;
+  font-family: var(--font-medium);
+  font-size: var(--text-sm);
+}
+
+.languages {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.featureCard {
+  display: grid;
+  gap: 8px;
+  padding: 20px;
+}
+
+.featureIcon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  color: var(--text-inverted);
+  background: var(--primary);
+  border-radius: 14px;
+}
+
+.featureIcon svg {
+  fill: var(--text-inverted);
+}
+
+.featureCard h2,
+.installCard h2 {
+  margin: 0;
+  color: var(--main);
+  font-family: var(--font-bold);
+  font-size: var(--text-lg);
+}
+
+.featureCard p,
+.installCard p {
+  margin: 0;
+  color: color-mix(in srgb, var(--main) 74%, transparent);
+  font-size: var(--text-sm);
+}
+
+.installCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px 24px;
+}
+
+@media (max-width: 900px) {
+  .page {
+    align-content: start;
+  }
+
+  .hero,
+  .features {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .screen {
+    width: 100%;
+  }
+
+  .page {
+    gap: 14px;
+    padding: 0 2px 16px;
+  }
+
+  .hero {
+    gap: 14px;
+  }
+
+  .heroText,
+  .previewCard,
+  .featureCard,
+  .installCard {
+    border-radius: 24px;
+  }
+
+  .heroText,
+  .previewCard {
+    padding: 22px;
+  }
+
+  .actions,
+  .installCard {
+    display: grid;
+  }
+
+  .progressList {
+    grid-template-columns: 1fr;
+  }
+}

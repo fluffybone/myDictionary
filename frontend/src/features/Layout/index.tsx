@@ -1,10 +1,11 @@
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import classes from "./index.module.css";
-import { Outlet } from "react-router-dom";
-import { Settings } from "../../pages/settings/SpeechSettings";
+import clsx from "clsx";
+import { Outlet, useLocation } from "react-router-dom";
 import { SpeechSettingsProvider } from "../../hooks/useSpeechSettings";
 import { Button } from "../../components/Button";
+import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "../../shared";
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -37,6 +38,7 @@ const isStandalone = () =>
   (window.navigator as IosNavigator).standalone === true;
 
 export const Layout: FC = () => {
+  const location = useLocation();
   const [installPrompt, setInstallPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [iosInstallHint, setIosInstallHint] = useState<"safari" | "other" | null>(
@@ -44,6 +46,10 @@ export const Layout: FC = () => {
   );
   const [isBannerVisible, setIsBannerVisible] = useState(false);
   const [isTranslateHintVisible, setIsTranslateHintVisible] = useState(false);
+  const isAuthPage = location.pathname.includes("auth");
+  const hasToken = Boolean(localStorage.getItem(ACCESS_TOKEN_LOCALSTORAGE_KEY));
+  const canShowAppControls = hasToken && !isAuthPage;
+  const isPublicHomePage = location.pathname === "/" && !hasToken;
 
   useEffect(() => {
     if (isStandalone()) {
@@ -85,7 +91,7 @@ export const Layout: FC = () => {
 
 
   useEffect(() => {
-    if (window.location.pathname.includes("auth")) {
+    if (!canShowAppControls) {
       return;
     }
 
@@ -95,7 +101,7 @@ export const Layout: FC = () => {
     if (!isDismissed) {
       setIsTranslateHintVisible(true);
     }
-  }, []);
+  }, [canShowAppControls]);
 
   const handleInstall = async () => {
     if (!installPrompt) {
@@ -125,7 +131,7 @@ export const Layout: FC = () => {
 
   return (
     <SpeechSettingsProvider>
-      <div className={classes.layout}>
+      <div className={clsx(classes.layout, isPublicHomePage && classes.scrollableLayout)}>
         {isBannerVisible && (
           <aside className={classes.installBanner}>
             <div>
@@ -151,7 +157,7 @@ export const Layout: FC = () => {
             </div>
           </aside>
         )}
-        {!window.location.pathname.includes("auth") && isTranslateHintVisible && (
+        {canShowAppControls && isTranslateHintVisible && (
           <aside className={classes.translateHint}>
             <p className={classes.translateHintText}>
               Напоминаем: Вы можете выделить любое слово и нажать “Перевести”
@@ -162,7 +168,6 @@ export const Layout: FC = () => {
             </Button>
           </aside>
         )}
-        {!window.location.pathname.includes("auth") && <Settings />}
         <Outlet />
       </div>
     </SpeechSettingsProvider>
