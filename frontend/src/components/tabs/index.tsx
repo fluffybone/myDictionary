@@ -6,9 +6,10 @@ import { Button } from "../Button";
 type TProps = {
   tabs: { name: ReactNode; children: ReactNode }[];
   className?: string;
+  contentAction?: ReactNode;
 };
 
-export const Tabs: FC<TProps> = ({ tabs, className }) => {
+export const Tabs: FC<TProps> = ({ tabs, className, contentAction }) => {
   const [activeIndexTab, setActiveIndexTab] = useState(0);
 
   return (
@@ -29,7 +30,12 @@ export const Tabs: FC<TProps> = ({ tabs, className }) => {
           );
         })}
       </div>
-      <div className={classes.content}>{tabs[activeIndexTab].children}</div>
+      <div className={classes.content}>
+        {contentAction && (
+          <div className={classes.contentAction}>{contentAction}</div>
+        )}
+        {tabs[activeIndexTab].children}
+      </div>
     </div>
   );
 };

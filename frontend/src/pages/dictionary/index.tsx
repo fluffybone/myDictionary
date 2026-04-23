@@ -5,8 +5,11 @@ import { BookFilled, BulbFilled } from "@ant-design/icons";
 import { AllWords } from "../all-words";
 import { LearningWords } from "../learning-words";
 import { Rules } from "../rules";
+import { useSpeechSettings } from "../../hooks/useSpeechSettings";
 
 export const Dictionary = () => {
+  const { activeLanguage } = useSpeechSettings();
+
   return (
     <Tabs
       tabs={[
@@ -19,6 +22,9 @@ export const Dictionary = () => {
         },
       ]}
       className={classes.containerTabs}
+      contentAction={
+        <span className={classes.languageBadge}>{activeLanguage.code}</span>
+      }
     />
   );
 };

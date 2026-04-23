@@ -21,8 +21,29 @@ type TWordResult = Record<number, { answer: string; correctAnswer: string }>;
 
 const formatDateLabel = (date: string) => date.split("-").reverse().join(".");
 
-const normalizeAnswer = (value: string) =>
-  value.trim().toLocaleLowerCase().replaceAll("ё", "е");
+const getNormalizedAnswerVariants = (value: string) => {
+  const preparedValue = value.trim().toLocaleLowerCase().replaceAll("ё", "е");
+  const softVariant = preparedValue
+    .replaceAll("ß", "ss")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+  const germanVariant = preparedValue
+    .replaceAll("ä", "ae")
+    .replaceAll("ö", "oe")
+    .replaceAll("ü", "ue")
+    .replaceAll("ß", "ss")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+  return new Set([softVariant, germanVariant]);
+};
+
+const isSameAnswer = (answer: string, correctAnswer: string) => {
+  const answerVariants = getNormalizedAnswerVariants(answer);
+  const correctAnswerVariants = getNormalizedAnswerVariants(correctAnswer);
+
+  return [...answerVariants].some((variant) => correctAnswerVariants.has(variant));
+};
 
 const getEmptyMessage = (
   wordsSource: TCheckWordsSource,
@@ -90,7 +111,7 @@ export const Check = () => {
 
       return (
         !result ||
-        normalizeAnswer(result.answer) !== normalizeAnswer(result.correctAnswer)
+        !isSameAnswer(result.answer, result.correctAnswer)
       );
     });
 
@@ -118,7 +139,7 @@ export const Check = () => {
 
     return (
       !result ||
-      normalizeAnswer(result.answer) !== normalizeAnswer(result.correctAnswer)
+      !isSameAnswer(result.answer, result.correctAnswer)
     );
   };
 
