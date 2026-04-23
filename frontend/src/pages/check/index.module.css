@@ -4,7 +4,7 @@
 }
 
 .listSelect {
-  width: min(100%, 230px);
+  width: 200px;
 
   @media (max-width: 640px) {
     width: 100%;
