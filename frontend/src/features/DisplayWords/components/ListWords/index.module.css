@@ -15,6 +15,7 @@ table tr:first-child {
   min-width: 100px;
 }
 
+
 .actionTd {
   min-width: 36px;
   text-align: center;
@@ -118,6 +119,14 @@ table tr:first-child {
     height: 72dvh;
   }
 
+}
+
+:global(:root[data-theme="neo"]) .tableTr:not(:first-child) {
+  border-top: 2px solid var(--surface-glass-light);
+}
+
+:global(:root[data-theme="neo"]) .learnWords {
+  background: floralwhite;
 }
 
 .learningWordsContainer .showFull {

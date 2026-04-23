@@ -33,6 +33,7 @@
   --success: #3f8f62;
   --main: #2b2d42;
   --main-rgb: 43, 45, 66;
+  --text: var(--main);
   --secondary: #676f54;
   --accent-warm: #f4a261;
   --accent-warm-rgb: 244, 162, 97;
@@ -65,6 +66,7 @@
   --surface-info-start: rgba(255, 255, 255, 0.96);
   --surface-info-end: rgba(226, 238, 255, 0.94);
   --surface-info-deep: rgba(196, 221, 248, 0.9);
+  --surface-form-strong: var(--surface-glass-soft);
 
   --border-glass-light: rgba(255, 255, 255, 0.4);
   --border-glass: rgba(255, 255, 255, 0.74);
@@ -98,36 +100,41 @@
   --primary: #5c80bc;
   --primary-rgb: 92, 128, 188;
   --background: #cdd1c4;
-  --background-secondary: #ffffff;
+  --background-secondary: floralwhite;
   --error: #b45a64;
   --error-rgb: 180, 90, 100;
   --success: #9ab87a;
   --main: #30323d;
   --main-rgb: 48, 50, 61;
+  --text: var(--main);
   --secondary: #4d5061;
   --accent-warm: #9ab87a;
   --accent-warm-rgb: 154, 184, 122;
   --accent-blue: #5c80bc;
 
+  --card-radius: 0px;
+  --element-radius: 0px;
+
   --primary-hover: #4f72ad;
   --primary-focus: #44649a;
   --main-hover: #242630;
 
-  --page-bg: #cdd1c4;
-  --page-bg-soft: #bfc5b5;
+  --page-bg: floralwhite;
+  --page-bg-soft: floralwhite;
 
-  --surface-glass-light: rgba(255, 255, 255, 0.24);
-  --surface-glass-soft: rgba(255, 255, 255, 0.48);
-  --surface-glass: rgba(255, 255, 255, 0.58);
-  --surface-glass-card: rgba(255, 255, 255, 0.64);
-  --surface-glass-medium: rgba(255, 255, 255, 0.76);
-  --surface-glass-panel: rgba(255, 255, 255, 0.86);
+  --surface-glass-light: #d7dbd1;
+  --surface-glass-soft: #d7dbd1;
+  --surface-glass: rgba(215, 219, 209, 0.92);
+  --surface-glass-card: rgba(215, 219, 209, 0.96);
+  --surface-glass-medium: rgba(215, 219, 209, 0.98);
+  --surface-glass-panel: rgba(215, 219, 209, 0.98);
   --surface-glass-strong: rgba(255, 255, 255, 0.96);
   --surface-banner-start: rgba(205, 209, 196, 0.94);
   --surface-banner-end: rgba(154, 184, 122, 0.32);
   --surface-info-start: rgba(205, 209, 196, 0.9);
   --surface-info-end: rgba(92, 128, 188, 0.22);
   --surface-info-deep: rgba(48, 50, 61, 0.2);
+  --surface-form-strong: rgb(232, 232, 213);
 
   --border-glass-light: rgba(255, 255, 255, 0.36);
   --border-glass: rgba(255, 255, 255, 0.62);

@@ -35,6 +35,11 @@
   box-shadow: 0 18px 40px -32px var(--shadow-main-medium);
 }
 
+:global(:root[data-theme="neo"]) .form {
+  background: var(--surface-form-strong);
+  border-radius: 0;
+}
+
 .formTitle {
   margin: 0;
   color: var(--main);
@@ -257,6 +262,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+:global(:root[data-theme="neo"]) .card {
+  background: floralwhite;
+}
+
+:global(:root[data-theme="neo"]) .customCard {
+  background:
+    linear-gradient(135deg, rgba(var(--primary-rgb), 0.14), transparent 42%),
+    floralwhite;
 }
 
 .closeForm {

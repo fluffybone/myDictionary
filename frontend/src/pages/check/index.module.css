@@ -167,3 +167,16 @@ table tr:first-child {
     gap: 6px;
   }
 }
+
+:global(:root[data-theme="neo"]) .wordTd {
+  color: var(--primary);
+  font-family: var(--font-bold);
+
+  input {
+    font-family: var(--font-regular);
+  }
+}
+
+:global(:root[data-theme="neo"]) .tableContainer {
+  background: rgb(232, 232, 213);
+}
