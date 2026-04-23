@@ -7,3 +7,20 @@
     grid-template-columns: 1fr;
   }
 }
+
+.languageBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  padding: 4px 10px;
+  color: var(--text-inverted);
+  background: linear-gradient(135deg, var(--primary), var(--accent-blue));
+  border-radius: 999px;
+  font-family: var(--font-bold);
+  font-size: var(--text-xs);
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 0 10px 22px -14px var(--shadow-primary);
+}

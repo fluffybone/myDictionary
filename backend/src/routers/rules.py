@@ -18,7 +18,7 @@ from src.schemas.rules import (
 router = APIRouter(prefix="/api/rules", tags=["rules"])
 SupportedLanguage = Literal["en", "de", "fr", "es", "it"]
 
-DEFAULT_RULES = [
+ENGLISH_DEFAULT_RULES = [
     {
         "category": "word-building",
         "description": "Приставка un- часто добавляет значение отрицания: not, opposite of.",
@@ -105,6 +105,146 @@ DEFAULT_RULES = [
     },
 ]
 
+SPANISH_DEFAULT_RULES = [
+    {
+        "category": "grammar",
+        "description": "В испанском существительные обычно имеют род: мужской или женский. Часто слова на -o мужского рода, а слова на -a женского, но есть исключения.",
+        "examples": ["el libro", "la casa", "el problema"],
+        "title": "Род существительных",
+    },
+    {
+        "category": "grammar",
+        "description": "Определенные артикли el, la, los, las используются, когда речь идет о конкретном предмете или группе предметов.",
+        "examples": ["el coche", "la mesa", "los amigos", "las palabras"],
+        "title": "Определенные артикли",
+    },
+    {
+        "category": "grammar",
+        "description": "Глаголы ser и estar переводятся как 'быть', но ser чаще описывает постоянные свойства, а estar — состояние или местоположение.",
+        "examples": ["Soy estudiante.", "Estoy cansado.", "Madrid está en España."],
+        "title": "Ser и estar",
+    },
+    {
+        "category": "word-building",
+        "description": "Правильные глаголы делятся на группы -ar, -er и -ir. Окончание помогает понять, как спрягается глагол.",
+        "examples": ["hablar", "comer", "vivir"],
+        "title": "Группы глаголов -ar, -er, -ir",
+    },
+    {
+        "category": "phrases",
+        "description": "В испанском вопрос можно строить интонацией или вопросительными словами. На письме вопрос обрамляется знаками ¿ и ?.",
+        "examples": ["¿Cómo estás?", "¿Dónde vives?", "¿Qué significa esta palabra?"],
+        "title": "Вопросительные фразы",
+    },
+]
+
+FRENCH_DEFAULT_RULES = [
+    {
+        "category": "grammar",
+        "description": "Во французском существительные имеют род: мужской или женский. Род влияет на артикль и согласование прилагательных.",
+        "examples": ["le livre", "la table", "une grande maison"],
+        "title": "Род существительных",
+    },
+    {
+        "category": "grammar",
+        "description": "Определенные артикли le, la, l' и les используются с конкретными предметами, людьми или понятиями.",
+        "examples": ["le café", "la ville", "l'école", "les amis"],
+        "title": "Определенные артикли",
+    },
+    {
+        "category": "grammar",
+        "description": "Глаголы être и avoir очень частотные: они используются как самостоятельные глаголы и помогают образовывать сложные времена.",
+        "examples": ["Je suis ici.", "J'ai un livre.", "Nous avons parlé."],
+        "title": "Être и avoir",
+    },
+    {
+        "category": "word-building",
+        "description": "Многие французские наречия образуются с помощью суффикса -ment. Часто он похож на русское '-но' или '-о' в наречиях.",
+        "examples": ["lent -> lentement", "rapide -> rapidement", "vrai -> vraiment"],
+        "title": "Суффикс -ment",
+    },
+    {
+        "category": "phrases",
+        "description": "Вежливые просьбы во французском часто строятся с s'il vous plaît и условными формами вроде je voudrais.",
+        "examples": ["S'il vous plaît.", "Je voudrais un café.", "Pouvez-vous répéter ?"],
+        "title": "Вежливые просьбы",
+    },
+]
+
+GERMAN_DEFAULT_RULES = [
+    {
+        "category": "grammar",
+        "description": "В немецком у существительных три рода: мужской, женский и средний. Артикль часто нужно запоминать вместе со словом.",
+        "examples": ["der Tisch", "die Lampe", "das Buch"],
+        "title": "Артикли der, die, das",
+    },
+    {
+        "category": "grammar",
+        "description": "Все немецкие существительные пишутся с большой буквы, даже если стоят в середине предложения.",
+        "examples": ["Ich lese ein Buch.", "Das ist meine Freundin.", "Wir lernen Deutsch."],
+        "title": "Существительные с большой буквы",
+    },
+    {
+        "category": "grammar",
+        "description": "В простом утвердительном предложении спрягаемый глагол обычно стоит на втором месте.",
+        "examples": ["Ich lerne Deutsch.", "Heute lerne ich Deutsch.", "Morgen gehen wir."],
+        "title": "Глагол на втором месте",
+    },
+    {
+        "category": "word-building",
+        "description": "Немецкий часто образует новые слова соединением нескольких основ. Главное слово обычно стоит в конце и задает род.",
+        "examples": ["Haus + Tür -> Haustür", "Wasser + Flasche -> Wasserflasche", "Deutsch + Kurs -> Deutschkurs"],
+        "title": "Сложные слова",
+    },
+    {
+        "category": "phrases",
+        "description": "Отделяемые приставки могут уходить в конец предложения, поэтому важно узнавать такие глаголы целиком.",
+        "examples": ["Ich stehe früh auf.", "Mach bitte die Tür zu.", "Wir fangen jetzt an."],
+        "title": "Отделяемые приставки",
+    },
+]
+
+ITALIAN_DEFAULT_RULES = [
+    {
+        "category": "grammar",
+        "description": "В итальянском существительные обычно имеют мужской или женский род. Часто слова на -o мужского рода, а на -a женского.",
+        "examples": ["il libro", "la casa", "la mano"],
+        "title": "Род существительных",
+    },
+    {
+        "category": "grammar",
+        "description": "Определенные артикли il, lo, la, l', i, gli, le выбираются по роду, числу и началу следующего слова.",
+        "examples": ["il ragazzo", "lo studente", "l'amica", "gli amici"],
+        "title": "Определенные артикли",
+    },
+    {
+        "category": "grammar",
+        "description": "Глаголы essere и avere часто используются сами по себе и как вспомогательные глаголы в прошедших временах.",
+        "examples": ["Sono qui.", "Ho una domanda.", "Abbiamo mangiato."],
+        "title": "Essere и avere",
+    },
+    {
+        "category": "word-building",
+        "description": "Правильные глаголы часто делятся на группы -are, -ere и -ire. Инфинитив помогает понять модель спряжения.",
+        "examples": ["parlare", "vedere", "dormire"],
+        "title": "Группы глаголов -are, -ere, -ire",
+    },
+    {
+        "category": "phrases",
+        "description": "Вежливые просьбы часто строятся через per favore, vorrei и posso. Эти формы помогают звучать мягче.",
+        "examples": ["Per favore.", "Vorrei un tè.", "Posso chiedere?"],
+        "title": "Вежливые просьбы",
+    },
+]
+
+DEFAULT_RULES_BY_LANGUAGE = {
+    "en": ENGLISH_DEFAULT_RULES,
+    "de": GERMAN_DEFAULT_RULES,
+    "es": SPANISH_DEFAULT_RULES,
+    "fr": FRENCH_DEFAULT_RULES,
+    "it": ITALIAN_DEFAULT_RULES,
+}
+
 VOWELS = {"a", "e", "i", "o", "u"}
 
 
@@ -137,7 +277,9 @@ async def ensure_default_rules(
     current_user: UserDb,
     language: SupportedLanguage,
 ) -> None:
-    if language != "en":
+    default_rules = DEFAULT_RULES_BY_LANGUAGE.get(language, [])
+
+    if not default_rules:
         return
 
     count_query = (
@@ -150,7 +292,7 @@ async def ensure_default_rules(
     if result.scalar_one_or_none() is not None:
         return
 
-    for rule in DEFAULT_RULES:
+    for rule in default_rules:
         db.add(
             LanguageRuleDb(
                 **rule,

@@ -18,14 +18,50 @@ async def test_rules_defaults_hint_and_crud(
     assert any(rule["is_default"] for rule in default_rules)
     assert all(rule["language"] == "en" for rule in default_rules)
 
-    french_rules_response = await client.get(
-        "/api/rules",
-        headers=headers,
-        params={"language": "fr"},
-    )
+    expected_default_rule_titles = {
+        "de": {
+            "Артикли der, die, das",
+            "Глагол на втором месте",
+            "Отделяемые приставки",
+            "Сложные слова",
+            "Существительные с большой буквы",
+        },
+        "es": {
+            "Вопросительные фразы",
+            "Группы глаголов -ar, -er, -ir",
+            "Определенные артикли",
+            "Род существительных",
+            "Ser и estar",
+        },
+        "fr": {
+            "Вежливые просьбы",
+            "Определенные артикли",
+            "Род существительных",
+            "Суффикс -ment",
+            "Être и avoir",
+        },
+        "it": {
+            "Essere и avere",
+            "Вежливые просьбы",
+            "Группы глаголов -are, -ere, -ire",
+            "Определенные артикли",
+            "Род существительных",
+        },
+    }
 
-    assert french_rules_response.status_code == 200
-    assert french_rules_response.json() == []
+    for language, expected_titles in expected_default_rule_titles.items():
+        language_rules_response = await client.get(
+            "/api/rules",
+            headers=headers,
+            params={"language": language},
+        )
+
+        assert language_rules_response.status_code == 200
+        language_rules = language_rules_response.json()
+        assert len(language_rules) == 5
+        assert all(rule["is_default"] for rule in language_rules)
+        assert all(rule["language"] == language for rule in language_rules)
+        assert {rule["title"] for rule in language_rules} == expected_titles
 
     hint_response = await client.get(
         "/api/rules/hint",
@@ -69,8 +105,8 @@ async def test_rules_defaults_hint_and_crud(
         params={"language": "fr"},
     )
     french_rules_after_create = french_rules_after_create_response.json()
-    assert len(french_rules_after_create) == 1
-    assert french_rules_after_create[0]["id"] == created_rule["id"]
+    assert len(french_rules_after_create) == 6
+    assert any(rule["id"] == created_rule["id"] for rule in french_rules_after_create)
 
     update_response = await client.put(
         f"/api/rules/{created_rule['id']}",

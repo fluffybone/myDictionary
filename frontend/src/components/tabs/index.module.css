@@ -37,9 +37,9 @@
     fill: var(--main);
   }
 
-   @media (max-width: 640px) {
+  @media (max-width: 640px) {
     max-width: 112px;
-   }
+  }
 
 }
 
@@ -53,6 +53,7 @@
 }
 
 .content {
+  position: relative;
   padding: 24px;
   background-color: var(--surface-glass-light);
   backdrop-filter: blur(4px);
@@ -69,6 +70,18 @@
     padding: 16px;
     width: 98vw;
     margin: auto;
+  }
+}
+
+.contentAction {
+  position: absolute;
+  top: -10px;
+  left: 26px;
+  z-index: 2;
+
+  @media (max-width: 640px) {
+    top: -16px;
+    left: 14px;
   }
 }
 
