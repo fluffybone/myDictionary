@@ -24,7 +24,6 @@
 
 :root {
   --animation-duration: 0.2s;
---y:#623CEA;
   --primary: #e59500;
   --primary-rgb: 229, 149, 0;
   --background: #f2edeb;
@@ -96,47 +95,47 @@
 }
 
 :root[data-theme="neo"] {
-  --primary: #623cea;
-  --primary-rgb: 98, 60, 234;
-  --background: #e7dfc6;
+  --primary: #5c80bc;
+  --primary-rgb: 92, 128, 188;
+  --background: #cdd1c4;
   --background-secondary: #ffffff;
   --error: #b45a64;
   --error-rgb: 180, 90, 100;
-  --success: #5e8f63;
-  --main: #54426b;
-  --main-rgb: 84, 66, 107;
-  --secondary: #6f6381;
-  --accent-warm: #dbd5b2;
-  --accent-warm-rgb: 219, 213, 178;
-  --accent-blue: #623cea;
+  --success: #9ab87a;
+  --main: #30323d;
+  --main-rgb: 48, 50, 61;
+  --secondary: #4d5061;
+  --accent-warm: #9ab87a;
+  --accent-warm-rgb: 154, 184, 122;
+  --accent-blue: #5c80bc;
 
-  --primary-hover: #512ed0;
-  --primary-focus: #4323b6;
-  --main-hover: #453659;
+  --primary-hover: #4f72ad;
+  --primary-focus: #44649a;
+  --main-hover: #242630;
 
-  --page-bg: #e7dfc6;
-  --page-bg-soft: #dbd5b2;
+  --page-bg: #cdd1c4;
+  --page-bg-soft: #bfc5b5;
 
-  --surface-glass-light: rgba(250, 247, 236, 0.52);
-  --surface-glass-soft: rgba(250, 247, 236, 0.68);
-  --surface-glass: rgba(250, 247, 236, 0.78);
-  --surface-glass-card: rgba(250, 247, 236, 0.86);
-  --surface-glass-medium: rgba(250, 247, 236, 0.92);
-  --surface-glass-panel: rgba(250, 247, 236, 0.96);
-  --surface-glass-strong: rgba(255, 253, 246, 0.98);
-  --surface-banner-start: rgba(255, 253, 246, 0.98);
-  --surface-banner-end: rgba(219, 213, 178, 0.72);
-  --surface-info-start: rgba(255, 253, 246, 0.98);
-  --surface-info-end: rgba(231, 223, 198, 0.94);
-  --surface-info-deep: rgba(219, 213, 178, 0.84);
+  --surface-glass-light: rgba(255, 255, 255, 0.24);
+  --surface-glass-soft: rgba(255, 255, 255, 0.48);
+  --surface-glass: rgba(255, 255, 255, 0.58);
+  --surface-glass-card: rgba(255, 255, 255, 0.64);
+  --surface-glass-medium: rgba(255, 255, 255, 0.76);
+  --surface-glass-panel: rgba(255, 255, 255, 0.86);
+  --surface-glass-strong: rgba(255, 255, 255, 0.96);
+  --surface-banner-start: rgba(205, 209, 196, 0.94);
+  --surface-banner-end: rgba(154, 184, 122, 0.32);
+  --surface-info-start: rgba(205, 209, 196, 0.9);
+  --surface-info-end: rgba(92, 128, 188, 0.22);
+  --surface-info-deep: rgba(48, 50, 61, 0.2);
 
-  --border-glass-light: rgba(84, 66, 107, 0.08);
-  --border-glass: rgba(84, 66, 107, 0.12);
-  --border-glass-strong: rgba(84, 66, 107, 0.18);
+  --border-glass-light: rgba(255, 255, 255, 0.36);
+  --border-glass: rgba(255, 255, 255, 0.62);
+  --border-glass-strong: rgba(255, 255, 255, 0.78);
 
-  --shadow-main-soft: rgba(84, 66, 107, 0.14);
-  --shadow-main-medium: rgba(84, 66, 107, 0.28);
-  --shadow-primary: rgba(98, 60, 234, 0.34);
+  --shadow-main-soft: rgba(48, 50, 61, 0.22);
+  --shadow-main-medium: rgba(48, 50, 61, 0.42);
+  --shadow-primary: rgba(92, 128, 188, 0.36);
 }
 
 * {
