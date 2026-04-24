@@ -25,13 +25,12 @@
   border: 1px solid var(--border-glass-strong);
   border-radius: 50%;
   cursor: pointer;
-
+  
   transition:
     background-color 0.2s ease,
     color 0.2s ease,
     transform 0.2s ease;
 }
-
 
 .page:hover {
   color: var(--primary);
