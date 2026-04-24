@@ -4,6 +4,7 @@
   height: calc(100dvh - 86px);
   overflow: hidden;
   padding-right: 4px;
+  grid-template-rows: 62px 26px 1fr;
 }
 
 .header {
@@ -282,6 +283,7 @@
 
 .pageWithForm {
   height: calc(100dvh - 76px);
+   grid-template-rows: 62px 492px 26px 1fr;
 }
 
 @media (max-width: 640px) {
