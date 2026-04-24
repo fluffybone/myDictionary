@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LogoutOutlined, SettingOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button";
@@ -16,6 +16,7 @@ import classes from "./SpeechSettings.module.css";
 export const Settings = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useState<TAppTheme>(() => getStoredTheme());
+  const settingsRef = useRef<HTMLElement | null>(null);
   const {
     activeLanguage,
     selectedVoiceURI,
@@ -25,6 +26,31 @@ export const Settings = () => {
   } = useSpeechSettings();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
+      if (!settingsRef.current) {
+        return;
+      }
+
+      const target = event.target;
+      if (target instanceof Node && !settingsRef.current.contains(target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("touchstart", handlePointerDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("touchstart", handlePointerDown);
+    };
+  }, [isOpen]);
 
   const handleLogout = () => {
     localStorage.removeItem(ACCESS_TOKEN_LOCALSTORAGE_KEY);
@@ -44,7 +70,11 @@ export const Settings = () => {
   };
 
   return (
-    <aside className={classes.settings} aria-label="Настройки приложения">
+    <aside
+      ref={settingsRef}
+      className={classes.settings}
+      aria-label="Настройки приложения"
+    >
       <div className={classes.panel} data-open={isOpen}>
         <p className={classes.title}>Дополнительные параметры</p>
         <div className={classes.themeBlock}>
