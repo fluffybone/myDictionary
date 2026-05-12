@@ -82,7 +82,7 @@ export const CodeLogin = () => {
 
   return (
     <>
-      <h1>Вход в WordEater 🍥</h1>
+      <h1>Вход в ПожирательСлов 🍥</h1>
       <div className={clsx(classes.authCard, "card")}>
         <form className={classes.wrapper} onSubmit={handleSubmit}>
           <p className={classes.infoText}>

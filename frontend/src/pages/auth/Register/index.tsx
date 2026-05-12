@@ -41,7 +41,7 @@ export const Registration = () => {
 
   return (
     <>
-      <h1>Регистрация в WordEater 🍥</h1>
+      <h1>Регистрация в ПожирательСлов 🍥</h1>
       <div className={clsx(classes.authCard, "card")}>
         {(emailError || registrationError) && (
           <div className={classes.errorText}>

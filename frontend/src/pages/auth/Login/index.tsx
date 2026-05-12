@@ -34,7 +34,7 @@ export const Login = () => {
 
   return (
     <>
-      <h1>Вход в WordEater 🍥</h1>
+      <h1>Вход в ПожирательСлов 🍥</h1>
       <div className={clsx(classes.authCard, "card")}>
         <form className={clsx(classes.wrapper)} onSubmit={handleSubmit}>
           {errorText && <div className={classes.errorText}>{errorText}</div>}

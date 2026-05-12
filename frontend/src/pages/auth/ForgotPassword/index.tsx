@@ -36,7 +36,7 @@ export const ForgotPassword = () => {
   return (
     <>
       <h1>
-        Восстановление пароля <br /> в WordEater 🍥
+        Восстановление пароля <br /> в ПожирательСлов 🍥
       </h1>
       <div className={clsx(classes.authCard, "card")}>
         {step === 4 && (

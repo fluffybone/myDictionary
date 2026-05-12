@@ -65,7 +65,7 @@ export const QuickRegister = () => {
 
   return (
     <>
-      <h1>Регистрация в WordEater 🍥</h1>
+      <h1>Регистрация в ПожирательСлов 🍥</h1>
       <div className={clsx(classes.authCard, "card")}>
         <div className={classes.wrapper}>
           <p className={classes.infoText}>
