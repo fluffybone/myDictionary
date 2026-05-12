@@ -1,15 +1,11 @@
 import { Link } from "react-router-dom";
 import classes from "../index.module.css";
 import { clsx } from "clsx";
-import { useLoginMutation } from "../../../store/authorization/api";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { PasswordInput } from "../components/PasswordInput";
-import { getErrorText } from "../../../store/utils/getErrorText";
-import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from "../../../shared";
 import { Button } from "../../../components/Button";
 
 export const Login = () => {
-  const [login, { isLoading, error }] = useLoginMutation();
   const [formValues, setFormValues] = useState<{
     email: string;
     password: string;
@@ -28,29 +24,13 @@ export const Login = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!formValues.email || !formValues.password) return;
-
-    const formData = new FormData();
-    formData.append("username", formValues.email);
-    formData.append("password", formValues.password);
-
-    const response = await login(formData);
-    if ("data" in response && response.data) {
-      window.location.href = "/";
-      localStorage.setItem(
-        ACCESS_TOKEN_LOCALSTORAGE_KEY,
-        response.data.access_token,
-      );
-    }
+    // Legacy email login is intentionally disabled.
+    return;
   };
 
-  const errorText = getErrorText({ error }) || "";
-
-  let error400 = false;
-
-  if (error && "status" in error && error.status === 400) {
-    error400 = true;
-  }
+  const isLoading = false;
+  const errorText = "";
+  const error400 = false;
 
   return (
     <>

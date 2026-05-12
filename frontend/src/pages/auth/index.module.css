@@ -67,3 +67,30 @@
   font-family: var(--font-bold);
   text-align: center;
 }
+
+.codePanel {
+  padding: 14px 16px;
+  background: var(--surface-glass);
+  border: 1px solid var(--border-glass);
+  border-radius: 16px;
+}
+
+.codeValue {
+  color: var(--main);
+  font-family: var(--font-bold);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.helperText {
+  margin: 0;
+  color: color-mix(in srgb, var(--main) 74%, transparent);
+  font-size: var(--text-sm);
+}
+
+.inlineActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

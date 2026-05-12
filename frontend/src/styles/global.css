@@ -160,7 +160,8 @@ body {
   font-size: var(--text-base);
   line-height: 1.5;
   color: var(--main);
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 p {

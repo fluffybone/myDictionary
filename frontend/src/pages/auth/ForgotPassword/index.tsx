@@ -3,10 +3,6 @@ import { clsx } from "clsx";
 import classes from "../index.module.css";
 import { useState, type FormEvent } from "react";
 import { PasswordInput } from "../components/PasswordInput";
-import {
-  useForgotPasswordMutation,
-  useResetPasswordMutation,
-} from "../../../store/authorization/api";
 import { getErrorText } from "../../../store/utils/getErrorText";
 import { AuthenticationCodeInput } from "../components/AuthenticationCodeInput";
 import { Button } from "../../../components/Button";
@@ -23,38 +19,16 @@ export const ForgotPassword = () => {
   const [emailValue, setEmailValue] = useState("");
   const [code, setCode] = useState(new Array(6).fill(""));
 
-  const [
-    forgotPassword,
-    { isLoading: isForgotPasswordLoading, error: forgotPasswordError },
-  ] = useForgotPasswordMutation();
-
-  const [
-    resetPassword,
-    { isLoading: isResetPasswordLoading, error: resetPasswordError },
-  ] = useResetPasswordMutation();
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (step === 1 && emailValue.length > 0) {
-      const response = await forgotPassword({ email: emailValue });
-      if ("data" in response) {
-        setStep(2);
-      }
-    }
-    if (step === 2 && passwordValue.length > 0) {
-      setStep(3);
-    }
-    if (step === 3 && code.join("").length > 0 && passwordValue.length > 0) {
-      const response = await resetPassword({
-        new_password: passwordValue,
-        email: emailValue,
-        code: code.join(""),
-      });
-      if ("data" in response) {
-        setStep(4);
-      }
-    }
+    // Legacy password reset flow is intentionally disabled.
+    return;
   };
+
+  const isForgotPasswordLoading = false;
+  const isResetPasswordLoading = false;
+  const forgotPasswordError = undefined;
+  const resetPasswordError = undefined;
 
   const forgotErrorText = getErrorText({ error: forgotPasswordError });
   const resetPasswordErrorText = getErrorText({ error: resetPasswordError });

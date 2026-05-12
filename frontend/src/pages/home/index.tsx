@@ -42,7 +42,7 @@ export const Home = () => {
               тренируйтесь и храните правила, которые помогают учиться без хаоса.
             </p>
             <div className={classes.actions}>
-              <Button variant="primary" onClick={() => navigate("/auth/registration")}>
+              <Button variant="primary" onClick={() => navigate("/auth/login")}>
                 Начать учиться
               </Button>
               <Button variant="secondary" onClick={() => navigate("/auth/login")}>
@@ -95,7 +95,7 @@ export const Home = () => {
               главный экран — словарь будет запускаться как обычное приложение.
             </p>
           </div>
-          <Button variant="primary" size="small" onClick={() => navigate("/auth/registration")}>
+          <Button variant="primary" size="small" onClick={() => navigate("/auth/login")}>
             Попробовать
           </Button>
         </section>

@@ -1,4 +1,8 @@
 import os
+import base64
+import hashlib
+import hmac
+import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 import jwt
@@ -23,6 +27,59 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 30  # 30 дней
 password_hash = PasswordHash.recommended()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+ACCESS_CODE_PREFIX = "WordEater"
+ACCESS_CODE_BYTES = 16
+
+
+def generate_access_code_seed() -> str:
+    return secrets.token_urlsafe(ACCESS_CODE_BYTES)
+
+
+def _to_base36(value: int) -> str:
+    alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    if value < 1:
+        raise ValueError("User id must be positive")
+
+    result = []
+    while value:
+        value, remainder = divmod(value, 36)
+        result.append(alphabet[remainder])
+    return "".join(reversed(result))
+
+
+def _from_base36(value: str) -> int:
+    return int(value, 36)
+
+
+def _build_access_code_signature(user_id: int, seed: str) -> str:
+    payload = f"access-code:{user_id}:{seed}".encode()
+    digest = hmac.new(SECRET_KEY.encode(), payload, hashlib.sha256).digest()
+    signature = base64.b32encode(digest).decode().rstrip("=")[:16]
+    return "-".join(signature[index:index + 4] for index in range(0, len(signature), 4))
+
+
+def build_access_code(user_id: int, seed: str) -> str:
+    public_id = _to_base36(user_id)
+    signature = _build_access_code_signature(user_id, seed)
+    return f"{ACCESS_CODE_PREFIX}-{public_id}-{signature}"
+
+
+def get_user_id_from_access_code(access_code: str) -> int:
+    normalized_code = access_code.strip().upper()
+    parts = normalized_code.split("-")
+    if len(parts) < 3 or parts[0] != ACCESS_CODE_PREFIX.upper():
+        raise ValueError("Invalid access code format")
+
+    return _from_base36(parts[1])
+
+
+def verify_access_code(access_code: str, user_id: int, seed: str | None) -> bool:
+    if not seed:
+        return False
+
+    expected_code = build_access_code(user_id, seed)
+    return secrets.compare_digest(access_code.strip().upper(), expected_code.upper())
 
 
 def verify_password(plain_password, hashed_password):

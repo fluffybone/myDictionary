@@ -5,34 +5,29 @@ from src import auth
 from src.models.users import User
 
 
-async def create_verified_user(
-    db_session: AsyncSession,
-    email: str = "user@example.com",
-    password: str = "password123",
-) -> User:
+async def create_code_user(db_session: AsyncSession) -> tuple[User, str]:
     user = User(
-        email=email,
-        hashed_password=auth.get_password_hash(password),
+        access_code_seed=auth.generate_access_code_seed(),
         is_verified=True,
+        is_active=True,
     )
     db_session.add(user)
     await db_session.commit()
     await db_session.refresh(user)
 
-    return user
+    access_code = auth.build_access_code(user.id, user.access_code_seed)
+    return user, access_code
 
 
 async def auth_headers(
     client: AsyncClient,
     db_session: AsyncSession,
-    email: str = "user@example.com",
-    password: str = "password123",
 ) -> dict[str, str]:
-    await create_verified_user(db_session, email=email, password=password)
+    _, access_code = await create_code_user(db_session)
 
     response = await client.post(
-        "/api/login",
-        data={"username": email, "password": password},
+        "/api/login-by-code",
+        json={"access_code": access_code},
     )
     assert response.status_code == 200
 
