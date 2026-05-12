@@ -59,6 +59,7 @@ export const wordsApi = createApi({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["LEARNING_WORDS"],
     }),
     deleteWords: builder.mutation<void, { ids: TWordResponse["id"][] }>({
       query: ({ ids }) => ({
