@@ -67,7 +67,8 @@ export const ListWords: FC<TProps> = ({
   const [selectedIds, setSelectedIds] = useState<TWordResponse["id"][]>([]);
   const [deleteWords, { isLoading: isDeleteLoading }] =
     useDeleteWordsMutation();
-  const wordsCount = totalWords ?? words.length;
+  const wordsCount =
+    typeof totalWords === "number" ? Math.max(totalWords, words.length) : words.length;
 
   return (
     <div className={classes.learningWordsContainer}>
