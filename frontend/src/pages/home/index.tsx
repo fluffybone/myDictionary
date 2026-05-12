@@ -35,7 +35,7 @@ export const Home = () => {
       <main className={classes.page}>
         <section className={classes.hero}>
           <div className={classes.heroText}>
-            <p className={classes.kicker}>WordEater / Пожиратель слов</p>
+            <p className={classes.kicker}>ПожирательСлов</p>
             <h1 className={classes.title}>Онлайн-словарь для изучения нескольких языков</h1>
             <p className={classes.description}>
               Собирайте слова в личные словари, слушайте произношение,
@@ -51,7 +51,7 @@ export const Home = () => {
             </div>
           </div>
 
-          <div className={classes.previewCard} aria-label="Возможности WordEater">
+          <div className={classes.previewCard} aria-label="Возможности ПожирательСлов">
             <div className={classes.previewHeader}>
               <span>Сегодня учу</span>
               <strong>EN</strong>
@@ -91,7 +91,7 @@ export const Home = () => {
           <div>
             <h2>Можно установить как приложение</h2>
             <p>
-              Откройте WordEater на телефоне или компьютере и добавьте его на
+              Откройте ПожирательСлов на телефоне или компьютере и добавьте его на
               главный экран — словарь будет запускаться как обычное приложение.
             </p>
           </div>

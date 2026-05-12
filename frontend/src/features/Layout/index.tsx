@@ -135,7 +135,7 @@ export const Layout: FC = () => {
         {isBannerVisible && (
           <aside className={classes.installBanner}>
             <div>
-              <p className={classes.installTitle}>WordEater можно открыть как приложение</p>
+              <p className={classes.installTitle}>ПожирательСлов можно открыть как приложение</p>
               <p className={classes.installText}>
                 {iosInstallHint === "other" &&
                   "На iPhone установка доступна через Safari: откройте сайт в Safari, нажмите «Поделиться», затем «На экран Домой»."}
