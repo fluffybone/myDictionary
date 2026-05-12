@@ -28,6 +28,7 @@
   max-height: 0;
   padding: 0 16px;
   overflow: hidden;
+  overflow-y: auto;
   background: var(--surface-glass-panel);
   border: 1px solid var(--border-glass-strong);
   border-radius: 22px;
@@ -49,7 +50,7 @@
 }
 
 .panel[data-open="true"] {
-  max-height: 520px;
+  max-height: min(720px, calc(100dvh - 96px));
   padding: 16px;
   opacity: 1;
   transform: translateY(0);
@@ -144,6 +145,7 @@
 
   .panel {
     width: min(320px, calc(100vw - 24px));
+    max-width: calc(100vw - 24px);
   }
 }
 
