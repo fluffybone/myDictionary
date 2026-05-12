@@ -110,12 +110,18 @@
 @media (max-width: 640px) {
   .settings {
     position: fixed;
-    left: max(12px, env(safe-area-inset-left));
-    bottom: calc(max(12px, env(safe-area-inset-bottom)) + 12px);
+    left: max(2px, env(safe-area-inset-left));
+    bottom: calc(max(0px, env(safe-area-inset-bottom)) + 0px);
   }
 
   .panel {
     width: min(320px, calc(100vw - 24px));
+  }
+}
+
+@media (display-mode: standalone) and (max-width: 640px) {
+  .settings {
+    bottom: calc(max(-24px, env(safe-area-inset-bottom)) - 24px);
   }
 }
 
