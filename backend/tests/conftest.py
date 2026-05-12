@@ -13,6 +13,16 @@ os.environ.setdefault("MAIL_PORT", "587")
 
 from src.database import Base, get_db  # noqa: E402
 from src.main import app  # noqa: E402
+from src.security.account_creation_rate_limit import (  # noqa: E402
+    reset_account_creation_rate_limit_state,
+)
+
+
+@pytest_asyncio.fixture(autouse=True)
+async def reset_rate_limit_state():
+    reset_account_creation_rate_limit_state()
+    yield
+    reset_account_creation_rate_limit_state()
 
 
 @pytest_asyncio.fixture

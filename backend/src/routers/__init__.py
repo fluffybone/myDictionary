@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from src.routers.users import router as users_router
+from src.routers.access_code_auth import router as users_router
 from src.routers.words import router as words_router
 from src.routers.rules import router as rules_router
 

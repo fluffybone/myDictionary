@@ -7,54 +7,40 @@ type TUser = {
   is_verified: boolean;
 };
 
+type TTokenResponse = {
+  access_token: string;
+  token_type: string;
+};
+
+type TTokenWithCodeResponse = TTokenResponse & {
+  access_code: string;
+};
+
 export const authorizationApi = createApi({
   baseQuery: customBaseQuery,
   endpoints: (builder) => ({
-    login: builder.mutation<{ access_token: string }, FormData>({
-      query: (body) => ({
-        url: "/api/login",
+    createAccount: builder.mutation<TTokenWithCodeResponse, void>({
+      query: () => ({
+        url: "/api/accounts/create",
         method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body,
       }),
     }),
-    registration: builder.mutation<
-      { access_token: string },
-      { email: string; password: string }
-    >({
+    loginByCode: builder.mutation<TTokenResponse, { access_code: string }>({
       query: (body) => ({
-        url: "/api/register",
+        url: "/api/login-by-code",
         method: "POST",
         body,
       }),
     }),
-    verifyEmail: builder.mutation<
-      { access_token: string },
-      { code: string; email: string }
-    >({
-      query: (body) => ({
-        url: "/api/verify-email",
-        method: "POST",
-        body,
+    getAccessCode: builder.query<{ access_code: string }, void>({
+      query: () => ({
+        url: "/api/users/access-code",
       }),
     }),
-    forgotPassword: builder.mutation<void, { email: string }>({
-      query: (body) => ({
-        url: "/api/forgot-password",
+    rotateAccessCode: builder.mutation<{ access_code: string }, void>({
+      query: () => ({
+        url: "/api/users/access-code/rotate",
         method: "POST",
-        body,
-      }),
-    }),
-    resetPassword: builder.mutation<
-      void,
-      { new_password: string; email: string; code: string }
-    >({
-      query: (body) => ({
-        url: "/api/reset-password",
-        method: "POST",
-        body,
       }),
     }),
     getMe: builder.query<TUser, void>({
@@ -67,10 +53,9 @@ export const authorizationApi = createApi({
 });
 
 export const {
-  useLoginMutation,
-  useRegistrationMutation,
-  useVerifyEmailMutation,
-  useForgotPasswordMutation,
-  useResetPasswordMutation,
+  useCreateAccountMutation,
+  useLazyGetAccessCodeQuery,
+  useLoginByCodeMutation,
+  useRotateAccessCodeMutation,
   useGetMeQuery,
 } = authorizationApi;

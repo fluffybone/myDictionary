@@ -1,9 +1,7 @@
 import { useEffect } from "react";
-import { Login } from "./Login";
 import { useNavigate, useParams } from "react-router-dom";
 import classes from "./index.module.css";
-import { Registration } from "./Register";
-import { ForgotPassword } from "./ForgotPassword";
+import { CodeLogin } from "./CodeLogin";
 
 export const AuthPage = () => {
   const navigate = useNavigate();
@@ -14,15 +12,18 @@ export const AuthPage = () => {
   useEffect(() => {
     if (!params.type) {
       navigate("/auth/login");
+      return;
+    }
+
+    if (params.type !== "login") {
+      navigate("/", { replace: true });
     }
   }, [navigate, params]);
 
   return (
     <>
       <div className={classes.container}>
-        {params.type === "login" && <Login />}
-        {params.type === "registration" && <Registration />}
-        {params.type == "forgot-password" && <ForgotPassword />}
+        {params.type === "login" && <CodeLogin />}
         <p className={classes.text}>З.Ы Скушай каждое слово</p>
       </div>
     </>

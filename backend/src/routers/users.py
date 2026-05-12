@@ -9,12 +9,14 @@ from src.crud import users as crud_users
 from src.schemas.users import (
     UserCreate,
     UserBase,
-    User,
+    UserPublic,
     ForgotPasswordRequest,
     ResetPasswordRequest,
+    LoginByCodeRequest,
+    AccessCodeResponse,
 )
 from src.models.users import User as UserDB
-from src.schemas.token import Token
+from src.schemas.token import Token, TokenWithAccessCode
 from src.database import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.utils.email import send_verification_code
@@ -72,6 +74,25 @@ async def register(
         return db_user
 
 
+@router.post("/accounts/create", response_model=TokenWithAccessCode)
+async def create_account(
+    session: Annotated[AsyncSession, Depends(get_db)],
+):
+    access_code_seed = auth.generate_access_code_seed()
+    user = await crud_users.create_auto_user(session, access_code_seed=access_code_seed)
+    access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = auth.create_access_token(
+        data={"sub": str(user.id)}, expires_delta=access_token_expires
+    )
+    access_code = auth.build_access_code(user.id, access_code_seed)
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "access_code": access_code,
+    }
+
+
 @router.post("/login", response_model=Token)
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
@@ -100,11 +121,74 @@ async def login_for_access_token(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.get("/users/me", response_model=User)
+@router.post("/login-by-code", response_model=Token)
+async def login_by_access_code(
+    request: LoginByCodeRequest,
+    session: Annotated[AsyncSession, Depends(get_db)],
+):
+    try:
+        user_id = auth.get_user_id_from_access_code(request.access_code)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Неверный код входа",
+        )
+
+    user = await crud_users.get_user(session, user_id=user_id)
+
+    if not user or not auth.verify_access_code(
+        request.access_code, user.id, user.access_code_seed
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Неверный код входа",
+        )
+
+    access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = auth.create_access_token(
+        data={"sub": str(user.id)}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.get("/users/me", response_model=UserPublic)
 async def read_users_me(
     current_user: Annotated[models.User, Depends(auth.get_current_user)],
 ):
     return current_user
+
+
+@router.get("/users/access-code", response_model=AccessCodeResponse)
+async def get_access_code(
+    current_user: Annotated[models.User, Depends(auth.get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_db)],
+):
+    if not current_user.access_code_seed:
+        current_user.access_code_seed = auth.generate_access_code_seed()
+        await session.commit()
+        await session.refresh(current_user)
+
+    return {
+        "access_code": auth.build_access_code(
+            current_user.id, current_user.access_code_seed
+        )
+    }
+
+
+@router.post("/users/access-code/rotate", response_model=AccessCodeResponse)
+async def rotate_access_code(
+    current_user: Annotated[models.User, Depends(auth.get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_db)],
+):
+    current_user.access_code_seed = auth.generate_access_code_seed()
+    await session.commit()
+    await session.refresh(current_user)
+
+    return {
+        "access_code": auth.build_access_code(
+            current_user.id, current_user.access_code_seed
+        )
+    }
 
 
 @router.post("/verify-email")

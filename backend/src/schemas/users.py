@@ -32,6 +32,23 @@ class User(UserBase):
     is_verified: bool = False
 
 
+class UserPublic(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    email: str | None = None
+    is_active: bool
+    is_verified: bool = False
+
+
+class LoginByCodeRequest(BaseModel):
+    access_code: str
+
+
+class AccessCodeResponse(BaseModel):
+    access_code: str
+
+
 class ResendCodeRequest(BaseModel):
     email: MyEmailStr
 

@@ -13,6 +13,7 @@ erDiagram
         int id PK
         string email
         string hashed_password
+        string access_code_seed
         boolean is_active
         boolean is_verified
         string verification_code
@@ -61,6 +62,7 @@ erDiagram
         int id PK
         string email
         string hashed_password
+        string access_code_seed
         boolean is_active
         boolean is_verified
     }

@@ -10,12 +10,15 @@ import { authorizationApi } from "../../store/authorization/api";
 import { rulesApi } from "../../store/rules/api";
 import { useAppDispatch } from "../../store/utils/useAppDispatch";
 import { wordsApi } from "../../store/words/api";
+import { getSessionStateFromToken } from "../../utils/authSession";
 import { getStoredTheme, saveTheme, type TAppTheme } from "../../utils/theme";
 import classes from "./SpeechSettings.module.css";
 
 export const Settings = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useState<TAppTheme>(() => getStoredTheme());
+  const [accessCode, setAccessCode] = useState<string | null>(null);
+  const [isCodeCopied, setIsCodeCopied] = useState(false);
   const settingsRef = useRef<HTMLElement | null>(null);
   const {
     activeLanguage,
@@ -26,6 +29,18 @@ export const Settings = () => {
   } = useSpeechSettings();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const [loadAccessCode, { isFetching: isAccessCodeLoading }] =
+    authorizationApi.useLazyGetAccessCodeQuery();
+  const [rotateAccessCode, { isLoading: isRotatingAccessCode }] =
+    authorizationApi.useRotateAccessCodeMutation();
+  const sessionState = getSessionStateFromToken(
+    localStorage.getItem(ACCESS_TOKEN_LOCALSTORAGE_KEY),
+  );
+  const sessionExpiresAtLabel = sessionState.expiresAt?.toLocaleDateString("ru-RU", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 
   useEffect(() => {
     if (!isOpen) {
@@ -69,6 +84,31 @@ export const Settings = () => {
     saveTheme(nextTheme);
   };
 
+  const handleShowAccessCode = async () => {
+    const response = await loadAccessCode();
+    if ("data" in response && response.data) {
+      setAccessCode(response.data.access_code);
+      setIsCodeCopied(false);
+    }
+  };
+
+  const handleRotateAccessCode = async () => {
+    const response = await rotateAccessCode();
+    if ("data" in response && response.data) {
+      setAccessCode(response.data.access_code);
+      setIsCodeCopied(false);
+    }
+  };
+
+  const handleCopyAccessCode = async () => {
+    if (!accessCode) {
+      return;
+    }
+
+    await navigator.clipboard.writeText(accessCode);
+    setIsCodeCopied(true);
+  };
+
   return (
     <aside
       ref={settingsRef}
@@ -77,6 +117,52 @@ export const Settings = () => {
     >
       <div className={classes.panel} data-open={isOpen}>
         <p className={classes.title}>Дополнительные параметры</p>
+        {sessionState.isExpiringSoon && (
+          <div className={classes.sessionNotice}>
+            <p className={classes.noticeTitle}>Сессия скоро завершится</p>
+            <p className={classes.noticeText}>
+              Сохраните код входа, чтобы быстро войти снова
+              {sessionExpiresAtLabel ? ` до ${sessionExpiresAtLabel}` : ""}.
+            </p>
+          </div>
+        )}
+        <div className={classes.accessCodeBlock}>
+          <div>
+            <p className={classes.settingLabel}>Код входа</p>
+            <p className={classes.settingDescription}>
+              Используйте его для входа на других устройствах.
+            </p>
+          </div>
+          {accessCode ? (
+            <>
+              <p className={classes.codeValue}>{accessCode}</p>
+              <div className={classes.codeActions}>
+                <Button size="small" variant="secondary" onClick={handleCopyAccessCode}>
+                  {isCodeCopied ? "Скопировано" : "Скопировать"}
+                </Button>
+                <Button
+                  size="small"
+                  variant="primary"
+                  onClick={handleRotateAccessCode}
+                  disabled={isRotatingAccessCode}
+                >
+                  Обновить код
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className={classes.codeActions}>
+              <Button
+                size="small"
+                variant="secondary"
+                onClick={handleShowAccessCode}
+                disabled={isAccessCodeLoading}
+              >
+                Показать код
+              </Button>
+            </div>
+          )}
+        </div>
         <div className={classes.themeBlock}>
           <div>
             <p className={classes.settingLabel}>Тема</p>

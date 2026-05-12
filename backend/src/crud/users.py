@@ -15,6 +15,18 @@ async def get_user_by_email(db: AsyncSession, email: str):
     return result.scalar_one_or_none()
 
 
+async def create_auto_user(db: AsyncSession, access_code_seed: str):
+    db_user = User(
+        access_code_seed=access_code_seed,
+        is_active=True,
+        is_verified=True,
+    )
+    db.add(db_user)
+    await db.commit()
+    await db.refresh(db_user)
+    return db_user
+
+
 async def create_user(
     db: AsyncSession,
     user: UserCreate,

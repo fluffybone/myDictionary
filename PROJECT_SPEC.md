@@ -7,7 +7,7 @@ This file is a working map of the project for future coding sessions. Keep it sh
 `myDictionary` / `WordEater` is a personal vocabulary trainer.
 
 Main user flows:
-- Register/login with email verification.
+- Create an account without email and log in with a personal access code.
 - Add words with translation and optional description.
 - Keep up to 10 active learning words per user.
 - Practice active words and move learned words out of the active list.
@@ -68,7 +68,7 @@ Important files:
 - `backend/src/main.py`: FastAPI app, CORS, router registration.
 - `backend/src/database.py`: async SQLAlchemy engine/session and `Base`.
 - `backend/src/auth.py`: password hashing, JWT creation, current-user dependency.
-- `backend/src/routers/users.py`: auth, registration, email verification, password reset.
+- `backend/src/routers/users.py`: legacy email auth plus current personal-code auth.
 - `backend/src/routers/words.py`: word CRUD and learning-status endpoints.
 - `backend/src/models/users.py`: `users` table.
 - `backend/src/models/words.py`: `words` table.
@@ -83,11 +83,12 @@ Important backend conventions:
 ## Database
 
 Tables:
-- `users`: email, password hash, active/verified flags, verification code fields.
+- `users`: optional email, optional password hash, personal access-code seed, active/verified flags, verification code fields.
 - `words`: original word, translation, description, owner, created timestamp, `is_learning`.
 
 Current key rules:
-- `users.email` is unique.
+- `users.email` is unique when present.
+- `users.access_code_seed` is unique when present.
 - `words.owner_id` references `users.id`.
 - Duplicate words are checked per user case-insensitively via `ilike`.
 - Max active learning words per user is `10` in `backend/src/routers/words.py`.
@@ -140,9 +141,14 @@ Auth:
 - `customBaseQuery` adds `Authorization: Bearer <token>`.
 
 Known route details:
+- Create account: `POST /api/accounts/create`
+  - protected by backend rate limiting per client IP
 - Login: `POST /api/login`
+- Login by code: `POST /api/login-by-code`
 - Register: `POST /api/register`
 - Current user: `GET /api/users/me`
+- Get access code: `GET /api/users/access-code`
+- Rotate access code: `POST /api/users/access-code/rotate`
 - Verify email: `POST /api/verify-email`
 - Forgot password: `POST /api/forgot-password`
 - Reset password: `POST /api/reset-password`
