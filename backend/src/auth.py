@@ -22,7 +22,7 @@ if not SECRET_KEY:
     raise ValueError("No SECRET_KEY")
 
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 30  # 30 дней
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 90  # 90 дней
 
 password_hash = PasswordHash.recommended()
 
