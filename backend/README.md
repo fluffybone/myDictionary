@@ -210,7 +210,7 @@ Authorization: Bearer <token>
 
 ### Срок жизни сессии
 
-JWT сейчас живет `30 дней`.
+JWT сейчас живет `90 дней` (примерно 3 месяца).
 
 Это задается в `ACCESS_TOKEN_EXPIRE_MINUTES` в [src/auth.py](./src/auth.py).
 
