@@ -45,6 +45,11 @@ const isSameAnswer = (answer: string, correctAnswer: string) => {
   return [...answerVariants].some((variant) => correctAnswerVariants.has(variant));
 };
 
+const waitForNextTick = () =>
+  new Promise<void>((resolve) => {
+    window.setTimeout(resolve, 0);
+  });
+
 const getEmptyMessage = (
   wordsSource: TCheckWordsSource,
   dateRange: { dateFrom: string; dateTo: string },
@@ -81,6 +86,8 @@ export const Check = () => {
   const [isViewResult, setIsViewResult] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isWin, setIsWin] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSubmitLoader, setShowSubmitLoader] = useState(false);
   const [shuffledWords, setShuffledWords] = useState<TWordResponse[]>();
 
   const [addedWordsInDictionary] = useUpdateLearningStatusWordMutation();
@@ -101,24 +108,39 @@ export const Check = () => {
     setIsWin(false);
   }, [activeLanguage.code, dateRange.dateFrom, dateRange.dateTo, wordsSource]);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSubmitting(true);
     setIsWin(false);
     setIsViewResult(true);
+    const loaderTimeoutId = window.setTimeout(() => {
+      setShowSubmitLoader(true);
+    }, 250);
 
-    const hasErrorInSubmit = shuffledWords?.some((word) => {
-      const result = wordResult[word.id];
+    try {
+      let hasErrorInSubmit = false;
 
-      return (
-        !result ||
-        !isSameAnswer(result.answer, result.correctAnswer)
-      );
-    });
+      if (shuffledWords?.length) {
+        for (const [index, word] of shuffledWords.entries()) {
+          if (index > 0 && index % 20 === 0) {
+            await waitForNextTick();
+          }
 
-    setHasError(Boolean(hasErrorInSubmit));
+          const result = wordResult[word.id];
 
-    if (!hasErrorInSubmit) {
-      setIsWin(true);
+          if (!result || !isSameAnswer(result.answer, result.correctAnswer)) {
+            hasErrorInSubmit = true;
+            break;
+          }
+        }
+      }
+
+      setHasError(hasErrorInSubmit);
+      setIsWin(!hasErrorInSubmit);
+    } finally {
+      window.clearTimeout(loaderTimeoutId);
+      setShowSubmitLoader(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -206,6 +228,14 @@ export const Check = () => {
           className={classes.form}
           key={`${selectedOption}-${wordsSource}-${isWin}`}
         >
+          {showSubmitLoader && (
+            <div className={classes.loaderOverlay} role="status" aria-live="polite">
+              <div className={classes.loaderCard}>
+                <div className={classes.loaderSpinner} aria-hidden="true" />
+                <span>Проверяем ответы...</span>
+              </div>
+            </div>
+          )}
           {isWin && (
             <div className={classes.blockWin}>
               <h3>Правильно! 🎉🎉🎉 </h3>
@@ -291,6 +321,7 @@ export const Check = () => {
                         <input
                           autoComplete="off"
                           className={isAnswerError(word) ? "error" : undefined}
+                          disabled={isSubmitting}
                           placeholder="Ваш ответ"
                           required
                           name={word[key]}
@@ -316,9 +347,10 @@ export const Check = () => {
             <Button
               className={classes.button}
               variant="secondary"
+              disabled={isSubmitting}
               type="submit"
             >
-              Отправить
+              {isSubmitting ? "Проверяем..." : "Отправить"}
             </Button>
           )}
         </form>

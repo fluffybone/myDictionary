@@ -144,9 +144,7 @@ export const ListWords: FC<TProps> = ({
             </>
           )}
         </div>
-        <p>
-          {isLearning ? `${wordsCount} / 10` : `Всего слов: ${wordsCount}`}
-        </p>
+        <p>{isLearning ? `Сейчас учу: ${wordsCount}` : `Всего слов: ${wordsCount}`}</p>
       </div>
       <div
         className={clsx(classes.learnWords, {
