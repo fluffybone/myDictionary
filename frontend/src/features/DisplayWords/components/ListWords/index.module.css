@@ -29,6 +29,8 @@ table tr:first-child {
 .descriptionTd {
   min-width: 240px;
   width: 100%;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .dateTd {
