@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import type { FC } from "react";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { Button } from "../Button";
 import classes from "./index.module.css";
 
@@ -10,16 +11,6 @@ type TProps = {
   totalPages: number;
 };
 
-const getVisiblePages = (currentPage: number, totalPages: number) => {
-  if (totalPages <= 5) {
-    return Array.from({ length: totalPages }, (_, index) => index + 1);
-  }
-
-  const start = Math.max(1, Math.min(currentPage - 2, totalPages - 4));
-
-  return Array.from({ length: 5 }, (_, index) => start + index);
-};
-
 export const Pagination: FC<TProps> = ({
   className,
   currentPage,
@@ -27,8 +18,6 @@ export const Pagination: FC<TProps> = ({
   totalPages,
 }) => {
   if (totalPages <= 1) return null;
-
-  const visiblePages = getVisiblePages(currentPage, totalPages);
 
   return (
     <nav className={clsx(classes.pagination, className)} aria-label="Пагинация">
@@ -38,23 +27,12 @@ export const Pagination: FC<TProps> = ({
         size="small"
         disabled={currentPage === 1}
         onClick={() => onChange(currentPage - 1)}
+        aria-label="Предыдущая страница"
       >
-        Назад
+        <LeftOutlined />
       </Button>
-      <div className={classes.pages}>
-        {visiblePages.map((page) => (
-          <button
-            className={clsx(classes.page, {
-              [classes.active]: page === currentPage,
-            })}
-            type="button"
-            key={page}
-            aria-current={page === currentPage ? "page" : undefined}
-            onClick={() => onChange(page)}
-          >
-            {page}
-          </button>
-        ))}
+      <div className={clsx(classes.page, classes.active)} aria-current="page">
+        {currentPage} / {totalPages}
       </div>
       <Button
         className={classes.button}
@@ -62,8 +40,9 @@ export const Pagination: FC<TProps> = ({
         size="small"
         disabled={currentPage === totalPages}
         onClick={() => onChange(currentPage + 1)}
+        aria-label="Следующая страница"
       >
-        Вперед
+        <RightOutlined />
       </Button>
     </nav>
   );

@@ -9,7 +9,7 @@ This file is a working map of the project for future coding sessions. Keep it sh
 Main user flows:
 - Create an account without email and log in with a personal access code.
 - Add words with translation and optional description.
-- Keep up to 10 active learning words per user.
+- Keep active learning words per user without a hard limit.
 - Practice active words and move learned words out of the active list.
 - View learned words separately.
 
@@ -91,7 +91,6 @@ Current key rules:
 - `users.access_code_seed` is unique when present.
 - `words.owner_id` references `users.id`.
 - Duplicate words are checked per user case-insensitively via `ilike`.
-- Max active learning words per user is `10` in `backend/src/routers/words.py`.
 
 Migration commands:
 

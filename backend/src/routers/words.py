@@ -21,7 +21,6 @@ from sqlalchemy import select, func, delete
 
 router = APIRouter(prefix="/api/words", tags=["words"])
 
-MAX_WORDS_PER_USER = 10
 SupportedLanguage = Literal["en", "de", "fr", "es", "it"]
 
 
@@ -46,20 +45,6 @@ async def create_word(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Слово '{word.orig_word}' уже существует в вашем словаре",
-        )
-
-    learning_words_count_query = select(func.count()).where(
-        WordDb.owner_id == current_user.id,
-        WordDb.language == word.language,
-        WordDb.is_learning == True,
-    )
-    learning_words_count_result = await db.execute(learning_words_count_query)
-    learning_words_count = learning_words_count_result.scalar()
-
-    if learning_words_count >= MAX_WORDS_PER_USER:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Достигнут предел на запись слов для текущего изучения (максимум {MAX_WORDS_PER_USER} слов)",
         )
 
     word_data = word.model_dump()
