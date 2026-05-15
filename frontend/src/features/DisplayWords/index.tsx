@@ -19,6 +19,7 @@ import { IconButton } from "../../components/IconButton";
 type TProps = {
   isLearning?: boolean;
   isOpenDefaultWordList?: boolean;
+  allowCreate?: boolean;
   pagination?: {
     currentPage: number;
     onPageChange: (page: number) => void;
@@ -32,6 +33,7 @@ export const DisplayWords: FC<TProps> = ({
   words,
   isOpenDefaultWordList,
   isLearning,
+  allowCreate = true,
   pagination,
   totalWords,
 }) => {
@@ -145,7 +147,7 @@ export const DisplayWords: FC<TProps> = ({
 
   return (
     <div>
-      {showSection == "all" && (
+      {showSection == "all" && (allowCreate || mode === "edit") && (
         <form
           onSubmit={mode === "show" ? handleCreateWord : handleUpdateWord}
           className={classes.form}
@@ -156,7 +158,7 @@ export const DisplayWords: FC<TProps> = ({
                 className={
                   error && error.includes("Слово") ? "error" : undefined
                 }
-                placeholder="Новое слово"
+                placeholder={mode === "edit" ? "Слово" : "Новое слово"}
                 id="origWord"
                 name="origWord"
                 autoFocus={!!wordForm?.wordId}

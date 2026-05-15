@@ -340,19 +340,21 @@ export const Check = () => {
                     </tr>
                   );
                 })}
+
               </tbody>
             </table>
+            {!isWin && (
+              <Button
+                className={classes.button}
+                variant="secondary"
+                disabled={isSubmitting}
+                type="submit"
+              >
+                {isSubmitting ? "Проверяем..." : "Отправить"}
+              </Button>
+            )}
           </div>
-          {!isWin && (
-            <Button
-              className={classes.button}
-              variant="secondary"
-              disabled={isSubmitting}
-              type="submit"
-            >
-              {isSubmitting ? "Проверяем..." : "Отправить"}
-            </Button>
-          )}
+
         </form>
       )}
     </div>

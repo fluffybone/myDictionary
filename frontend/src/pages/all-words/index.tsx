@@ -42,6 +42,7 @@ export const AllWords = () => {
       {words && (
         <DisplayWords
           words={words.items}
+          allowCreate={false}
           isOpenDefaultWordList
           pagination={{
             currentPage,
