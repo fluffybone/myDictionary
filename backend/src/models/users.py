@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from src.database import Base
-from datetime import datetime
+from sqlalchemy.sql import func
 
 
 class User(Base):
@@ -15,6 +15,7 @@ class User(Base):
     is_verified = Column(Boolean, default=False)
     verification_code = Column(String)
     verification_code_expires_at = Column(DateTime(timezone=True))
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
     last_seen_at = Column(DateTime(timezone=True), nullable=True)
 
     # Связь с таблицей слов
