@@ -1,4 +1,4 @@
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, time, timedelta, timezone
 from typing import List, Literal, Optional
 from fastapi import APIRouter, Depends, Query
 from fastapi import HTTPException, status
@@ -22,6 +22,21 @@ from sqlalchemy import select, func, delete
 router = APIRouter(prefix="/api/words", tags=["words"])
 
 SupportedLanguage = Literal["en", "de", "fr", "es", "it"]
+
+
+async def touch_last_seen_for_today(
+    db: AsyncSession,
+    current_user: UserDb,
+) -> None:
+    today = datetime.now(timezone.utc).date()
+    last_seen_at = current_user.last_seen_at
+
+    if last_seen_at is not None and last_seen_at.date() == today:
+        return
+
+    current_user.last_seen_at = datetime.now(timezone.utc)
+    await db.commit()
+    await db.refresh(current_user)
 
 
 # Для слов Изучаю сейчас
@@ -80,6 +95,8 @@ async def read_my_words(
         "en", description="Язык словаря: en, de, fr, es или it"
     ),
 ):
+    await touch_last_seen_for_today(db, current_user)
+
     filters = [WordDb.owner_id == current_user.id, WordDb.language == language]
 
     if is_learning is not None:

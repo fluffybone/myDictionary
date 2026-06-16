@@ -1,7 +1,7 @@
 from typing import Annotated, Callable, Dict, List, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import delete, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import auth
@@ -408,15 +408,18 @@ async def delete_rule(
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[UserDb, Depends(auth.get_current_user)],
 ):
-    query = delete(LanguageRuleDb).where(
+    query = select(LanguageRuleDb).where(
         LanguageRuleDb.id == rule_id,
         LanguageRuleDb.owner_id == current_user.id,
     )
     result = await db.execute(query)
-    await db.commit()
+    db_rule = result.scalar_one_or_none()
 
-    if result.rowcount == 0:
+    if not db_rule:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Правило не найдено",
         )
+
+    await db.delete(db_rule)
+    await db.commit()

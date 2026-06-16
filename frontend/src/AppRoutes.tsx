@@ -12,6 +12,12 @@ const Dictionary = lazy(() =>
   })),
 );
 
+const SecretStats = lazy(() =>
+  import("./pages/secret-stats").then((module) => ({
+    default: module.SecretStats,
+  })),
+);
+
 export const AppRoutes = () => {
   const token = localStorage.getItem(ACCESS_TOKEN_LOCALSTORAGE_KEY);
   const { data: authorizedUser, error } = useGetMeQuery(undefined, {
@@ -37,12 +43,20 @@ export const AppRoutes = () => {
   ) : (
     <AuthPage />
   );
+  const secretStatsPage = isCheckingUser ? null : authorizedUser ? (
+    <Suspense fallback={null}>
+      <SecretStats />
+    </Suspense>
+  ) : (
+    <Navigate to="/" replace />
+  );
 
   return (
     <Routes>
       <Route element={<Layout />}>
         <Route element={dictionaryPage} path="/" />
         <Route element={authPage} path="/auth/:type?" />
+        <Route element={secretStatsPage} path="/vault/users-overview" />
       </Route>
     </Routes>
   );
