@@ -15,6 +15,7 @@ class User(Base):
     is_verified = Column(Boolean, default=False)
     verification_code = Column(String)
     verification_code_expires_at = Column(DateTime(timezone=True))
+    last_seen_at = Column(DateTime(timezone=True), nullable=True)
 
     # Связь с таблицей слов
     # back_populates создает виртуальное поле "owner" в модели Word

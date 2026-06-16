@@ -1,7 +1,8 @@
 from datetime import timedelta
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from sqlalchemy import case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import auth, models
@@ -16,6 +17,10 @@ from src.schemas.access_code_auth import (
     Token,
     TokenWithAccessCode,
     UserPublic,
+)
+from src.schemas.user_stats import (
+    UserLastSeenRow,
+    UsersLastSeenResponse,
 )
 
 router = APIRouter(prefix="/api", tags=["Users"])
@@ -141,6 +146,69 @@ async def rotate_access_code(
             current_user.id, current_user.access_code_seed
         )
     }
+
+
+@router.get("/users/last-seen", response_model=UsersLastSeenResponse)
+async def get_users_last_seen(
+    current_user: Annotated[models.User, Depends(auth.get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_db)],
+    limit: int = Query(200, ge=1, le=1000),
+):
+    del current_user
+
+    total_users_query = select(func.count(models.User.id))
+    total_users_result = await session.execute(total_users_query)
+    total_users = total_users_result.scalar() or 0
+
+    words_by_user_subquery = (
+        select(
+            models.Word.owner_id.label("user_id"),
+            func.count(models.Word.id).label("total_words"),
+            func.sum(case((models.Word.language == "en", 1), else_=0)).label("en_words"),
+            func.sum(case((models.Word.language == "de", 1), else_=0)).label("de_words"),
+            func.sum(case((models.Word.language == "fr", 1), else_=0)).label("fr_words"),
+            func.sum(case((models.Word.language == "es", 1), else_=0)).label("es_words"),
+            func.sum(case((models.Word.language == "it", 1), else_=0)).label("it_words"),
+        )
+        .group_by(models.Word.owner_id)
+        .subquery()
+    )
+
+    users_query = (
+        select(
+            models.User,
+            words_by_user_subquery.c.total_words,
+            words_by_user_subquery.c.en_words,
+            words_by_user_subquery.c.de_words,
+            words_by_user_subquery.c.fr_words,
+            words_by_user_subquery.c.es_words,
+            words_by_user_subquery.c.it_words,
+        )
+        .outerjoin(words_by_user_subquery, words_by_user_subquery.c.user_id == models.User.id)
+        .order_by(
+            models.User.last_seen_at.desc().nullslast(),
+            models.User.id.asc(),
+        )
+        .limit(limit)
+    )
+    users_result = await session.execute(users_query)
+
+    return UsersLastSeenResponse(
+        total_users=total_users,
+        users=[
+            UserLastSeenRow(
+                user_id=user.id,
+                last_seen_at=user.last_seen_at.isoformat() if user.last_seen_at else None,
+                total_words=total_words or 0,
+                en_words=en_words or 0,
+                de_words=de_words or 0,
+                fr_words=fr_words or 0,
+                es_words=es_words or 0,
+                it_words=it_words or 0,
+            )
+            for user, total_words, en_words, de_words, fr_words, es_words, it_words in users_result.all()
+        ],
+    )
 
 
 @router.post("/login")

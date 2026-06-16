@@ -7,6 +7,22 @@ type TUser = {
   is_verified: boolean;
 };
 
+export type TUserLastSeenRow = {
+  user_id: number;
+  last_seen_at: string | null;
+  total_words: number;
+  en_words: number;
+  de_words: number;
+  fr_words: number;
+  es_words: number;
+  it_words: number;
+};
+
+export type TUsersLastSeenResponse = {
+  total_users: number;
+  users: TUserLastSeenRow[];
+};
+
 type TTokenResponse = {
   access_token: string;
   token_type: string;
@@ -48,6 +64,11 @@ export const authorizationApi = createApi({
         url: "/api/users/me",
       }),
     }),
+    getUsersLastSeen: builder.query<TUsersLastSeenResponse, void>({
+      query: () => ({
+        url: "/api/users/last-seen",
+      }),
+    }),
   }),
   reducerPath: "authorizationApi",
 });
@@ -58,4 +79,5 @@ export const {
   useLoginByCodeMutation,
   useRotateAccessCodeMutation,
   useGetMeQuery,
+  useGetUsersLastSeenQuery,
 } = authorizationApi;

@@ -50,6 +50,28 @@ async def test_login_by_access_code_returns_token(
     assert payload["token_type"] == "bearer"
 
 
+async def test_last_seen_is_empty_before_words_request(
+    client: AsyncClient,
+):
+    create_response = await client.post("/api/accounts/create")
+
+    assert create_response.status_code == 200
+    payload = create_response.json()
+
+    activity_response = await client.get(
+        "/api/users/last-seen",
+        headers={"Authorization": f"Bearer {payload['access_token']}"},
+    )
+
+    assert activity_response.status_code == 200
+    activity_payload = activity_response.json()
+    assert activity_payload["total_users"] == 1
+    assert activity_payload["users"][0]["user_id"] >= 1
+    assert activity_payload["users"][0]["last_seen_at"] is None
+    assert activity_payload["users"][0]["total_words"] == 0
+    assert activity_payload["users"][0]["en_words"] == 0
+
+
 async def test_rotate_access_code_invalidates_previous_code(
     client: AsyncClient,
     db_session: AsyncSession,
@@ -87,3 +109,4 @@ async def test_legacy_register_is_rejected(client: AsyncClient):
     )
 
     assert response.status_code == 410
+

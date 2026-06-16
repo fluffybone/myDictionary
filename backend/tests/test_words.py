@@ -1,6 +1,8 @@
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
+from src.models.users import User
 from tests.helpers import auth_headers
 
 
@@ -91,3 +93,35 @@ async def test_words_create_list_and_learning_status(
     learned_data = learned_response.json()
     assert learned_data["total"] == 1
     assert learned_data["items"][0]["is_learning"] is False
+
+    last_seen_response = await client.get(
+        "/api/users/last-seen",
+        headers=headers,
+    )
+
+    assert last_seen_response.status_code == 200
+    last_seen_data = last_seen_response.json()
+    assert last_seen_data["total_users"] == 1
+    assert last_seen_data["users"][0]["last_seen_at"] is not None
+    assert last_seen_data["users"][0]["total_words"] == 2
+    assert last_seen_data["users"][0]["en_words"] == 1
+    assert last_seen_data["users"][0]["fr_words"] == 1
+    assert last_seen_data["users"][0]["de_words"] == 0
+
+    user = (
+        await db_session.execute(select(User).where(User.id == last_seen_data["users"][0]["user_id"]))
+    ).scalar_one()
+    first_last_seen_at = user.last_seen_at
+
+    repeat_learning_response = await client.get(
+        "/api/words/learning",
+        headers=headers,
+        params={"is_learning": True, "language": "en"},
+    )
+
+    assert repeat_learning_response.status_code == 200
+
+    same_user = (
+        await db_session.execute(select(User).where(User.id == user.id))
+    ).scalar_one()
+    assert same_user.last_seen_at == first_last_seen_at
