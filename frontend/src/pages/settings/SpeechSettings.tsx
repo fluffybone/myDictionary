@@ -109,6 +109,11 @@ export const Settings = () => {
     setIsCodeCopied(true);
   };
 
+  const handleOpenImprovementForm = () => {
+    setIsOpen(false);
+    navigate("/suggest-improvement");
+  };
+
   return (
     <aside
       ref={settingsRef}
@@ -184,6 +189,15 @@ export const Settings = () => {
             Вы можете выделить любое слово на странице и нажать “Перевести”
             в системном меню браузера или телефона.
           </p>
+        </div>
+        <div className={classes.feedbackNotice}>
+          <p className={classes.noticeTitle}>Предложить улучшение</p>
+          <p className={classes.noticeText}>
+            Если хочется новую функцию или что-то мешает, отправьте предложение прямо из приложения.
+          </p>
+          <Button size="small" variant="primary" onClick={handleOpenImprovementForm}>
+            Открыть форму
+          </Button>
         </div>
         <Select
           className={classes.select}

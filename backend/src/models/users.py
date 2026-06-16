@@ -22,3 +22,7 @@ class User(Base):
     # back_populates создает виртуальное поле "owner" в модели Word
     words = relationship("Word", back_populates="owner")
     language_rules = relationship("LanguageRule", back_populates="owner")
+    improvement_suggestions = relationship(
+        "ImprovementSuggestion",
+        back_populates="user",
+    )

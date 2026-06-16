@@ -18,6 +18,11 @@ from src.schemas.access_code_auth import (
     TokenWithAccessCode,
     UserPublic,
 )
+from src.schemas.improvement_suggestions import (
+    ImprovementSuggestionCreate,
+    ImprovementSuggestionListResponse,
+    ImprovementSuggestionPublic,
+)
 from src.schemas.user_stats import (
     UserLastSeenRow,
     UsersLastSeenResponse,
@@ -208,6 +213,68 @@ async def get_users_last_seen(
             )
             for user, total_words, en_words, de_words, fr_words, es_words, it_words in users_result.all()
         ],
+    )
+
+
+@router.post(
+    "/improvement-suggestions",
+    response_model=ImprovementSuggestionPublic,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_improvement_suggestion(
+    request: ImprovementSuggestionCreate,
+    current_user: Annotated[models.User, Depends(auth.get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_db)],
+):
+    suggestion = models.ImprovementSuggestion(
+        user_id=current_user.id,
+        message=request.message.strip(),
+    )
+    session.add(suggestion)
+    await session.commit()
+    await session.refresh(suggestion)
+
+    return ImprovementSuggestionPublic(
+        id=suggestion.id,
+        user_id=suggestion.user_id,
+        message=suggestion.message,
+        status=suggestion.status,
+        created_at=suggestion.created_at.isoformat(),
+    )
+
+
+@router.get(
+    "/improvement-suggestions",
+    response_model=ImprovementSuggestionListResponse,
+)
+async def get_improvement_suggestions(
+    current_user: Annotated[models.User, Depends(auth.get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_db)],
+    limit: int = Query(200, ge=1, le=1000),
+):
+    del current_user
+
+    result = await session.execute(
+        select(models.ImprovementSuggestion)
+        .order_by(
+            models.ImprovementSuggestion.created_at.desc(),
+            models.ImprovementSuggestion.id.desc(),
+        )
+        .limit(limit)
+    )
+    suggestions = result.scalars().all()
+
+    return ImprovementSuggestionListResponse(
+        suggestions=[
+            ImprovementSuggestionPublic(
+                id=suggestion.id,
+                user_id=suggestion.user_id,
+                message=suggestion.message,
+                status=suggestion.status,
+                created_at=suggestion.created_at.isoformat(),
+            )
+            for suggestion in suggestions
+        ]
     )
 
 

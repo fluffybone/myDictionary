@@ -169,6 +169,20 @@
   border-radius: 16px;
 }
 
+.feedbackNotice {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 12px;
+  color: var(--main);
+  background:
+    radial-gradient(circle at 92% 18%, rgba(var(--primary-rgb), 0.16), transparent 28%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 244, 225, 0.94) 48%, rgba(233, 241, 255, 0.9) 100%);
+  border: 1px solid var(--border-glass-strong);
+  border-left: 4px solid var(--primary);
+  border-radius: 16px;
+}
+
 .sessionNotice {
   display: grid;
   gap: 4px;
@@ -213,6 +227,10 @@
 }
 
 :global(:root[data-theme="neo"]) .translateNotice {
+  background: floralwhite;
+}
+
+:global(:root[data-theme="neo"]) .feedbackNotice {
   background: floralwhite;
 }
 

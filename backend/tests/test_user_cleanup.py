@@ -40,6 +40,7 @@ async def test_cleanup_deletes_old_user_without_words_and_related_rules(
 
     assert result.deleted_user_ids == [stale_user.id]
     assert result.deleted_rules_count == 1
+    assert result.deleted_suggestions_count == 0
 
     deleted_user = await db_session.get(User, stale_user.id)
     assert deleted_user is None
@@ -79,6 +80,7 @@ async def test_cleanup_keeps_old_user_with_words(
     )
 
     assert result.deleted_user_ids == []
+    assert result.deleted_suggestions_count == 0
     assert await db_session.get(User, user_with_words.id) is not None
 
 
@@ -102,4 +104,5 @@ async def test_cleanup_keeps_recently_seen_user_without_words(
     )
 
     assert result.deleted_user_ids == []
+    assert result.deleted_suggestions_count == 0
     assert await db_session.get(User, recent_user.id) is not None

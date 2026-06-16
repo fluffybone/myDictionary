@@ -23,6 +23,14 @@ export type TUsersLastSeenResponse = {
   users: TUserLastSeenRow[];
 };
 
+export type TImprovementSuggestion = {
+  id: number;
+  user_id: number;
+  message: string;
+  status: string;
+  created_at: string;
+};
+
 type TTokenResponse = {
   access_token: string;
   token_type: string;
@@ -69,6 +77,24 @@ export const authorizationApi = createApi({
         url: "/api/users/last-seen",
       }),
     }),
+    createImprovementSuggestion: builder.mutation<
+      TImprovementSuggestion,
+      { message: string }
+    >({
+      query: (body) => ({
+        url: "/api/improvement-suggestions",
+        method: "POST",
+        body,
+      }),
+    }),
+    getImprovementSuggestions: builder.query<
+      { suggestions: TImprovementSuggestion[] },
+      void
+    >({
+      query: () => ({
+        url: "/api/improvement-suggestions",
+      }),
+    }),
   }),
   reducerPath: "authorizationApi",
 });
@@ -80,4 +106,6 @@ export const {
   useRotateAccessCodeMutation,
   useGetMeQuery,
   useGetUsersLastSeenQuery,
+  useCreateImprovementSuggestionMutation,
+  useGetImprovementSuggestionsQuery,
 } = authorizationApi;

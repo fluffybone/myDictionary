@@ -18,6 +18,12 @@ const SecretStats = lazy(() =>
   })),
 );
 
+const ImprovementSuggestions = lazy(() =>
+  import("./pages/improvement-suggestions").then((module) => ({
+    default: module.ImprovementSuggestions,
+  })),
+);
+
 export const AppRoutes = () => {
   const token = localStorage.getItem(ACCESS_TOKEN_LOCALSTORAGE_KEY);
   const { data: authorizedUser, error } = useGetMeQuery(undefined, {
@@ -50,6 +56,13 @@ export const AppRoutes = () => {
   ) : (
     <Navigate to="/" replace />
   );
+  const improvementSuggestionsPage = isCheckingUser ? null : authorizedUser ? (
+    <Suspense fallback={null}>
+      <ImprovementSuggestions />
+    </Suspense>
+  ) : (
+    <Navigate to="/" replace />
+  );
 
   return (
     <Routes>
@@ -57,6 +70,7 @@ export const AppRoutes = () => {
         <Route element={dictionaryPage} path="/" />
         <Route element={authPage} path="/auth/:type?" />
         <Route element={secretStatsPage} path="/vault/users-overview" />
+        <Route element={improvementSuggestionsPage} path="/suggest-improvement" />
       </Route>
     </Routes>
   );
