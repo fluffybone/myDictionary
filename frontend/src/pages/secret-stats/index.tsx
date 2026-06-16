@@ -1,5 +1,8 @@
 import classes from "./index.module.css";
-import { useGetUsersLastSeenQuery } from "../../store/authorization/api";
+import {
+  useGetImprovementSuggestionsQuery,
+  useGetUsersLastSeenQuery,
+} from "../../store/authorization/api";
 
 const formatDateTime = (value: string) =>
   new Intl.DateTimeFormat("ru-RU", {
@@ -13,6 +16,11 @@ export const SecretStats = () => {
     isLoading,
     isError,
   } = useGetUsersLastSeenQuery();
+  const {
+    data: suggestionsData,
+    isLoading: isSuggestionsLoading,
+    isError: isSuggestionsError,
+  } = useGetImprovementSuggestionsQuery();
 
   if (isLoading) {
     return (
@@ -56,6 +64,10 @@ export const SecretStats = () => {
         <article className={classes.card}>
           <p className={classes.cardLabel}>Всего пользователей</p>
           <strong className={classes.cardValue}>{lastSeenData.total_users}</strong>
+        </article>
+        <article className={classes.card}>
+          <p className={classes.cardLabel}>Предложений по улучшению</p>
+          <strong className={classes.cardValue}>{suggestionsData?.suggestions.length ?? 0}</strong>
         </article>
       </div>
 
@@ -103,6 +115,37 @@ export const SecretStats = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+      </section>
+
+      <section className={classes.tableCard}>
+        <div className={classes.tableHeader}>
+          <div>
+            <p className={classes.sectionEyebrow}>Фидбек</p>
+            <h2 className={classes.sectionTitle}>Предложения пользователей</h2>
+          </div>
+        </div>
+
+        {isSuggestionsLoading ? (
+          <p className={classes.emptyState}>Загружаем предложения...</p>
+        ) : isSuggestionsError ? (
+          <p className={classes.emptyState}>Не удалось получить предложения.</p>
+        ) : !suggestionsData || suggestionsData.suggestions.length === 0 ? (
+          <p className={classes.emptyState}>Пока никто ничего не предложил.</p>
+        ) : (
+          <div className={classes.suggestionsList}>
+            {suggestionsData.suggestions.map((suggestion) => (
+              <article key={suggestion.id} className={classes.suggestionCard}>
+                <div className={classes.suggestionMeta}>
+                  <span className={classes.actionBadge}>user #{suggestion.user_id}</span>
+                  <span className={classes.suggestionDate}>
+                    {formatDateTime(suggestion.created_at)}
+                  </span>
+                </div>
+                <p className={classes.suggestionText}>{suggestion.message}</p>
+              </article>
+            ))}
           </div>
         )}
       </section>

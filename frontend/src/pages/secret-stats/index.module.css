@@ -189,6 +189,38 @@
   color: color-mix(in srgb, var(--main) 74%, transparent);
 }
 
+.suggestionsList {
+  display: grid;
+  gap: 12px;
+}
+
+.suggestionCard {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.76), rgba(236, 243, 255, 0.72));
+  border: 1px solid var(--border-glass);
+  border-radius: 20px;
+}
+
+.suggestionMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.suggestionDate {
+  color: color-mix(in srgb, var(--main) 68%, transparent);
+  font-size: var(--text-xs);
+}
+
+.suggestionText {
+  margin: 0;
+  color: var(--main);
+  white-space: pre-wrap;
+}
+
 @media (max-width: 900px) {
   .cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -211,5 +243,10 @@
 
   .cards {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .suggestionMeta {
+    flex-direction: column;
+    align-items: start;
   }
 }

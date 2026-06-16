@@ -11,7 +11,8 @@ async def _run() -> None:
     print(
         "Deleted "
         f"{result.deleted_users_count} inactive empty users and "
-        f"{result.deleted_rules_count} related rules."
+        f"{result.deleted_rules_count} related rules, "
+        f"{result.deleted_suggestions_count} related suggestions."
     )
 
 

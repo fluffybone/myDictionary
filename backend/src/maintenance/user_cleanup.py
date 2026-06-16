@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 from sqlalchemy import delete, exists, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.models.improvement_suggestions import ImprovementSuggestion
 from src.models.rules import LanguageRule
 from src.models.users import User
 from src.models.words import Word
@@ -13,6 +14,7 @@ from src.models.words import Word
 class UserCleanupResult:
     deleted_user_ids: list[int]
     deleted_rules_count: int
+    deleted_suggestions_count: int
 
     @property
     def deleted_users_count(self) -> int:
@@ -37,10 +39,17 @@ async def delete_inactive_empty_users(
     candidate_ids = list(candidate_ids_result.scalars().all())
 
     if not candidate_ids:
-        return UserCleanupResult(deleted_user_ids=[], deleted_rules_count=0)
+        return UserCleanupResult(
+            deleted_user_ids=[],
+            deleted_rules_count=0,
+            deleted_suggestions_count=0,
+        )
 
     deleted_rules_result = await db.execute(
         delete(LanguageRule).where(LanguageRule.owner_id.in_(candidate_ids))
+    )
+    deleted_suggestions_result = await db.execute(
+        delete(ImprovementSuggestion).where(ImprovementSuggestion.user_id.in_(candidate_ids))
     )
     await db.execute(delete(User).where(User.id.in_(candidate_ids)))
     await db.commit()
@@ -48,4 +57,5 @@ async def delete_inactive_empty_users(
     return UserCleanupResult(
         deleted_user_ids=candidate_ids,
         deleted_rules_count=deleted_rules_result.rowcount or 0,
+        deleted_suggestions_count=deleted_suggestions_result.rowcount or 0,
     )
