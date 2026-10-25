@@ -56,7 +56,6 @@ table tr:first-child {
 
   @media (max-width: 640px) {
     min-height: 140px;
-    height: 35vh;
     padding: 1vw 16px;
   }
 }
@@ -90,12 +89,6 @@ table tr:first-child {
   @media (max-width: 640px) {
     max-height: none;
     height: 75dvh;
-  }
-}
-
-@media (display-mode: standalone) and (max-width: 640px) {
-  .learnWords:not(.showFull) {
-    height: clamp(35vh, calc(100dvh - 390px), 45vh);
   }
 }
 
