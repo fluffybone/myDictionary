@@ -1,4 +1,11 @@
-import { useEffect, useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type DragEvent,
+  type FormEvent,
+} from "react";
 import { RadioGroup } from "../../components/RadioComponents/RadioGroup";
 import classes from "./index.module.css";
 import {
@@ -17,7 +24,11 @@ import { useSpeechSettings } from "../../hooks/useSpeechSettings";
 
 type TCheckWordsSource = "learning" | "learned";
 type TSelectedOption = "origWord" | "translateWord";
-type TWordResult = Record<number, { answer: string; correctAnswer: string }>;
+type TWordResult = Record<
+  number,
+  { answer: string; correctAnswer: string; sourceWordId?: number }
+>;
+type TTranslationChip = { id: number; text: string };
 
 const formatDateLabel = (date: string) => date.split("-").reverse().join(".");
 
@@ -50,6 +61,8 @@ const waitForNextTick = () =>
     window.setTimeout(resolve, 0);
   });
 
+const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
+
 const getEmptyMessage = (
   wordsSource: TCheckWordsSource,
   dateRange: { dateFrom: string; dateTo: string },
@@ -68,6 +81,8 @@ const getEmptyMessage = (
 export const Check = () => {
   const [selectedOption, setSelectedOption] =
     useState<TSelectedOption>("origWord");
+  const answerMode =
+    selectedOption === "origWord" ? ("choice" as const) : ("write" as const);
   const [wordsSource, setWordsSource] = useState<TCheckWordsSource>("learning");
   const [dateRange, setDateRange] = useState(getCurrentMonthRange);
   const { activeLanguage } = useSpeechSettings();
@@ -89,6 +104,8 @@ export const Check = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSubmitLoader, setShowSubmitLoader] = useState(false);
   const [shuffledWords, setShuffledWords] = useState<TWordResponse[]>();
+  const [selectedChip, setSelectedChip] = useState<TTranslationChip | null>(null);
+  const draggedChipRef = useRef<TTranslationChip | null>(null);
 
   const [addedWordsInDictionary] = useUpdateLearningStatusWordMutation();
 
@@ -96,17 +113,88 @@ export const Check = () => {
 
   useEffect(() => {
     if (words) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShuffledWords([...words.items].sort(() => Math.random() - 0.5));
     }
   }, [words]);
 
   useEffect(() => {
     setWordResult({});
+    setSelectedChip(null);
     setIsViewResult(false);
     setHasError(false);
     setIsWin(false);
-  }, [activeLanguage.code, dateRange.dateFrom, dateRange.dateTo, wordsSource]);
+  }, [
+    activeLanguage.code,
+    dateRange.dateFrom,
+    dateRange.dateTo,
+    wordsSource,
+  ]);
+
+  const translationChips = useMemo(
+    () =>
+      shuffledWords
+        ? shuffle(
+            shuffledWords.map((word) => ({
+              id: word.id,
+              text: word.translate_word,
+            })),
+          )
+        : [],
+    [shuffledWords],
+  );
+
+  const usedChipIds = useMemo(
+    () =>
+      new Set(
+        Object.values(wordResult)
+          .map((result) => result.sourceWordId)
+          .filter((id): id is number => id !== undefined),
+      ),
+    [wordResult],
+  );
+
+  const bankChips = translationChips.filter(
+    (chip) => !usedChipIds.has(chip.id),
+  );
+
+  const assignChipToWord = (word: TWordResponse, chip: TTranslationChip) => {
+    setHasError(false);
+    setSelectedChip(null);
+    setWordResult((prev) => ({
+      ...prev,
+      [word.id]: {
+        answer: chip.text,
+        correctAnswer: word.translate_word,
+        sourceWordId: chip.id,
+      },
+    }));
+  };
+
+  const unassignChip = (chipId: number) => {
+    setHasError(false);
+    setWordResult((prev) => {
+      const next = { ...prev };
+
+      for (const [wordId, result] of Object.entries(next)) {
+        if (result.sourceWordId === chipId) delete next[Number(wordId)];
+      }
+
+      return next;
+    });
+  };
+
+  const startChipDrag = (
+    event: DragEvent<HTMLButtonElement>,
+    chip: TTranslationChip,
+  ) => {
+    draggedChipRef.current = chip;
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", String(chip.id));
+  };
+
+  const stopChipDrag = () => {
+    draggedChipRef.current = null;
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -178,6 +266,7 @@ export const Check = () => {
               onChange={(value) => {
                 setSelectedOption(value as TSelectedOption);
                 setWordResult({});
+                setSelectedChip(null);
                 setIsViewResult(false);
               }}
               options={[
@@ -298,51 +387,182 @@ export const Check = () => {
               )}
             </div>
           )}
+          {answerMode === "choice" && !isWin && (
+            <p className={classes.hint}>
+              Перетащите перевод к слову или выберите вариант и нажмите на
+              слово
+            </p>
+          )}
           <div
             className={clsx(classes.tableContainer, { [classes.isWin]: isWin })}
           >
-            <table className={classes.table}>
-              <tbody>
-                {shuffledWords.map((word) => {
-                  const key =
-                    selectedOption === "origWord"
-                      ? "orig_word"
-                      : "translate_word";
+            {answerMode === "choice" ? (
+              <div className={classes.matchBoard}>
+                <div className={classes.wordsColumn}>
+                  {shuffledWords.map((word) => {
+                    const result = wordResult[word.id];
+                    const isWrong = isAnswerError(word);
+                    const isCorrect =
+                      Boolean(result) && isViewResult && hasError && !isWrong;
 
-                  const keyRightWord =
-                    selectedOption === "origWord"
-                      ? "translate_word"
-                      : "orig_word";
+                    return (
+                      <div
+                        key={word.id}
+                        className={clsx(classes.matchRow, {
+                          [classes.matchRowFilled]: Boolean(result),
+                          [classes.matchRowError]: isWrong,
+                          [classes.matchRowCorrect]: isCorrect,
+                        })}
+                        onClick={() => {
+                          if (selectedChip) {
+                            assignChipToWord(word, selectedChip);
+                          }
+                        }}
+                        onDragOver={(event) => {
+                          event.preventDefault();
+                          event.dataTransfer.dropEffect = "move";
+                        }}
+                        onDrop={(event) => {
+                          event.preventDefault();
+                          const chip = draggedChipRef.current;
+                          if (chip) assignChipToWord(word, chip);
+                          draggedChipRef.current = null;
+                        }}
+                      >
+                        <span className={classes.matchWord}>
+                          {word.orig_word}
+                        </span>
+                        <div className={classes.matchSlot}>
+                          {result ? (
+                            <button
+                              type="button"
+                              draggable={!isSubmitting && !isWin}
+                              title="Перетащите к другому слову или нажмите, чтобы убрать"
+                              className={clsx(
+                                classes.option,
+                                classes.assignedChip,
+                                {
+                                  [classes.optionCorrect]: isCorrect,
+                                  [classes.optionWrong]: isWrong,
+                                },
+                              )}
+                              onDragStart={(event) =>
+                                startChipDrag(event, {
+                                  id: result.sourceWordId ?? word.id,
+                                  text: result.answer,
+                                })
+                              }
+                              onDragEnd={stopChipDrag}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                if (result.sourceWordId !== undefined) {
+                                  unassignChip(result.sourceWordId);
+                                }
+                              }}
+                            >
+                              {result.answer}
+                              <span
+                                className={classes.chipRemove}
+                                aria-hidden="true"
+                              >
+                                ×
+                              </span>
+                            </button>
+                          ) : (
+                            <span className={classes.matchPlaceholder}>
+                              Перетащите перевод
+                            </span>
+                          )}
+                        </div>
+                        {isWrong && (
+                          <span className={classes.correctHint}>
+                            {word.translate_word}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                <div
+                  className={classes.bank}
+                  onDragOver={(event) => {
+                    event.preventDefault();
+                    event.dataTransfer.dropEffect = "move";
+                  }}
+                  onDrop={(event) => {
+                    event.preventDefault();
+                    const chip = draggedChipRef.current;
+                    if (chip) unassignChip(chip.id);
+                    draggedChipRef.current = null;
+                  }}
+                >
+                  <p className={classes.bankTitle}>Варианты перевода</p>
+                  <div className={classes.bankChips}>
+                    {bankChips.map((chip) => (
+                      <button
+                        key={chip.id}
+                        type="button"
+                        draggable={!isSubmitting && !isWin}
+                        className={clsx(classes.option, classes.bankChip, {
+                          [classes.optionSelected]: selectedChip?.id === chip.id,
+                        })}
+                        onDragStart={(event) => startChipDrag(event, chip)}
+                        onDragEnd={stopChipDrag}
+                        onClick={() =>
+                          setSelectedChip((prev) =>
+                            prev?.id === chip.id ? null : chip,
+                          )
+                        }
+                      >
+                        {chip.text}
+                      </button>
+                    ))}
+                    {!bankChips.length && (
+                      <span className={classes.bankEmpty}>
+                        Все переводы распределены
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <table className={classes.table}>
+                <tbody>
+                  {shuffledWords.map((word) => {
+                    const key = "translate_word";
+                    const keyRightWord = "orig_word";
 
-                  return (
-                    <tr key={word.id} className={classes.tableTr}>
-                      <td className={classes.wordTd}>{word[key]}</td>
-                      <td className={classes.wordTd}>
-                        <input
-                          autoComplete="off"
-                          className={isAnswerError(word) ? "error" : undefined}
-                          disabled={isSubmitting}
-                          placeholder="Ваш ответ"
-                          required
-                          name={word[key]}
-                          onChange={(event) => {
-                            setHasError(false);
-                            setWordResult((prev) => ({
-                              ...prev,
-                              [word.id]: {
-                                answer: event.target.value,
-                                correctAnswer: word[keyRightWord],
-                              },
-                            }));
-                          }}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
-
-              </tbody>
-            </table>
+                    return (
+                      <tr key={word.id} className={classes.tableTr}>
+                        <td className={classes.wordTd}>{word[key]}</td>
+                        <td className={classes.wordTd}>
+                          <input
+                            autoComplete="off"
+                            className={
+                              isAnswerError(word) ? "error" : undefined
+                            }
+                            disabled={isSubmitting}
+                            placeholder="Ваш ответ"
+                            required
+                            name={word[key]}
+                            onChange={(event) => {
+                              setHasError(false);
+                              setWordResult((prev) => ({
+                                ...prev,
+                                [word.id]: {
+                                  answer: event.target.value,
+                                  correctAnswer: word[keyRightWord],
+                                },
+                              }));
+                            }}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
             {!isWin && (
               <Button
                 className={classes.button}
